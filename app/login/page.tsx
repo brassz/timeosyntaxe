@@ -18,7 +18,16 @@ import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/lib/store'
 
 const loginSchema = z.object({
-  email: z.string().email('Email inválido'),
+  email: z.string()
+    .min(1, 'Email é obrigatório')
+    .refine(
+      (email) => {
+        // Validação mais flexível para aceitar emails como bruno@ti
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]*[^\s@]+$|^[^\s@]+@[^\s@]+$/
+        return emailRegex.test(email)
+      },
+      'Email inválido'
+    ),
   password: z.string().min(3, 'Senha deve ter no mínimo 3 caracteres'),
 })
 
