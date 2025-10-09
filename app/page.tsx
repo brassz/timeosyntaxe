@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Check, Calendar, Clock, Users, Sparkles, CreditCard } from 'lucide-react'
+import { Check, User, Clock, Users, Sparkles, CreditCard, Calendar } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
@@ -87,12 +87,17 @@ export default function LandingPage() {
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="flex items-center space-x-2"
+            className="flex items-center space-x-1"
           >
-            <Calendar className="w-8 h-8 text-blue-600" />
-            <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              TimeoSyntaxe
-            </span>
+            <div className="flex items-center">
+              <span className="text-3xl font-bold text-gray-900">TIM</span>
+              <span className="text-3xl font-bold text-gray-900">E</span>
+              <div className="relative ml-0.5">
+                <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
+                  <User className="w-5 h-5 text-white" />
+                </div>
+              </div>
+            </div>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, x: 20 }}
@@ -143,7 +148,7 @@ export default function LandingPage() {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          <h2 className="text-4xl font-bold mb-4">Por que escolher o TimeoSyntaxe?</h2>
+          <h2 className="text-4xl font-bold mb-4">Por que escolher o TIMEO?</h2>
           <p className="text-slate-600 text-lg">Recursos que fazem a diferença no seu dia a dia</p>
         </motion.div>
 
@@ -285,7 +290,7 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="border-t bg-white/80 backdrop-blur-sm mt-16">
         <div className="container mx-auto px-4 py-8 text-center text-slate-600">
-          <p>&copy; 2025 TimeoSyntaxe. Todos os direitos reservados.</p>
+          <p>&copy; 2025 TIMEO. Todos os direitos reservados.</p>
         </div>
       </footer>
     </div>

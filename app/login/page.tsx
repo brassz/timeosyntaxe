@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import toast from 'react-hot-toast'
-import { Calendar, Lock, Mail } from 'lucide-react'
+import { User, Lock, Mail } from 'lucide-react'
 import Link from 'next/link'
 
 import { Button } from '@/components/ui/button'
@@ -94,11 +94,19 @@ export default function LoginPage() {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, type: 'spring' }}
-            className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm mb-4"
+            className="inline-flex items-center justify-center mb-4"
           >
-            <Calendar className="w-8 h-8 text-white" />
+            <div className="flex items-center">
+              <span className="text-4xl font-bold text-white">TIM</span>
+              <span className="text-4xl font-bold text-white">E</span>
+              <div className="relative ml-1">
+                <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center">
+                  <User className="w-6 h-6 text-white" />
+                </div>
+              </div>
+            </div>
           </motion.div>
-          <h1 className="text-3xl font-bold text-white mb-2">TimeoSyntaxe</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">TIMEO</h1>
           <p className="text-white/80">Sistema de Agendamentos Inteligente</p>
         </div>
 
