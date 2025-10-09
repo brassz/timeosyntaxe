@@ -9,6 +9,7 @@ import * as z from 'zod'
 import toast from 'react-hot-toast'
 import { Calendar, Lock, Mail } from 'lucide-react'
 import Link from 'next/link'
+import Cookies from 'js-cookie'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -69,6 +70,13 @@ export default function LoginPage() {
           created_at: authData.user.created_at!,
         })
         setToken(authData.session.access_token)
+
+        // Salvar token no cookie para o middleware
+        Cookies.set('auth-token', authData.session.access_token, {
+          expires: 7, // 7 dias
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax'
+        })
 
         toast.success('Login realizado com sucesso!')
         router.push('/dashboard')

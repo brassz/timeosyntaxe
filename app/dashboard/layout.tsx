@@ -17,6 +17,7 @@ export default function DashboardLayout({
     // Verificar autenticação
     if (!user || !token) {
       router.push('/login')
+      return
     }
   }, [user, token, router])
 
