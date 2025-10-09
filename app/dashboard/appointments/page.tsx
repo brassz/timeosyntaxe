@@ -32,28 +32,28 @@ export default function AppointmentsPage() {
   })
 
   useEffect(() => {
+    const loadAppointments = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('appointments')
+          .select('*')
+          .order('start_time', { ascending: true })
+
+        if (error) throw error
+
+        if (data) {
+          setAppointments(data)
+        }
+      } catch (error) {
+        console.error('Erro ao carregar agendamentos:', error)
+        toast.error('Erro ao carregar agendamentos')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    
     loadAppointments()
   }, [])
-
-  const loadAppointments = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('appointments')
-        .select('*')
-        .order('start_time', { ascending: true })
-
-      if (error) throw error
-
-      if (data) {
-        setAppointments(data)
-      }
-    } catch (error) {
-      console.error('Erro ao carregar agendamentos:', error)
-      toast.error('Erro ao carregar agendamentos')
-    } finally {
-      setIsLoading(false)
-    }
-  }
 
   const handleDelete = async () => {
     if (!deleteDialog.id) return
