@@ -88,42 +88,42 @@ export default function EditAppointmentPage() {
   const status = watch('status')
 
   useEffect(() => {
-    loadAppointment()
-  }, [params.id])
+    const loadAppointment = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('appointments')
+          .select('*')
+          .eq('id', params.id)
+          .single()
 
-  const loadAppointment = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('appointments')
-        .select('*')
-        .eq('id', params.id)
-        .single()
+        if (error) throw error
 
-      if (error) throw error
+        if (data) {
+          setAppointment(data)
+          
+          // Preencher form
+          setValue('title', data.title)
+          setValue('client_name', data.client_name)
+          setValue('service', data.service)
+          setValue('duration', data.duration)
+          setValue('status', data.status)
 
-      if (data) {
-        setAppointment(data)
-        
-        // Preencher form
-        setValue('title', data.title)
-        setValue('client_name', data.client_name)
-        setValue('service', data.service)
-        setValue('duration', data.duration)
-        setValue('status', data.status)
-
-        // Setar data e hora
-        const startDate = parseISO(data.start_time)
-        setSelectedDate(startDate)
-        setSelectedTime(startDate)
+          // Setar data e hora
+          const startDate = parseISO(data.start_time)
+          setSelectedDate(startDate)
+          setSelectedTime(startDate)
+        }
+      } catch (error) {
+        console.error('Erro ao carregar agendamento:', error)
+        toast.error('Erro ao carregar agendamento')
+        router.push('/dashboard/appointments')
+      } finally {
+        setIsLoading(false)
       }
-    } catch (error) {
-      console.error('Erro ao carregar agendamento:', error)
-      toast.error('Erro ao carregar agendamento')
-      router.push('/dashboard/appointments')
-    } finally {
-      setIsLoading(false)
     }
-  }
+    
+    loadAppointment()
+  }, [params.id, setValue, router])
 
   const onSubmit = async (data: AppointmentForm) => {
     setIsSaving(true)

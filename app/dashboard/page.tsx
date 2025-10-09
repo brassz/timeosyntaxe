@@ -19,27 +19,27 @@ export default function DashboardPage() {
   const [selectedDate, setSelectedDate] = useState(new Date())
 
   useEffect(() => {
+    const loadAppointments = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('appointments')
+          .select('*')
+          .order('start_time', { ascending: true })
+
+        if (error) throw error
+
+        if (data) {
+          setAppointments(data)
+        }
+      } catch (error) {
+        console.error('Erro ao carregar agendamentos:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    
     loadAppointments()
   }, [])
-
-  const loadAppointments = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('appointments')
-        .select('*')
-        .order('start_time', { ascending: true })
-
-      if (error) throw error
-
-      if (data) {
-        setAppointments(data)
-      }
-    } catch (error) {
-      console.error('Erro ao carregar agendamentos:', error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
 
   const today = new Date()
   const currentMonth = startOfMonth(selectedDate)
