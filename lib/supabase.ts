@@ -14,6 +14,23 @@ export interface User {
   created_at: string
 }
 
+export interface Usuario {
+  id: string
+  nome: string
+  email: string
+  telefone?: string
+  endereco?: string
+  cidade?: string
+  estado?: string
+  cep?: string
+  data_nascimento?: string
+  profissao?: string
+  observacoes?: string
+  ativo: boolean
+  created_at: string
+  updated_at: string
+}
+
 export interface Appointment {
   id: string
   user_id: string
