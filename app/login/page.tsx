@@ -16,6 +16,7 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/lib/store'
+import { Logo } from '@/components/Logo'
 
 const loginSchema = z.object({
   email: z.string()
@@ -96,17 +97,9 @@ export default function LoginPage() {
             transition={{ delay: 0.2, type: 'spring' }}
             className="inline-flex items-center justify-center mb-4"
           >
-            <div className="flex items-center">
-              <span className="text-4xl font-bold text-white">TIM</span>
-              <span className="text-4xl font-bold text-white">E</span>
-              <div className="relative ml-1">
-                <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center">
-                  <User className="w-6 h-6 text-white" />
-                </div>
-              </div>
-            </div>
+            <Logo size="lg" variant="light" />
           </motion.div>
-          <h1 className="text-3xl font-bold text-white mb-2">TIMEO</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">TIMEŌ</h1>
           <p className="text-white/80">Sistema de Agendamentos Inteligente</p>
         </div>
 

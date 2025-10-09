@@ -5,6 +5,7 @@ import { Check, User, Clock, Users, Sparkles, CreditCard, Calendar } from 'lucid
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Logo } from '@/components/Logo'
 
 const plans = [
   {
@@ -87,17 +88,8 @@ export default function LandingPage() {
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="flex items-center space-x-1"
           >
-            <div className="flex items-center">
-              <span className="text-3xl font-bold text-gray-900">TIM</span>
-              <span className="text-3xl font-bold text-gray-900">E</span>
-              <div className="relative ml-0.5">
-                <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
-                  <User className="w-5 h-5 text-white" />
-                </div>
-              </div>
-            </div>
+            <Logo size="lg" href="/" />
           </motion.div>
           <motion.div
             initial={{ opacity: 0, x: 20 }}
