@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
+import Cookies from 'js-cookie'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -26,6 +27,8 @@ export function Header() {
 
   const handleLogout = () => {
     logout()
+    // Remover o cookie de autenticação
+    Cookies.remove('auth-token')
     toast.success('Logout realizado com sucesso!')
     router.push('/login')
   }
