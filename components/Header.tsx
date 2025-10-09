@@ -44,11 +44,16 @@ export function Header() {
       <nav className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link href="/dashboard" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
-            <Calendar className="w-6 h-6 text-blue-600" />
-            <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              TimeoSyntaxe
-            </span>
+          <Link href="/dashboard" className="flex items-center space-x-1 hover:opacity-80 transition-opacity">
+            <div className="flex items-center">
+              <span className="text-2xl font-bold text-gray-900">TIM</span>
+              <span className="text-2xl font-bold text-gray-900">E</span>
+              <div className="relative ml-0.5">
+                <div className="w-7 h-7 bg-orange-500 rounded-full flex items-center justify-center">
+                  <User className="w-4 h-4 text-white" />
+                </div>
+              </div>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}

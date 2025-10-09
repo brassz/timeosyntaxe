@@ -1,4 +1,4 @@
-📦 TimeoSyntaxe - Estrutura Completa do Projeto
+📦 TIMEO - Estrutura Completa do Projeto
 ================================================
 
 timeosyntaxe/

@@ -1,4 +1,4 @@
-# 📦 TimeoSyntaxe - Resumo do Projeto
+# 📦 TIMEO - Resumo do Projeto
 
 ## 🎯 Visão Geral
 

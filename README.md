@@ -1,4 +1,4 @@
-# 📅 TimeoSyntaxe - Sistema de Agendamentos
+# 📅 TIMEO - Sistema de Agendamentos
 
 Sistema moderno e inteligente para gerenciar agendamentos, construído com as melhores tecnologias do mercado.
 

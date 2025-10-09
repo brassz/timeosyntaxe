@@ -6,7 +6,7 @@ import { Toaster } from 'react-hot-toast'
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "TimeoSyntaxe - Sistema de Agendamentos",
+  title: "TIMEO - Sistema de Agendamentos",
   description: "Sistema moderno e elegante para gerenciar seus agendamentos",
 }
 

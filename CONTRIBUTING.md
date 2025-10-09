@@ -1,6 +1,6 @@
 # 🤝 Guia de Contribuição
 
-Obrigado por considerar contribuir com o TimeoSyntaxe! Este documento fornece diretrizes para contribuições.
+Obrigado por considerar contribuir com o TIMEO! Este documento fornece diretrizes para contribuições.
 
 ## 📋 Código de Conduta
 

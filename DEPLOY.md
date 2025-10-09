@@ -1,4 +1,4 @@
-# 🚀 Guia de Deploy - TimeoSyntaxe
+# 🚀 Guia de Deploy - TIMEO
 
 ## Deploy no Vercel (Recomendado)
 

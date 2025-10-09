@@ -1,4 +1,4 @@
-# 🚀 Guia Rápido - TimeoSyntaxe
+# 🚀 Guia Rápido - TIMEO
 
 ## Começar em 5 minutos
 
