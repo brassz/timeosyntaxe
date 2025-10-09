@@ -126,6 +126,11 @@ Após criar o usuário, teste o login:
 
 ## 🐛 Solução de Problemas
 
+### ✅ CORRIGIDO: Erro "Email inválido"
+- **Problema**: A validação Zod não aceitava emails com domínios curtos como "ti"
+- **Solução**: Ajustada a validação em `app/login/page.tsx` para aceitar formatos como `bruno@ti`
+- **Status**: ✅ Corrigido automaticamente
+
 ### Erro: "User already registered"
 - O usuário já existe
 - Verifique com o SQL do Método 4
