@@ -5,6 +5,7 @@ import { Calendar, LogOut, Menu, User, X } from 'lucide-react'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
+import Image from 'next/image'
 import toast from 'react-hot-toast'
 
 import { Button } from '@/components/ui/button'
@@ -45,15 +46,13 @@ export function Header() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/dashboard" className="flex items-center space-x-1 hover:opacity-80 transition-opacity">
-            <div className="flex items-center">
-              <span className="text-2xl font-bold text-gray-900">TIM</span>
-              <span className="text-2xl font-bold text-gray-900">E</span>
-              <div className="relative ml-0.5">
-                <div className="w-7 h-7 bg-orange-500 rounded-full flex items-center justify-center">
-                  <User className="w-4 h-4 text-white" />
-                </div>
-              </div>
-            </div>
+            <Image
+              src="/timeo-logo.svg"
+              alt="TIMEO"
+              width={120}
+              height={36}
+              className="h-9 w-auto"
+            />
           </Link>
 
           {/* Desktop Navigation */}
