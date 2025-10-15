@@ -97,7 +97,7 @@ const AdminDashboard: React.FC = () => {
         appointmentsService.getAppointments(),
       ]);
       
-      setUsers(usersData.users || []);
+      setUsers(usersData.data || []);
       setServices(servicesData);
       setAppointments(appointmentsData);
     } catch (error) {
