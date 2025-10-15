@@ -1,0 +1,122 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  CLIENT
+  PROVIDER
+  ADMIN
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+enum NotificationType {
+  EMAIL
+  SMS
+  PUSH
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  phone     String?
+  role      UserRole @default(CLIENT)
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relacionamentos
+  appointments     Appointment[]
+  services         Service[]
+  availability     Availability[]
+  notifications    Notification[]
+  sentNotifications Notification[] @relation("NotificationSender")
+
+  @@map("users")
+}
+
+model Service {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  duration    Int     // em minutos
+  price       Float
+  active      Boolean @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relacionamentos
+  providerId   String
+  provider     User          @relation(fields: [providerId], references: [id])
+  appointments Appointment[]
+
+  @@unique([name, providerId], name: "name_providerId")
+  @@map("services")
+}
+
+model Appointment {
+  id        String            @id @default(cuid())
+  date      DateTime
+  status    AppointmentStatus @default(PENDING)
+  notes     String?
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  // Relacionamentos
+  clientId  String
+  client    User    @relation(fields: [clientId], references: [id])
+  serviceId String
+  service   Service @relation(fields: [serviceId], references: [id])
+
+  @@map("appointments")
+}
+
+model Availability {
+  id        String   @id @default(cuid())
+  dayOfWeek Int      // 0 = Domingo, 1 = Segunda, etc.
+  startTime String   // "09:00"
+  endTime   String   // "17:00"
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relacionamentos
+  providerId String
+  provider   User   @relation(fields: [providerId], references: [id])
+
+  @@unique([providerId, dayOfWeek, startTime, endTime], name: "providerId_dayOfWeek_startTime_endTime")
+  @@map("availability")
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  title     String
+  message   String
+  type      NotificationType
+  read      Boolean          @default(false)
+  sentAt    DateTime?
+  createdAt DateTime         @default(now())
+
+  // Relacionamentos
+  userId   String
+  user     User   @relation(fields: [userId], references: [id])
+  senderId String?
+  sender   User?  @relation("NotificationSender", fields: [senderId], references: [id])
+
+  @@map("notifications")
+}
