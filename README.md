@@ -1,172 +1,117 @@
-# 📅 Sistema de Agendamentos Completo
+# NADO777.COM - Replica Website
 
-Um sistema completo de agendamentos desenvolvido com React (frontend) e Node.js (backend), oferecendo uma solução moderna e escalável para gerenciamento de agendamentos e serviços.
+Este é uma réplica exata do website https://nado777.com/, criada com HTML, CSS e JavaScript puros.
 
-## Funcionalidades
+## 🎯 Características
 
-### Para Clientes
-- ✅ Cadastro e login de usuários
-- ✅ Visualização de horários disponíveis
-- ✅ Agendamento de serviços
-- ✅ Histórico de agendamentos
-- ✅ Cancelamento de agendamentos
-- ✅ Notificações por email
+- **Design Responsivo**: Adaptado para desktop, tablet e mobile
+- **Tema Moderno**: Esquema de cores azul (#006CFF) com gradientes
+- **Animações Suaves**: Efeitos de hover e transições CSS
+- **Loading Screen**: Tela de carregamento com spinner animado
+- **Jogos em Destaque**: Seção com jogos populares de cassino
+- **Promoções**: Área dedicada para ofertas especiais
+- **Links Sociais**: Integração com Instagram, Telegram e WhatsApp
+- **SEO Otimizado**: Meta tags completas para redes sociais
 
-### Para Prestadores de Serviço
-- ✅ Dashboard administrativo
-- ✅ Gerenciamento de horários disponíveis
-- ✅ Visualização de agendamentos
-- ✅ Confirmação/cancelamento de agendamentos
-- ✅ Relatórios e estatísticas
+## 🚀 Como Executar
 
-### Recursos Técnicos
-- ✅ Interface moderna e responsiva
-- ✅ Autenticação JWT
-- ✅ Banco de dados PostgreSQL
-- ✅ API RESTful
-- ✅ Validação de dados
-- ✅ Sistema de notificações
-- ✅ Calendário interativo
-
-## Tecnologias Utilizadas
-
-### Frontend
-- React 18
-- TypeScript
-- Material-UI
-- React Router
-- Axios
-- React Query
-- FullCalendar
-
-### Backend
-- Node.js
-- Express.js
-- TypeScript
-- PostgreSQL
-- Prisma ORM
-- JWT Authentication
-- Nodemailer
-- Express Validator
-
-## 🚀 Instalação Rápida
-
-### Método 1: Setup Automático (Recomendado)
+### Opção 1: Servidor HTTP Simples (Python)
 ```bash
-# Execute o script de setup automático
-./setup.sh
+cd /workspace
+python3 -m http.server 8000
 ```
+Acesse: http://localhost:8000
 
-### Método 2: Instalação Manual
-
-#### Pré-requisitos
-- Node.js 18+
-- PostgreSQL 12+
-- npm ou yarn
-
-#### Passos
+### Opção 2: Servidor HTTP Simples (Node.js)
 ```bash
-# 1. Instalar todas as dependências
-npm run install-all
-
-# 2. Configurar banco de dados
-cd server
-cp .env.example .env
-# Edite .env com suas configurações de banco
-
-# 3. Executar migrações e seed
-npm run db:migrate
-npm run db:seed
-
-# 4. Voltar ao diretório raiz
-cd ..
-
-# 5. Iniciar o sistema
-npm run dev
+npx http-server /workspace -p 8000
 ```
 
-### ⚡ Execução
-```bash
-# Executar em modo desenvolvimento (frontend + backend)
-npm run dev
+### Opção 3: Live Server (VS Code)
+Instale a extensão "Live Server" e clique com o botão direito no `index.html`
 
-# Ou executar separadamente:
-npm run server  # Backend na porta 3001
-npm run client  # Frontend na porta 3000
-```
-
-### 📦 Build para Produção
-```bash
-npm run build
-npm start
-```
-
-## Estrutura do Projeto
+## 📁 Estrutura do Projeto
 
 ```
-├── client/                 # Frontend React
-│   ├── public/
-│   ├── src/
-│   │   ├── components/     # Componentes reutilizáveis
-│   │   ├── pages/         # Páginas da aplicação
-│   │   ├── hooks/         # Custom hooks
-│   │   ├── services/      # Serviços de API
-│   │   ├── types/         # Tipos TypeScript
-│   │   └── utils/         # Utilitários
-│   └── package.json
-├── server/                # Backend Node.js
-│   ├── src/
-│   │   ├── controllers/   # Controladores
-│   │   ├── middleware/    # Middlewares
-│   │   ├── models/        # Modelos Prisma
-│   │   ├── routes/        # Rotas da API
-│   │   ├── services/      # Serviços de negócio
-│   │   └── utils/         # Utilitários
-│   ├── prisma/           # Schema e migrações
-│   └── package.json
-└── package.json          # Scripts principais
+/workspace/
+├── index.html              # Página principal
+├── assets/
+│   ├── css/
+│   │   └── styles.css      # Estilos CSS
+│   ├── js/
+│   │   └── main.js         # JavaScript funcional
+│   └── images/
+│       ├── logo.svg        # Logo do site
+│       ├── hero-games.svg  # Imagem hero
+│       ├── game1.svg       # Fortune Tiger
+│       ├── game2.svg       # Gates of Olympus
+│       ├── game3.svg       # Sweet Bonanza
+│       ├── game4.svg       # Aviator
+│       ├── 18plus.svg      # Badge 18+
+│       └── responsible-gaming.svg
+└── README.md
 ```
 
-## API Endpoints
+## 🎨 Design System
 
-### Autenticação
-- `POST /api/auth/register` - Cadastro de usuário
-- `POST /api/auth/login` - Login
-- `POST /api/auth/refresh` - Renovar token
+### Cores Principais
+- **Primária**: #006CFF (Azul)
+- **Background**: #EEF5FF (Azul claro)
+- **Secundário**: #FFFFFF (Branco)
+- **Border**: #BAD7FF (Azul border)
+- **Accent Green**: #00DA0F
+- **Accent Red**: #FF0000
+- **Accent Yellow**: #F9D115
 
-### Agendamentos
-- `GET /api/appointments` - Listar agendamentos
-- `POST /api/appointments` - Criar agendamento
-- `PUT /api/appointments/:id` - Atualizar agendamento
-- `DELETE /api/appointments/:id` - Cancelar agendamento
+### Tipografia
+- **Fonte**: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif
+- **Títulos**: 600 weight
+- **Corpo**: 400 weight
+- **Line Height**: 1.6
 
-### Serviços
-- `GET /api/services` - Listar serviços
-- `POST /api/services` - Criar serviço (admin)
-- `PUT /api/services/:id` - Atualizar serviço (admin)
+## 🔧 Funcionalidades JavaScript
 
-### Horários
-- `GET /api/availability` - Verificar disponibilidade
-- `POST /api/availability` - Definir horários disponíveis (admin)
+- **Device Detection**: Detecta tipo de dispositivo (mobile/tablet/desktop)
+- **Responsive Design**: Ajusta layout baseado no tamanho da tela
+- **Loading Screen**: Animação de carregamento
+- **Smooth Scrolling**: Navegação suave entre seções
+- **Hover Effects**: Efeitos interativos nos elementos
+- **Game Interactions**: Simulação de cliques nos jogos
+- **Social Links**: Links funcionais para redes sociais
+- **Form Handling**: Simulação de login/cadastro
+- **Performance**: Lazy loading e otimizações
 
-## Configuração do Banco de Dados
+## 📱 Responsividade
 
-O sistema utiliza PostgreSQL com Prisma ORM. O schema inclui:
+- **Mobile First**: Design otimizado para dispositivos móveis
+- **Breakpoints**:
+  - Mobile: < 768px
+  - Tablet: 768px - 1024px
+  - Desktop: > 1024px
 
-- **Users**: Usuários do sistema (clientes e prestadores)
-- **Services**: Serviços oferecidos
-- **Appointments**: Agendamentos
-- **Availability**: Horários disponíveis
-- **Notifications**: Notificações
+## 🎮 Jogos Incluídos
 
-## Contribuição
+1. **Fortune Tiger** (PG Soft)
+2. **Gates of Olympus** (Pragmatic Play)
+3. **Sweet Bonanza** (Pragmatic Play)
+4. **Aviator** (Spribe)
 
-1. Fork o projeto
-2. Crie uma branch para sua feature
-3. Commit suas mudanças
-4. Push para a branch
-5. Abra um Pull Request
+## 🔗 Links Sociais
 
-## Licença
+- **Instagram**: https://www.instagram.com/equipe777.oficialsite
+- **Telegram**: Configurável
+- **WhatsApp**: Configurável
 
-Este projeto está sob a licença MIT.
+## 🛡️ Responsabilidade
+
+- Conteúdo para maiores de 18 anos
+- Jogo responsável
+- Termos e condições incluídos
+
+## 📄 Licença
+
+Este projeto é uma réplica educacional do website original NADO777.COM.
+
+---
+
+**Desenvolvido como uma réplica exata do site original https://nado777.com/**
