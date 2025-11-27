@@ -50,18 +50,25 @@ function App() {
   return (
     <div className="app">
       <header className="header">
-        <h1>🚜 Terraplanagem Guimarães</h1>
-        <p>Sistema de Checklist de Máquinas Pesadas</p>
-        <div className="header-actions">
-          <label className="toggle-switch">
-            <input
-              type="checkbox"
-              checked={darkMode}
-              onChange={toggleDarkMode}
-            />
-            <span className="toggle-slider"></span>
-            <span>{darkMode ? '🌙 Modo Escuro' : '☀️ Modo Claro'}</span>
-          </label>
+        <div className="header-content">
+          <div className="header-logo">
+            <img src="/logo.png" alt="Terraplanagem Guimarães" className="logo-image" />
+            <div className="header-text">
+              <h1>Terraplanagem Guimarães</h1>
+              <p>Sistema de Checklist de Máquinas Pesadas</p>
+            </div>
+          </div>
+          <div className="header-actions">
+            <label className="toggle-switch">
+              <input
+                type="checkbox"
+                checked={darkMode}
+                onChange={toggleDarkMode}
+              />
+              <span className="toggle-slider"></span>
+              <span>{darkMode ? '🌙 Modo Escuro' : '☀️ Modo Claro'}</span>
+            </label>
+          </div>
         </div>
       </header>
 

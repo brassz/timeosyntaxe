@@ -1,17 +1,18 @@
-# Terraplanagem Guimarães - Sistema de Checklist
+# 🚜 Terraplanagem Guimarães - Sistema de Checklist
 
 Sistema completo, web e mobile-friendly, para checklist de máquinas pesadas.
 
 ## Características
 
-- ✅ Sem login - acesso direto
-- ✅ Mobile-friendly
-- ✅ Armazenamento local (localStorage + IndexedDB)
-- ✅ Upload de múltiplas fotos por item
-- ✅ Geração de PDF profissional
-- ✅ Salvamento automático de rascunhos
-- ✅ Modo escuro opcional
-- ✅ Cores da marca: Amarelo, Preto e Cinza
+- ✅ **Sem login** - acesso direto
+- ✅ **Mobile-friendly** - otimizado para tablets e celulares
+- ✅ **Armazenamento local** - localStorage + IndexedDB
+- ✅ **Upload de múltiplas fotos** por item
+- ✅ **Geração de PDF profissional** - com logo da empresa
+- ✅ **Salvamento automático** de rascunhos
+- ✅ **Modo escuro** opcional
+- ✅ **Identidade visual** - Logo, cores amarelo, preto e cinza
+- ✅ **18 itens** de verificação pré-definidos
 
 ## Como usar
 

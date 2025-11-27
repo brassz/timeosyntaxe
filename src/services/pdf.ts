@@ -18,20 +18,46 @@ export const generatePDF = async (checklist: ChecklistData): Promise<void> => {
     return false;
   };
 
-  // Cabeçalho
+  // Cabeçalho com logo
   doc.setFillColor(255, 204, 0); // Amarelo
-  doc.rect(0, 0, pageWidth, 35, 'F');
+  doc.rect(0, 0, pageWidth, 40, 'F');
   
-  doc.setTextColor(0, 0, 0);
-  doc.setFontSize(24);
-  doc.setFont('helvetica', 'bold');
-  doc.text('Terraplanagem Guimarães', margin, 15);
-  
-  doc.setFontSize(12);
-  doc.setFont('helvetica', 'normal');
-  doc.text('Checklist de Máquinas Pesadas', margin, 25);
+  // Tentar adicionar a logo
+  try {
+    const logoResponse = await fetch('/logo.png');
+    const logoBlob = await logoResponse.blob();
+    const logoBase64 = await new Promise<string>((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.readAsDataURL(logoBlob);
+    });
+    
+    // Adicionar logo no PDF (canto esquerdo)
+    doc.addImage(logoBase64, 'PNG', margin, 8, 24, 24);
+    
+    // Textos ao lado da logo
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(24);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Terraplanagem Guimarães', margin + 30, 18);
+    
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Checklist de Máquinas Pesadas', margin + 30, 28);
+  } catch (error) {
+    // Fallback se a logo não carregar
+    console.warn('Logo não carregada, usando texto apenas', error);
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(24);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Terraplanagem Guimarães', margin, 18);
+    
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Checklist de Máquinas Pesadas', margin, 28);
+  }
 
-  yPos = 45;
+  yPos = 50;
 
   // Informações principais
   doc.setFontSize(10);
