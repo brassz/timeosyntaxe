@@ -59,6 +59,8 @@ export const Checklist: React.FC<ChecklistProps> = ({ initialData, onBack }) => 
   const [currentItemIndex, setCurrentItemIndex] = useState(0);
   const [photoPreview, setPhotoPreview] = useState<{ [key: string]: string[] }>({});
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const [showAllItems, setShowAllItems] = useState(false);
+  const [headerCollapsed, setHeaderCollapsed] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -208,66 +210,77 @@ export const Checklist: React.FC<ChecklistProps> = ({ initialData, onBack }) => 
   return (
     <div className="checklist">
       <div className="checklist-header card">
-        <div className="checklist-info">
-          <div className="info-row">
-            <span className="info-label">Operador:</span>
-            <span className="info-value">{checklist.operator}</span>
+        <div className="header-compact">
+          <div className="header-summary">
+            <div className="header-main-info">
+              <strong>{checklist.operator}</strong> · {checklist.machine}
+            </div>
+            <button 
+              className="header-toggle"
+              onClick={() => setHeaderCollapsed(!headerCollapsed)}
+              aria-label="Toggle detalhes"
+            >
+              {headerCollapsed ? '▼' : '▲'}
+            </button>
           </div>
-          <div className="info-row">
-            <span className="info-label">Máquina:</span>
-            <span className="info-value">{checklist.machine}</span>
-          </div>
-          <div className="info-row">
-            <span className="info-label">Local:</span>
-            <span className="info-value">{checklist.location}</span>
-          </div>
-          <div className="info-row">
-            <span className="info-label">Data/Hora:</span>
-            <span className="info-value">{new Date(checklist.date).toLocaleString('pt-BR')}</span>
+          
+          <div className="progress-bar">
+            <div className="progress-fill" style={{ width: `${progress}%` }}></div>
+            <span className="progress-text">{progress}%</span>
           </div>
         </div>
 
-        <div className="form-group">
-          <label htmlFor="horimeter">Horímetro *</label>
-          <input
-            id="horimeter"
-            type="text"
-            value={checklist.horimeter}
-            onChange={(e) => setChecklist({ ...checklist, horimeter: e.target.value })}
-            placeholder="Ex: 1234.5"
-          />
-        </div>
+        {!headerCollapsed && (
+          <div className="header-details">
+            <div className="checklist-info">
+              <div className="info-row">
+                <span className="info-label">Local:</span>
+                <span className="info-value">{checklist.location}</span>
+              </div>
+              <div className="info-row">
+                <span className="info-label">Data/Hora:</span>
+                <span className="info-value">{new Date(checklist.date).toLocaleString('pt-BR')}</span>
+              </div>
+            </div>
 
-        <div className="form-group">
-          <label htmlFor="mileage">Quilometragem (se aplicável)</label>
-          <input
-            id="mileage"
-            type="text"
-            value={checklist.mileage}
-            onChange={(e) => setChecklist({ ...checklist, mileage: e.target.value })}
-            placeholder="Ex: 45678"
-          />
-        </div>
+            <div className="form-group">
+              <label htmlFor="horimeter">Horímetro *</label>
+              <input
+                id="horimeter"
+                type="text"
+                value={checklist.horimeter}
+                onChange={(e) => setChecklist({ ...checklist, horimeter: e.target.value })}
+                placeholder="Ex: 1234.5"
+              />
+            </div>
 
-        <div className="progress-bar">
-          <div className="progress-fill" style={{ width: `${progress}%` }}></div>
-          <span className="progress-text">{progress}% concluído</span>
-        </div>
+            <div className="form-group">
+              <label htmlFor="mileage">Quilometragem (se aplicável)</label>
+              <input
+                id="mileage"
+                type="text"
+                value={checklist.mileage}
+                onChange={(e) => setChecklist({ ...checklist, mileage: e.target.value })}
+                placeholder="Ex: 45678"
+              />
+            </div>
+          </div>
+        )}
       </div>
 
-      <div className="checklist-navigation card">
+      <div className="checklist-navigation">
         <button
-          className="btn btn-secondary"
+          className="nav-btn nav-prev"
           onClick={() => setCurrentItemIndex(Math.max(0, currentItemIndex - 1))}
           disabled={currentItemIndex === 0}
         >
           ← Anterior
         </button>
-        <span className="item-counter">
-          Item {currentItemIndex + 1} de {checklist.items.length}
-        </span>
+        <div className="item-counter">
+          <span className="counter-main">{currentItemIndex + 1}/{checklist.items.length}</span>
+        </div>
         <button
-          className="btn btn-secondary"
+          className="nav-btn nav-next"
           onClick={() => setCurrentItemIndex(Math.min(checklist.items.length - 1, currentItemIndex + 1))}
           disabled={currentItemIndex === checklist.items.length - 1}
         >
@@ -354,27 +367,42 @@ export const Checklist: React.FC<ChecklistProps> = ({ initialData, onBack }) => 
           onClick={handleFinishChecklist}
           disabled={isGeneratingPDF}
         >
-          {isGeneratingPDF ? '⏳ Gerando PDF...' : '✓ Finalizar e Gerar PDF'}
+          {isGeneratingPDF ? '⏳ Gerando...' : '✓ Finalizar'}
         </button>
       </div>
 
-      <div className="item-list card">
-        <h4>Todos os Itens</h4>
-        <div className="item-grid">
-          {checklist.items.map((item, index) => (
-            <button
-              key={item.id}
-              className={`item-badge ${item.status ? `badge-${item.status.toLowerCase().replace('.', '')}` : 'badge-pending'} ${
-                index === currentItemIndex ? 'active' : ''
-              }`}
-              onClick={() => setCurrentItemIndex(index)}
-            >
-              <span className="badge-number">{index + 1}</span>
-              <span className="badge-status">{item.status || '?'}</span>
-            </button>
-          ))}
-        </div>
+      <div className="item-list-toggle">
+        <button 
+          className="toggle-all-items"
+          onClick={() => setShowAllItems(!showAllItems)}
+        >
+          {showAllItems ? '▲ Ocultar todos os itens' : '▼ Ver todos os itens'}
+        </button>
       </div>
+
+      {showAllItems && (
+        <div className="item-list card">
+          <h4>Todos os Itens</h4>
+          <div className="item-grid">
+            {checklist.items.map((item, index) => (
+              <button
+                key={item.id}
+                className={`item-badge ${item.status ? `badge-${item.status.toLowerCase().replace('.', '')}` : 'badge-pending'} ${
+                  index === currentItemIndex ? 'active' : ''
+                }`}
+                onClick={() => {
+                  setCurrentItemIndex(index);
+                  setShowAllItems(false);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+              >
+                <span className="badge-number">{index + 1}</span>
+                <span className="badge-status">{item.status || '?'}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
