@@ -113,7 +113,7 @@
   font-weight: 600;
   border: 2px solid var(--color-yellow);
   border-radius: 8px;
-  background: white;
+  background: var(--color-white);
   color: var(--color-black);
   cursor: pointer;
   transition: all 0.2s;
