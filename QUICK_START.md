@@ -1,162 +1,214 @@
-# 🚀 Guia de Início Rápido
+# 🚀 Quick Start - Terraplanagem Guimarães
 
-## 1. Configuração Inicial
+## ⚡ Início Rápido (3 minutos)
 
-### Opção A: Setup Automático
+### 1️⃣ Instalar Dependências
 ```bash
-./setup.sh
+npm install
 ```
 
-### Opção B: Setup Manual
-```bash
-# Instalar dependências
-npm run install-all
-
-# Configurar banco (PostgreSQL)
-cd server
-cp .env.example .env
-# Edite .env com suas configurações
-
-# Executar migrações
-npm run db:migrate
-npm run db:seed
-cd ..
-```
-
-## 2. Iniciar o Sistema
+### 2️⃣ Iniciar Servidor
 ```bash
 npm run dev
 ```
 
-## 3. Acessar o Sistema
-- **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:3001/api
-- **Documentação API**: http://localhost:3001/api/health
+### 3️⃣ Abrir no Navegador
+Acesse: `http://localhost:5173`
 
-## 4. Usuários de Teste
-Após executar o seed, você terá:
+---
 
-| Tipo | Email | Senha | Descrição |
-|------|-------|-------|-----------|
-| Admin | admin@agendamentos.com | admin123 | Acesso total ao sistema |
-| Provider | provider@agendamentos.com | provider123 | Prestador de serviços |
-| Cliente | client@agendamentos.com | client123 | Cliente final |
+## 📱 Primeiro Uso
 
-## 5. Funcionalidades Principais
+### Passo 1: Tela Inicial
+1. Digite seu nome
+2. Selecione a máquina
+3. Informe o local
+4. Clique em "Iniciar Checklist"
 
-### Para Clientes
-1. **Cadastro/Login** - Criar conta e fazer login
-2. **Agendar Serviços** - Escolher serviço, data e horário
-3. **Visualizar Agendamentos** - Ver histórico e próximos agendamentos
-4. **Cancelar Agendamentos** - Cancelar quando necessário
+### Passo 2: Preencher Checklist
+1. Informe horímetro e quilometragem
+2. Para cada item:
+   - Escolha: C / N.C / N.A
+   - Adicione observação (opcional)
+   - Tire fotos (opcional)
+3. Navegue com as setas ou clique nos números
 
-### Para Prestadores
-1. **Gerenciar Serviços** - Criar e editar serviços oferecidos
-2. **Definir Disponibilidade** - Configurar horários de trabalho
-3. **Confirmar Agendamentos** - Aprovar ou rejeitar solicitações
-4. **Dashboard** - Visualizar estatísticas e agendamentos
+### Passo 3: Finalizar
+1. Clique em "Finalizar e Gerar PDF"
+2. PDF será baixado automaticamente
+3. Checklist salvo no histórico
 
-### Para Administradores
-1. **Dashboard Completo** - Visão geral do sistema
-2. **Gerenciar Usuários** - Administrar todos os usuários
-3. **Relatórios** - Estatísticas e métricas do sistema
-4. **Configurações** - Ajustes gerais do sistema
+---
 
-## 6. Estrutura de Navegação
+## 🎯 Atalhos Úteis
 
-```
-📱 Frontend (React)
-├── 🏠 Dashboard - Visão geral personalizada
-├── 📅 Agendamentos - Listar e gerenciar agendamentos
-├── 🛍️ Serviços - Catálogo de serviços disponíveis
-├── ⏰ Disponibilidade - Configurar horários (providers)
-├── 👥 Usuários - Gerenciar usuários (admin)
-├── 🔔 Notificações - Central de notificações
-└── 👤 Perfil - Configurações da conta
-```
+| Ação | Como fazer |
+|------|------------|
+| Próximo item | Botão "Próximo →" |
+| Item anterior | Botão "← Anterior" |
+| Ir para item específico | Clicar no número do item |
+| Adicionar foto | Botão "📷 Adicionar Fotos" |
+| Ver histórico | Botão na tela inicial |
+| Modo escuro | Toggle no cabeçalho |
 
-## 7. API Endpoints Principais
+---
 
-```
-🔐 Autenticação
-POST /api/auth/login
-POST /api/auth/register
-GET  /api/auth/me
+## 📋 18 Itens do Checklist
 
-📅 Agendamentos
-GET    /api/appointments
-POST   /api/appointments
-PUT    /api/appointments/:id/status
-DELETE /api/appointments/:id
+1. Nível de óleo
+2. Nível de água
+3. Vazamentos visíveis
+4. Pneus / Rodas / Esteiras
+5. Freio
+6. Direção
+7. Buzina
+8. Luzes
+9. Itens de segurança
+10. Painel de alerta
+11. Documentação
+12. Cabine em geral
+13. Motor
+14. Sistema hidráulico
+15. Braços / Caçamba / Lâmina
+16. Filtros
+17. Extintor
+18. Condições externas gerais
 
-🛍️ Serviços
-GET  /api/services
-POST /api/services
-PUT  /api/services/:id
+---
 
-⏰ Disponibilidade
-GET  /api/availability/provider/:id
-POST /api/availability
-GET  /api/availability/slots/:serviceId
-```
-
-## 8. Configurações Importantes
-
-### Banco de Dados
-```env
-DATABASE_URL="postgresql://usuario:senha@localhost:5432/agendamentos"
-```
-
-### Email (Notificações)
-```env
-EMAIL_HOST="smtp.gmail.com"
-EMAIL_USER="seu-email@gmail.com"
-EMAIL_PASS="sua-senha-de-app"
-```
-
-### JWT
-```env
-JWT_SECRET="seu-secret-super-seguro"
-JWT_EXPIRES_IN="7d"
-```
-
-## 9. Comandos Úteis
+## 🔧 Comandos Principais
 
 ```bash
 # Desenvolvimento
-npm run dev              # Iniciar frontend + backend
-npm run server          # Apenas backend
-npm run client          # Apenas frontend
-
-# Banco de dados
-cd server
-npm run db:migrate      # Executar migrações
-npm run db:seed         # Popular com dados de teste
-npm run db:studio       # Abrir Prisma Studio
+npm run dev          # Inicia servidor de desenvolvimento
 
 # Produção
-npm run build           # Build do frontend
-npm start              # Iniciar em produção
+npm run build        # Cria versão otimizada
+npm run preview      # Preview da build
+
+# Limpeza
+rm -rf dist          # Remove build anterior
+rm -rf node_modules  # Remove dependências
 ```
 
-## 10. Solução de Problemas
+---
 
-### Erro de Conexão com Banco
-1. Verifique se PostgreSQL está rodando
-2. Confirme as credenciais no `.env`
-3. Execute `npm run db:migrate`
+## 💾 Onde os Dados Ficam?
 
-### Porta já em uso
-1. Backend (3001): Altere `PORT` no `.env`
-2. Frontend (3000): Será perguntado para usar outra porta
+- **Rascunhos**: localStorage do navegador
+- **Fotos**: IndexedDB do navegador
+- **Histórico**: localStorage do navegador
+- **PDFs**: Pasta de Downloads do seu dispositivo
 
-### Erro de Dependências
+⚠️ **Importante:** Dados são locais. Limpar cache = perder dados.
+
+---
+
+## 📱 Testar em Mobile
+
+### Método 1: Rede Local
 ```bash
+npm run dev -- --host
+```
+Acesse pelo IP no celular: `http://192.168.x.x:5173`
+
+### Método 2: Simulação no Browser
+1. Abra DevTools (F12)
+2. Clique no ícone de dispositivo móvel
+3. Escolha um dispositivo (iPhone, Galaxy, etc.)
+
+---
+
+## 🐛 Problemas Comuns
+
+### Erro ao instalar
+```bash
+# Usar versão correta do Node (18+)
+node -v
+
 # Limpar e reinstalar
-rm -rf node_modules server/node_modules client/node_modules
-npm run install-all
+rm -rf node_modules package-lock.json
+npm install
 ```
 
-## 🎉 Pronto!
+### Porta 5173 em uso
+```bash
+# Usar outra porta
+npm run dev -- --port 3000
+```
 
-Agora você tem um sistema completo de agendamentos funcionando. Explore as funcionalidades e personalize conforme suas necessidades!
+### Build falha
+```bash
+# Verificar erros
+npm run build
+
+# Ver logs completos
+npm run build 2>&1 | tee build.log
+```
+
+---
+
+## 📚 Arquivos Importantes
+
+| Arquivo | Descrição |
+|---------|-----------|
+| `README.md` | Documentação completa |
+| `MANUAL_USO.md` | Manual detalhado |
+| `FEATURES.md` | Lista de funcionalidades |
+| `DEPLOY.md` | Guia de publicação |
+| `src/App.tsx` | Componente principal |
+| `src/services/storage.ts` | Gerenciamento de dados |
+| `src/services/pdf.ts` | Geração de PDF |
+
+---
+
+## ✅ Checklist Pré-Deploy
+
+- [ ] `npm install` funciona
+- [ ] `npm run dev` funciona
+- [ ] `npm run build` funciona
+- [ ] Testar no Chrome
+- [ ] Testar no Safari (iOS)
+- [ ] Testar upload de foto
+- [ ] Testar geração de PDF
+- [ ] Testar modo escuro
+
+---
+
+## 🎓 Próximos Passos
+
+1. **Personalizar**: Edite cores, logo, itens do checklist
+2. **Testar**: Use em situação real
+3. **Deploy**: Publique online (ver DEPLOY.md)
+4. **Treinar**: Ensine operadores a usar
+5. **Melhorar**: Colete feedback e ajuste
+
+---
+
+## 📞 Suporte Rápido
+
+**Problema com fotos?**
+→ Verificar permissões de câmera no navegador
+
+**PDF não gera?**
+→ Verificar console do navegador (F12)
+
+**Dados perdidos?**
+→ Não limpar cache/dados do navegador
+
+**App lento?**
+→ Limpar histórico antigo, usar fotos menores
+
+---
+
+## 🎯 Dica de Ouro
+
+> **Use em tablet de 7-10"** para melhor experiência!
+> 
+> Tela grande o suficiente para conforto, pequena o suficiente para campo.
+
+---
+
+**Pronto para usar! 🚜💪**
+
+Leia o `MANUAL_USO.md` para detalhes completos.

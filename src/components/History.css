@@ -1,0 +1,250 @@
+.history {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.history-header h2 {
+  color: var(--color-black);
+  margin: 0;
+}
+
+.history-count {
+  background-color: var(--color-yellow);
+  color: var(--color-black);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+}
+
+.empty-state h2 {
+  color: var(--color-gray);
+  margin-bottom: 1rem;
+}
+
+.empty-state p {
+  color: var(--color-gray);
+  margin-bottom: 2rem;
+}
+
+.checklist-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.checklist-card {
+  overflow: hidden;
+}
+
+.checklist-summary {
+  cursor: pointer;
+  transition: background-color 0.2s;
+  padding: 0.5rem 0;
+}
+
+.checklist-summary:hover {
+  background-color: var(--color-light-gray);
+}
+
+.summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.summary-header h3 {
+  color: var(--color-black);
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.summary-date {
+  background-color: var(--color-light-gray);
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: var(--color-gray);
+  font-weight: 600;
+}
+
+.summary-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.detail-label {
+  font-size: 0.85rem;
+  color: var(--color-gray);
+  font-weight: 600;
+}
+
+.detail-value {
+  font-size: 1rem;
+  color: var(--color-black);
+}
+
+.summary-stats {
+  font-size: 0.9rem;
+  color: var(--color-gray);
+  padding-top: 0.8rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+.checklist-details {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid var(--color-yellow);
+}
+
+.details-header h4 {
+  color: var(--color-black);
+  margin-bottom: 1rem;
+}
+
+.details-info {
+  margin-bottom: 1.5rem;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.info-grid div {
+  padding: 0.8rem;
+  background-color: var(--color-light-gray);
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.info-grid strong {
+  color: var(--color-gray);
+  display: block;
+  margin-bottom: 0.3rem;
+  font-size: 0.85rem;
+}
+
+.details-items h5 {
+  color: var(--color-black);
+  margin-bottom: 1rem;
+}
+
+.items-table {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.item-row {
+  display: grid;
+  grid-template-columns: 2fr auto 2fr auto;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.8rem;
+  background-color: var(--color-light-gray);
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.item-name {
+  font-weight: 600;
+  color: var(--color-black);
+}
+
+.item-status {
+  padding: 0.3rem 0.8rem;
+  border-radius: 6px;
+  font-weight: 600;
+  text-align: center;
+  min-width: 60px;
+}
+
+.item-status.status-c {
+  background-color: var(--color-success);
+  color: white;
+}
+
+.item-status.status-nc {
+  background-color: var(--color-error);
+  color: white;
+}
+
+.item-status.status-na {
+  background-color: var(--color-gray);
+  color: white;
+}
+
+.item-status.status-pending {
+  background-color: #ccc;
+  color: var(--color-gray);
+}
+
+.item-observation {
+  color: var(--color-gray);
+  font-size: 0.85rem;
+}
+
+.item-photos-count {
+  color: var(--color-gray);
+  font-size: 0.85rem;
+  text-align: right;
+}
+
+.checklist-actions {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+@media (max-width: 768px) {
+  .history-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .history-header h2 {
+    text-align: center;
+  }
+
+  .item-row {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .item-status,
+  .item-photos-count {
+    text-align: left;
+  }
+
+  .checklist-actions {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,290 @@
+.checklist {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.checklist-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: var(--color-white);
+}
+
+.checklist-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
+}
+
+.info-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.info-label {
+  font-size: 0.85rem;
+  color: var(--color-gray);
+  font-weight: 600;
+}
+
+.info-value {
+  font-size: 1rem;
+  color: var(--color-black);
+}
+
+.progress-bar {
+  position: relative;
+  height: 30px;
+  background-color: var(--color-light-gray);
+  border-radius: 15px;
+  overflow: hidden;
+  margin-top: 1rem;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-yellow) 0%, #ffdd44 100%);
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: 600;
+  color: var(--color-black);
+  font-size: 0.9rem;
+}
+
+.checklist-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.item-counter {
+  font-weight: 600;
+  color: var(--color-gray);
+}
+
+.checklist-item {
+  margin: 1.5rem 0;
+}
+
+.item-title {
+  font-size: 1.5rem;
+  color: var(--color-black);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.status-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.status-btn {
+  padding: 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: 3px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background-color: var(--color-light-gray);
+  color: var(--color-black);
+  min-height: 60px;
+}
+
+.status-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.status-btn.active {
+  transform: scale(1.05);
+}
+
+.status-c {
+  border-color: var(--color-success);
+}
+
+.status-c.active {
+  background-color: var(--color-success);
+  color: white;
+}
+
+.status-nc {
+  border-color: var(--color-error);
+}
+
+.status-nc.active {
+  background-color: var(--color-error);
+  color: white;
+}
+
+.status-na {
+  border-color: var(--color-gray);
+}
+
+.status-na.active {
+  background-color: var(--color-gray);
+  color: white;
+}
+
+.photo-section {
+  margin-top: 1.5rem;
+}
+
+.photo-section label {
+  display: block;
+  margin-bottom: 0.8rem;
+  font-weight: 600;
+  color: var(--color-gray);
+}
+
+.photo-preview {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.photo-item {
+  position: relative;
+  aspect-ratio: 4/3;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.photo-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-delete {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background-color: var(--color-error);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s;
+}
+
+.photo-delete:hover {
+  transform: scale(1.1);
+}
+
+.checklist-actions {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.item-list {
+  margin-top: 2rem;
+}
+
+.item-list h4 {
+  margin-bottom: 1rem;
+  color: var(--color-black);
+}
+
+.item-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  gap: 0.8rem;
+}
+
+.item-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.8rem;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background-color: var(--color-light-gray);
+  min-height: 70px;
+}
+
+.item-badge:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.item-badge.active {
+  border-color: var(--color-yellow);
+  box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.3);
+}
+
+.badge-number {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-gray);
+}
+
+.badge-status {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-top: 0.3rem;
+}
+
+.badge-c .badge-status {
+  color: var(--color-success);
+}
+
+.badge-nc .badge-status {
+  color: var(--color-error);
+}
+
+.badge-na .badge-status {
+  color: var(--color-gray);
+}
+
+.badge-pending .badge-status {
+  color: #ccc;
+}
+
+@media (max-width: 768px) {
+  .checklist-navigation {
+    flex-wrap: wrap;
+  }
+
+  .status-buttons {
+    grid-template-columns: 1fr;
+  }
+
+  .checklist-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .item-grid {
+    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+  }
+
+  .photo-preview {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+}
