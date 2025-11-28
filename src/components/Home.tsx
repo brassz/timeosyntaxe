@@ -53,7 +53,6 @@ export const Home: React.FC<HomeProps> = ({ onStartChecklist, onViewHistory }) =
         <div className="welcome-card card">
           <h2>Bem-vindo!</h2>
           <p>
-            Sistema rápido e prático para checklist de máquinas pesadas.
             Preencha as informações abaixo para começar.
           </p>
         </div>
