@@ -92,11 +92,30 @@ export const generatePDF = async (checklist: ChecklistData): Promise<void> => {
 
   yPos += 10;
 
-  // Itens do checklist
+  // Itens do checklist organizados por categoria
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(0, 0, 0);
 
+  let currentCategory = '';
+  
   for (const item of checklist.items) {
+    // Adicionar título da categoria quando mudar
+    if (item.category !== currentCategory) {
+      currentCategory = item.category;
+      addNewPageIfNeeded(15);
+      
+      // Título da categoria
+      doc.setFillColor(255, 204, 0); // Amarelo
+      doc.rect(margin, yPos, pageWidth - 2 * margin, 10, 'F');
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(0, 0, 0);
+      doc.text(currentCategory, margin + 2, yPos + 7);
+      
+      yPos += 12;
+      doc.setFont('helvetica', 'normal');
+    }
+
     addNewPageIfNeeded(20);
 
     // Linha do item
@@ -168,6 +187,28 @@ export const generatePDF = async (checklist: ChecklistData): Promise<void> => {
 
     yPos += 2;
   }
+
+  // Adicionar linha de assinatura
+  addNewPageIfNeeded(40);
+  yPos += 10;
+  
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(0, 0, 0);
+  doc.text('Assinatura do Responsável:', margin, yPos);
+  yPos += 15;
+  
+  // Linha para assinatura
+  doc.setLineWidth(0.5);
+  doc.line(margin, yPos, pageWidth - margin, yPos);
+  yPos += 8;
+  
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(100, 100, 100);
+  doc.text(`Nome: ${checklist.operator}`, margin, yPos);
+  yPos += 6;
+  doc.text(`Data: ${new Date(checklist.date).toLocaleDateString('pt-BR')}`, margin, yPos);
 
   // Rodapé
   const totalPages = doc.getNumberOfPages();
