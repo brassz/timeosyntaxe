@@ -85,8 +85,12 @@ export const History: React.FC<HistoryProps> = ({ onBack }) => {
               </div>
               <div className="summary-details">
                 <div className="detail-item">
-                  <span className="detail-label">Operador:</span>
+                  <span className="detail-label">Inspecionado por:</span>
                   <span className="detail-value">{checklist.operator}</span>
+                </div>
+                <div className="detail-item">
+                  <span className="detail-label">TAG:</span>
+                  <span className="detail-value">{checklist.tag || '-'}</span>
                 </div>
                 <div className="detail-item">
                   <span className="detail-label">Local:</span>
@@ -113,7 +117,10 @@ export const History: React.FC<HistoryProps> = ({ onBack }) => {
                 <div className="details-info">
                   <div className="info-grid">
                     <div>
-                      <strong>Operador:</strong> {checklist.operator}
+                      <strong>Inspecionado por:</strong> {checklist.operator}
+                    </div>
+                    <div>
+                      <strong>TAG:</strong> {checklist.tag || '-'}
                     </div>
                     <div>
                       <strong>Máquina:</strong> {checklist.machine}

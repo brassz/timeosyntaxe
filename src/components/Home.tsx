@@ -27,6 +27,7 @@ export const Home: React.FC<HomeProps> = ({ onStartChecklist, onViewHistory }) =
   const [operator, setOperator] = useState('');
   const [machine, setMachine] = useState('');
   const [location, setLocation] = useState('');
+  const [tag, setTag] = useState('');
   const [hasDraft, setHasDraft] = useState(false);
 
   useEffect(() => {
@@ -37,7 +38,7 @@ export const Home: React.FC<HomeProps> = ({ onStartChecklist, onViewHistory }) =
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!operator.trim() || !machine.trim() || !location.trim()) {
+    if (!operator.trim() || !machine.trim() || !location.trim() || !tag.trim()) {
       alert('Por favor, preencha todos os campos.');
       return;
     }
@@ -46,6 +47,7 @@ export const Home: React.FC<HomeProps> = ({ onStartChecklist, onViewHistory }) =
       operator: operator.trim(),
       machine: machine.trim(),
       location: location.trim(),
+      tag: tag.trim(),
     });
   };
 
@@ -69,13 +71,25 @@ export const Home: React.FC<HomeProps> = ({ onStartChecklist, onViewHistory }) =
           <h3>Iniciar Novo Checklist</h3>
 
           <div className="form-group">
-            <label htmlFor="operator">Nome do Operador *</label>
+            <label htmlFor="operator">Inspecionado por *</label>
             <input
               id="operator"
               type="text"
               value={operator}
               onChange={(e) => setOperator(e.target.value)}
               placeholder="Digite seu nome"
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="tag">TAG *</label>
+            <input
+              id="tag"
+              type="text"
+              value={tag}
+              onChange={(e) => setTag(e.target.value)}
+              placeholder="Ex: TAG-001, EQ-123, etc."
               required
             />
           </div>

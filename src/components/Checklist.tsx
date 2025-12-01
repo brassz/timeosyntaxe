@@ -45,6 +45,7 @@ export const Checklist: React.FC<ChecklistProps> = ({ initialData, onBack }) => 
       date: new Date().toISOString(),
       horimeter: '',
       mileage: '',
+      tag: initialData.tag || '',
       items: CHECKLIST_ITEMS.map((name, index) => ({
         id: `item-${index}`,
         name,
@@ -233,6 +234,10 @@ export const Checklist: React.FC<ChecklistProps> = ({ initialData, onBack }) => 
         {!headerCollapsed && (
           <div className="header-details">
             <div className="checklist-info">
+              <div className="info-row">
+                <span className="info-label">TAG:</span>
+                <span className="info-value">{checklist.tag}</span>
+              </div>
               <div className="info-row">
                 <span className="info-label">Local:</span>
                 <span className="info-value">{checklist.location}</span>

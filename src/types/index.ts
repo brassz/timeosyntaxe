@@ -16,6 +16,7 @@ export interface ChecklistData {
   date: string;
   horimeter: string;
   mileage: string;
+  tag: string;
   items: ChecklistItem[];
   completed: boolean;
 }
