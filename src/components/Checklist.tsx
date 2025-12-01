@@ -31,6 +31,7 @@ const CHECKLIST_MOTONIVELADORA = [
   { name: 'Giroflex', category: 'DIVERSOS' },
   { name: 'Mangueiras hidráulicas', category: 'DIVERSOS' },
   { name: 'Embuchamentos', category: 'DIVERSOS' },
+  { name: 'Mesa', category: 'DIVERSOS' },
   { name: 'Cinto de segurança', category: 'SEGURANÇA' },
   { name: 'Extintor de incêndio', category: 'SEGURANÇA' },
   { name: 'Retrovisores', category: 'SEGURANÇA' },
@@ -41,7 +42,8 @@ const CHECKLIST_MOTONIVELADORA = [
   { name: 'Nível de óleo motor de tração', category: 'ÓLEOS' },
   { name: 'Nível de óleo hidráulico', category: 'ÓLEOS' },
   { name: 'Nível de óleo do motor', category: 'ÓLEOS' },
-  { name: 'Água de bateria', category: 'OUTROS' },
+  { name: 'Bateria', category: 'OUTROS' },
+  { name: 'Ar condicionado', category: 'OUTROS' },
 ];
 
 // Checklist para Trator Agrícola, Retro Escavadeira, Pá Carregadeira
@@ -75,7 +77,8 @@ const CHECKLIST_TRATOR_RETRO_PA = [
   { name: 'Nível de óleo motor de tração', category: 'ÓLEOS' },
   { name: 'Nível de óleo hidráulico', category: 'ÓLEOS' },
   { name: 'Nível de óleo do motor', category: 'ÓLEOS' },
-  { name: 'Água de bateria', category: 'OUTROS' },
+  { name: 'Bateria', category: 'OUTROS' },
+  { name: 'Ar condicionado', category: 'OUTROS' },
 ];
 
 // Checklist para Caminhão
@@ -108,7 +111,8 @@ const CHECKLIST_CAMINHAO = [
   { name: 'Nível de óleo motor de tração', category: 'ÓLEOS' },
   { name: 'Nível de óleo hidráulico', category: 'ÓLEOS' },
   { name: 'Nível de óleo do motor', category: 'ÓLEOS' },
-  { name: 'Água de bateria', category: 'OUTROS' },
+  { name: 'Bateria', category: 'OUTROS' },
+  { name: 'Ar condicionado', category: 'OUTROS' },
 ];
 
 // Checklist para Escavadeira
@@ -147,7 +151,8 @@ const CHECKLIST_ESCAVADEIRA = [
   { name: 'Nível de óleo motor de tração', category: 'ÓLEOS' },
   { name: 'Nível de óleo hidráulico', category: 'ÓLEOS' },
   { name: 'Nível de óleo do motor', category: 'ÓLEOS' },
-  { name: 'Água de bateria', category: 'OUTROS' },
+  { name: 'Bateria', category: 'OUTROS' },
+  { name: 'Ar condicionado', category: 'OUTROS' },
 ];
 
 // Checklist para Rolo Compactador
@@ -175,7 +180,8 @@ const CHECKLIST_ROLO = [
   { name: 'Nível de óleo motor de tração', category: 'ÓLEOS' },
   { name: 'Nível de óleo hidráulico', category: 'ÓLEOS' },
   { name: 'Nível de óleo do motor', category: 'ÓLEOS' },
-  { name: 'Água de bateria', category: 'OUTROS' },
+  { name: 'Bateria', category: 'OUTROS' },
+  { name: 'Ar condicionado', category: 'OUTROS' },
 ];
 
 // Função para selecionar o checklist correto baseado no tipo de máquina
