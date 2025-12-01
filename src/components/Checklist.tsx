@@ -9,26 +9,200 @@ interface ChecklistProps {
   onBack: () => void;
 }
 
-const CHECKLIST_ITEMS = [
-  'Nível de óleo',
-  'Nível de água',
-  'Vazamentos visíveis',
-  'Pneus / Rodas / Esteiras',
-  'Freio',
-  'Direção',
-  'Buzina',
-  'Luzes',
-  'Itens de segurança',
-  'Painel de alerta',
-  'Documentação',
-  'Cabine em geral',
-  'Motor',
-  'Sistema hidráulico',
-  'Braços / Caçamba / Lâmina',
-  'Filtros',
-  'Extintor',
-  'Condições externas gerais',
+// Checklist para Motoniveladora
+const CHECKLIST_MOTONIVELADORA = [
+  { name: 'Pino', category: 'PNEUS-ESTEIRAS' },
+  { name: 'Bucha', category: 'PNEUS-ESTEIRAS' },
+  { name: 'Pneus dianteiros', category: 'PNEUS-ESTEIRAS' },
+  { name: 'Pneus traseiros', category: 'PNEUS-ESTEIRAS' },
+  { name: 'Farol dianteiro', category: 'SINALIZAÇÃO' },
+  { name: 'Farol traseiro', category: 'SINALIZAÇÃO' },
+  { name: 'Luz de freio', category: 'SINALIZAÇÃO' },
+  { name: 'Pisca alerta', category: 'SINALIZAÇÃO' },
+  { name: 'Setas dianteiras', category: 'SINALIZAÇÃO' },
+  { name: 'Setas traseiras', category: 'SINALIZAÇÃO' },
+  { name: 'Buzina', category: 'SINALIZAÇÃO' },
+  { name: 'Alarme sonoro de ré', category: 'SINALIZAÇÃO' },
+  { name: 'Sistema de freios', category: 'SINALIZAÇÃO' },
+  { name: 'Cabine', category: 'DIVERSOS' },
+  { name: 'Portas', category: 'DIVERSOS' },
+  { name: 'Limpador para-brisa', category: 'DIVERSOS' },
+  { name: 'Parachoque', category: 'DIVERSOS' },
+  { name: 'Giroflex', category: 'DIVERSOS' },
+  { name: 'Mangueiras hidráulicas', category: 'DIVERSOS' },
+  { name: 'Embuchamentos', category: 'DIVERSOS' },
+  { name: 'Cinto de segurança', category: 'SEGURANÇA' },
+  { name: 'Extintor de incêndio', category: 'SEGURANÇA' },
+  { name: 'Retrovisores', category: 'SEGURANÇA' },
+  { name: 'Cone preto e amarelo refletivo (03)', category: 'SEGURANÇA' },
+  { name: 'Vazamento de óleos', category: 'ÓLEOS' },
+  { name: 'Troca de óleo', category: 'ÓLEOS' },
+  { name: 'Nível de óleo motor de giro', category: 'ÓLEOS' },
+  { name: 'Nível de óleo motor de tração', category: 'ÓLEOS' },
+  { name: 'Nível de óleo hidráulico', category: 'ÓLEOS' },
+  { name: 'Nível de óleo do motor', category: 'ÓLEOS' },
+  { name: 'Água de bateria', category: 'OUTROS' },
 ];
+
+// Checklist para Trator Agrícola, Retro Escavadeira, Pá Carregadeira
+const CHECKLIST_TRATOR_RETRO_PA = [
+  { name: 'Pneus dianteiros', category: 'PNEUS-ESTEIRAS' },
+  { name: 'Pneus traseiros', category: 'PNEUS-ESTEIRAS' },
+  { name: 'Farol dianteiro', category: 'SINALIZAÇÃO' },
+  { name: 'Farol traseiro', category: 'SINALIZAÇÃO' },
+  { name: 'Luz de ré', category: 'SINALIZAÇÃO' },
+  { name: 'Luz de freio', category: 'SINALIZAÇÃO' },
+  { name: 'Pisca alerta', category: 'SINALIZAÇÃO' },
+  { name: 'Setas dianteiras', category: 'SINALIZAÇÃO' },
+  { name: 'Setas traseiras', category: 'SINALIZAÇÃO' },
+  { name: 'Buzina', category: 'SINALIZAÇÃO' },
+  { name: 'Alarme sonoro de ré', category: 'SINALIZAÇÃO' },
+  { name: 'Sistema de freios', category: 'SINALIZAÇÃO' },
+  { name: 'Cabine', category: 'DIVERSOS' },
+  { name: 'Portas', category: 'DIVERSOS' },
+  { name: 'Limpador para-brisa', category: 'DIVERSOS' },
+  { name: 'Parachoque', category: 'DIVERSOS' },
+  { name: 'Giroflex', category: 'DIVERSOS' },
+  { name: 'Mangueiras hidráulicas', category: 'DIVERSOS' },
+  { name: 'Embuchamentos', category: 'DIVERSOS' },
+  { name: 'Cinto de segurança', category: 'SEGURANÇA' },
+  { name: 'Extintor de incêndio', category: 'SEGURANÇA' },
+  { name: 'Retrovisores', category: 'SEGURANÇA' },
+  { name: 'Cone preto e amarelo refletivo (03)', category: 'SEGURANÇA' },
+  { name: 'Vazamento de óleos', category: 'ÓLEOS' },
+  { name: 'Troca de óleo', category: 'ÓLEOS' },
+  { name: 'Nível de óleo motor de giro', category: 'ÓLEOS' },
+  { name: 'Nível de óleo motor de tração', category: 'ÓLEOS' },
+  { name: 'Nível de óleo hidráulico', category: 'ÓLEOS' },
+  { name: 'Nível de óleo do motor', category: 'ÓLEOS' },
+  { name: 'Água de bateria', category: 'OUTROS' },
+];
+
+// Checklist para Caminhão
+const CHECKLIST_CAMINHAO = [
+  { name: 'Pneus dianteiros', category: 'PNEUS-ESTEIRAS' },
+  { name: 'Pneus traseiros', category: 'PNEUS-ESTEIRAS' },
+  { name: 'Farol dianteiro', category: 'SINALIZAÇÃO' },
+  { name: 'Farol traseiro', category: 'SINALIZAÇÃO' },
+  { name: 'Luz de ré', category: 'SINALIZAÇÃO' },
+  { name: 'Luz de freio', category: 'SINALIZAÇÃO' },
+  { name: 'Pisca alerta', category: 'SINALIZAÇÃO' },
+  { name: 'Setas dianteiras', category: 'SINALIZAÇÃO' },
+  { name: 'Setas traseiras', category: 'SINALIZAÇÃO' },
+  { name: 'Buzina', category: 'SINALIZAÇÃO' },
+  { name: 'Alarme sonoro de ré', category: 'SINALIZAÇÃO' },
+  { name: 'Sistema de freios', category: 'SINALIZAÇÃO' },
+  { name: 'Cabine', category: 'DIVERSOS' },
+  { name: 'Portas', category: 'DIVERSOS' },
+  { name: 'Limpador para-brisa', category: 'DIVERSOS' },
+  { name: 'Parachoque', category: 'DIVERSOS' },
+  { name: 'Giroflex', category: 'DIVERSOS' },
+  { name: 'Mangueiras hidráulicas', category: 'DIVERSOS' },
+  { name: 'Embuchamentos', category: 'DIVERSOS' },
+  { name: 'Cinto de segurança', category: 'SEGURANÇA' },
+  { name: 'Extintor de incêndio', category: 'SEGURANÇA' },
+  { name: 'Retrovisores', category: 'SEGURANÇA' },
+  { name: 'Vazamento de óleos', category: 'ÓLEOS' },
+  { name: 'Troca de óleo', category: 'ÓLEOS' },
+  { name: 'Nível de óleo motor de giro', category: 'ÓLEOS' },
+  { name: 'Nível de óleo motor de tração', category: 'ÓLEOS' },
+  { name: 'Nível de óleo hidráulico', category: 'ÓLEOS' },
+  { name: 'Nível de óleo do motor', category: 'ÓLEOS' },
+  { name: 'Água de bateria', category: 'OUTROS' },
+];
+
+// Checklist para Escavadeira
+const CHECKLIST_ESCAVADEIRA = [
+  { name: 'Rolete superior', category: 'PNEUS-ESTEIRAS' },
+  { name: 'Rolete inferior', category: 'PNEUS-ESTEIRAS' },
+  { name: 'Roda guia', category: 'PNEUS-ESTEIRAS' },
+  { name: 'Pino', category: 'PNEUS-ESTEIRAS' },
+  { name: 'Bucha', category: 'PNEUS-ESTEIRAS' },
+  { name: 'Roda motriz', category: 'PNEUS-ESTEIRAS' },
+  { name: 'Links', category: 'PNEUS-ESTEIRAS' },
+  { name: 'Farol dianteiro', category: 'SINALIZAÇÃO' },
+  { name: 'Farol traseiro', category: 'SINALIZAÇÃO' },
+  { name: 'Luz de ré', category: 'SINALIZAÇÃO' },
+  { name: 'Luz de freio', category: 'SINALIZAÇÃO' },
+  { name: 'Pisca alerta', category: 'SINALIZAÇÃO' },
+  { name: 'Buzina', category: 'SINALIZAÇÃO' },
+  { name: 'Alarme sonoro de ré', category: 'SINALIZAÇÃO' },
+  { name: 'Sistema de freios', category: 'SINALIZAÇÃO' },
+  { name: 'Cabine', category: 'DIVERSOS' },
+  { name: 'Portas', category: 'DIVERSOS' },
+  { name: 'Limpador para-brisa', category: 'DIVERSOS' },
+  { name: 'Parachoque', category: 'DIVERSOS' },
+  { name: 'Giroflex', category: 'DIVERSOS' },
+  { name: 'Mangueiras hidráulicas', category: 'DIVERSOS' },
+  { name: 'Embuchamentos', category: 'DIVERSOS' },
+  { name: 'Lâmina', category: 'DIVERSOS' },
+  { name: 'Caçamba', category: 'DIVERSOS' },
+  { name: 'Cinto de segurança', category: 'SEGURANÇA' },
+  { name: 'Extintor de incêndio', category: 'SEGURANÇA' },
+  { name: 'Retrovisores', category: 'SEGURANÇA' },
+  { name: 'Cone preto e amarelo refletivo (03)', category: 'SEGURANÇA' },
+  { name: 'Vazamento de óleos', category: 'ÓLEOS' },
+  { name: 'Troca de óleo', category: 'ÓLEOS' },
+  { name: 'Nível de óleo motor de giro', category: 'ÓLEOS' },
+  { name: 'Nível de óleo motor de tração', category: 'ÓLEOS' },
+  { name: 'Nível de óleo hidráulico', category: 'ÓLEOS' },
+  { name: 'Nível de óleo do motor', category: 'ÓLEOS' },
+  { name: 'Água de bateria', category: 'OUTROS' },
+];
+
+// Checklist para Rolo Compactador
+const CHECKLIST_ROLO = [
+  { name: 'Pino', category: 'PNEUS-ESTEIRAS' },
+  { name: 'Buchas', category: 'PNEUS-ESTEIRAS' },
+  { name: 'Pneus traseiros', category: 'PNEUS-ESTEIRAS' },
+  { name: 'Farol dianteiro', category: 'SINALIZAÇÃO' },
+  { name: 'Farol traseiro', category: 'SINALIZAÇÃO' },
+  { name: 'Buzina', category: 'SINALIZAÇÃO' },
+  { name: 'Alarme sonoro de ré', category: 'SINALIZAÇÃO' },
+  { name: 'Sistema de freios', category: 'SINALIZAÇÃO' },
+  { name: 'Cabine', category: 'DIVERSOS' },
+  { name: 'Portas', category: 'DIVERSOS' },
+  { name: 'Limpador para-brisa', category: 'DIVERSOS' },
+  { name: 'Parachoque', category: 'DIVERSOS' },
+  { name: 'Giroflex', category: 'DIVERSOS' },
+  { name: 'Mangueiras hidráulicas', category: 'DIVERSOS' },
+  { name: 'Cinto de segurança', category: 'SEGURANÇA' },
+  { name: 'Extintor de incêndio', category: 'SEGURANÇA' },
+  { name: 'Retrovisores', category: 'SEGURANÇA' },
+  { name: 'Cone preto e amarelo refletivo (03)', category: 'SEGURANÇA' },
+  { name: 'Vazamento de óleos', category: 'ÓLEOS' },
+  { name: 'Troca de óleo', category: 'ÓLEOS' },
+  { name: 'Nível de óleo motor de tração', category: 'ÓLEOS' },
+  { name: 'Nível de óleo hidráulico', category: 'ÓLEOS' },
+  { name: 'Nível de óleo do motor', category: 'ÓLEOS' },
+  { name: 'Água de bateria', category: 'OUTROS' },
+];
+
+// Função para selecionar o checklist correto baseado no tipo de máquina
+const getChecklistByMachineType = (machine: string) => {
+  const machineUpper = machine.toUpperCase();
+  
+  if (machineUpper.includes('MOTONIVELADORA')) {
+    return CHECKLIST_MOTONIVELADORA;
+  } else if (
+    machineUpper.includes('TRATOR') ||
+    machineUpper.includes('RETRO') ||
+    machineUpper.includes('RETROESCAVADEIRA') ||
+    machineUpper.includes('PÁ') ||
+    machineUpper.includes('PA CARREGADEIRA')
+  ) {
+    return CHECKLIST_TRATOR_RETRO_PA;
+  } else if (machineUpper.includes('CAMINHÃO') || machineUpper.includes('CAMINHAO')) {
+    return CHECKLIST_CAMINHAO;
+  } else if (machineUpper.includes('ESCAVADEIRA')) {
+    return CHECKLIST_ESCAVADEIRA;
+  } else if (machineUpper.includes('ROLO')) {
+    return CHECKLIST_ROLO;
+  } else {
+    // Retorna o checklist padrão (Trator/Retro/Pá) se não identificar o tipo
+    return CHECKLIST_TRATOR_RETRO_PA;
+  }
+};
 
 export const Checklist: React.FC<ChecklistProps> = ({ initialData, onBack }) => {
   const [checklist, setChecklist] = useState<ChecklistData>(() => {
@@ -36,6 +210,8 @@ export const Checklist: React.FC<ChecklistProps> = ({ initialData, onBack }) => 
     if (draft && draft.operator === initialData.operator) {
       return draft;
     }
+
+    const selectedChecklist = getChecklistByMachineType(initialData.machine || '');
 
     return {
       id: Date.now().toString(),
@@ -46,9 +222,10 @@ export const Checklist: React.FC<ChecklistProps> = ({ initialData, onBack }) => 
       horimeter: '',
       mileage: '',
       tag: initialData.tag || '',
-      items: CHECKLIST_ITEMS.map((name, index) => ({
+      items: selectedChecklist.map((item, index) => ({
         id: `item-${index}`,
-        name,
+        name: item.name,
+        category: item.category,
         status: null,
         observation: '',
         photos: [],

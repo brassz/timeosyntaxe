@@ -3,6 +3,7 @@ export type ChecklistStatus = 'C' | 'N.C' | 'N.A' | null;
 export interface ChecklistItem {
   id: string;
   name: string;
+  category: string;
   status: ChecklistStatus;
   observation: string;
   photos: string[]; // Array de photo IDs do IndexedDB
