@@ -15,6 +15,8 @@ const MACHINES = [
   'Motoniveladora',
   'Rolo Compactador',
   'Trator de Esteiras',
+  'Trator Agrícola',
+  'Caminhão',
   'Caminhão Basculante',
   'Mini Escavadeira',
   'Skid Steer',
