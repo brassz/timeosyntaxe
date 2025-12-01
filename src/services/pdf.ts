@@ -65,7 +65,8 @@ export const generatePDF = async (checklist: ChecklistData): Promise<void> => {
   
   const infoLines = [
     `Data/Hora: ${new Date(checklist.date).toLocaleString('pt-BR')}`,
-    `Operador: ${checklist.operator}`,
+    `Inspecionado por: ${checklist.operator}`,
+    `TAG: ${checklist.tag || '-'}`,
     `Máquina: ${checklist.machine}`,
     `Local: ${checklist.location}`,
     `Horímetro: ${checklist.horimeter}`,
