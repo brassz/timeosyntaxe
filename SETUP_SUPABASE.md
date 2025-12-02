@@ -4,17 +4,30 @@ Este documento explica como configurar o banco de dados Supabase para o sistema.
 
 ## Passo 1: Criar as Tabelas
 
+### Método Recomendado - Script Completo
+
 1. Acesse o [Supabase Dashboard](https://app.supabase.com)
 2. Selecione seu projeto
-3. Vá para "SQL Editor"
-4. Execute o script `supabase-setup.sql` que está na raiz do projeto
+3. Vá para **"SQL Editor"**
+4. Clique em **"New Query"**
+5. Copie e cole o conteúdo do arquivo **`supabase-complete-setup.sql`**
+6. Clique em **"Run"** ou pressione `Ctrl+Enter`
+7. Aguarde a mensagem de sucesso ✅
 
-O script irá criar:
-- Tabela `checklists` para armazenar os checklists
-- Tabela `service_orders` para armazenar as ordens de serviço
-- Políticas de segurança (RLS)
-- Função de limpeza automática de checklists antigos
-- Índices para otimizar as consultas
+O script completo irá criar automaticamente:
+- ✅ Tabela `checklists` (retenção de 7 dias)
+- ✅ Tabela `service_orders` (armazenamento permanente)
+- ✅ Políticas de segurança (RLS)
+- ✅ Função de limpeza automática (apenas checklists)
+- ✅ Índices para otimização
+- ✅ Triggers de auto-numeração
+- ✅ Funções de estatísticas
+- ✅ Verificação automática da instalação
+
+### Arquivos Disponíveis
+
+- **`supabase-complete-setup.sql`** ⭐ RECOMENDADO - Script completo com comentários e verificações
+- **`supabase-setup.sql`** - Script básico (versão simplificada)
 
 ## Passo 2: Configurar Limpeza Automática de Checklists (Opcional)
 

@@ -48,11 +48,19 @@ npm run build
 
 ## 🔧 Configuração do Banco de Dados
 
-Para habilitar as funcionalidades de nuvem e OSI:
+### ⚡ Configuração Rápida (5 minutos)
 
-1. Siga as instruções em [SETUP_SUPABASE.md](SETUP_SUPABASE.md)
-2. Execute o script SQL em `supabase-setup.sql`
-3. Crie usuários administrativos conforme documentação
+1. Siga o guia [QUICK_SETUP.md](QUICK_SETUP.md) - **RECOMENDADO**
+2. Execute o script `supabase-complete-setup.sql` no Supabase
+3. Pronto! Sistema configurado e funcionando
+
+### 📚 Configuração Detalhada
+
+Para instruções completas, consulte [SETUP_SUPABASE.md](SETUP_SUPABASE.md)
+
+**Scripts disponíveis:**
+- `supabase-complete-setup.sql` - ⭐ Script completo com verificações (RECOMENDADO)
+- `supabase-setup.sql` - Script básico (versão simplificada)
 
 ## Tecnologias
 
