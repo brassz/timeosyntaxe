@@ -27,18 +27,35 @@ Se não tem projeto ainda:
 7. Clique em **"Run"** (ou `Ctrl+Enter`)
 8. Aguarde aparecer ✅ **"INSTALAÇÃO COMPLETA COM SUCESSO!"**
 
-### 2️⃣ Criar Usuário Admin (1 minuto)
+### 2️⃣ Limpar Sistema Antigo (30 segundos)
 
-**Script Recomendado:**
+**⚠️ IMPORTANTE - Execute primeiro:**
 
-Use o script simplificado que funciona sem erros:
-1. Abra o arquivo **`create-users-simple.sql`** ⭐
+1. Abra o arquivo **`revert-auth-supabase.sql`**
+2. Copie todo o conteúdo
+3. Cole no SQL Editor do Supabase
+4. Execute (Ctrl+Enter)
+
+*Remove autenticação antiga do auth.users*
+
+### 3️⃣ Configurar Nova Autenticação (1 minuto)
+
+1. Abra o arquivo **`setup-custom-auth.sql`** ⭐
+2. Copie todo o conteúdo
+3. Cole no SQL Editor do Supabase
+4. Execute (Ctrl+Enter)
+
+*Cria tabela users e funções de autenticação*
+
+### 4️⃣ Criar Usuários (30 segundos)
+
+1. Abra o arquivo **`create-users-custom.sql`** ⭐
 2. Copie todo o conteúdo
 3. Cole no SQL Editor do Supabase
 4. Execute (Ctrl+Enter)
 5. Aguarde as mensagens de sucesso
 
-*Este script funciona sem precisar de permissões especiais e corrige automaticamente o erro "profiles does not exist"*
+*Cria os 2 usuários administrativos*
 
 **Credenciais criadas:**
 
@@ -88,7 +105,7 @@ WHERE NOT EXISTS (
 
 ⚠️ **IMPORTANTE:** Troque a senha após primeiro login!
 
-### 3️⃣ Configurar Limpeza Automática (1 minuto - OPCIONAL)
+### 5️⃣ Configurar Limpeza Automática (1 minuto - OPCIONAL)
 
 Se quiser que checklists antigos sejam deletados automaticamente:
 
@@ -107,7 +124,7 @@ SELECT cron.schedule(
 );
 ```
 
-### 4️⃣ Testar o Sistema (1 minuto)
+### 6️⃣ Testar o Sistema (1 minuto)
 
 1. Abra o sistema no navegador
 2. Clique em **"🔐 Login"** (canto superior direito)

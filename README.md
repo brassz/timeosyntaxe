@@ -83,7 +83,7 @@ Para instruções completas, consulte [SETUP_SUPABASE.md](SETUP_SUPABASE.md)
 5. **Histórico (7 dias)**: Acesso aos checklists recentes
 
 ### Para Administradores (OSI)
-1. **Login Seguro**: Autenticação via Supabase
+1. **Login Seguro**: Autenticação customizada com tabela própria
 2. **Painel OSI**: Interface administrativa intuitiva
 3. **Criar Ordens**: Formulário completo de serviço interno
 4. **Exportar**: PDF ou Excel com um clique
@@ -91,10 +91,10 @@ Para instruções completas, consulte [SETUP_SUPABASE.md](SETUP_SUPABASE.md)
 
 ## 📚 Documentação Adicional
 
-- [SOLUCAO_RAPIDA.md](SOLUCAO_RAPIDA.md) - 🚨 LEIA PRIMEIRO - Solução dos problemas mais comuns
+- [MIGRACAO_AUTH.md](MIGRACAO_AUTH.md) - 🔄 **LEIA PRIMEIRO** - Migração para autenticação customizada
 - [QUICK_SETUP.md](QUICK_SETUP.md) - ⚡ Configuração rápida em 5 minutos
-- [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - 🔧 Solução de problemas
 - [CREDENCIAIS.md](CREDENCIAIS.md) - 🔐 Credenciais de acesso
+- [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - 🔧 Solução de problemas
 - [README_OSI.md](README_OSI.md) - Guia completo do Sistema OSI
 - [SETUP_SUPABASE.md](SETUP_SUPABASE.md) - Configuração detalhada do banco
 - [USUARIOS.md](USUARIOS.md) - Gerenciamento de usuários
@@ -104,15 +104,13 @@ Para instruções completas, consulte [SETUP_SUPABASE.md](SETUP_SUPABASE.md)
 ## 🔑 Scripts SQL Disponíveis
 
 ### Configuração Inicial:
-- `supabase-complete-setup.sql` - ⭐ Script completo de instalação (RECOMENDADO)
+- `supabase-complete-setup.sql` - ⭐ Script completo de instalação (checklists e OSI)
 - `supabase-setup.sql` - Script básico de instalação
 
-### Criação de Usuários:
-- `create-users-basic.sql` - ⭐⭐⭐ Script mais simples e confiável (RECOMENDADO)
-- `create-users-simple.sql` - ⭐⭐ Script alternativo
-- `fix-supabase-auth.sql` - 🔧 Correção de erros de schema
-- `create-users-fixed.sql` - Script com correções avançadas
-- `create-users-all.sql` - Script completo
+### Sistema de Autenticação Customizado:
+- `revert-auth-supabase.sql` - 🔄 Limpar sistema antigo (executar primeiro)
+- `setup-custom-auth.sql` - ⭐ Configurar autenticação customizada
+- `create-users-custom.sql` - ⭐ Criar usuários no novo sistema
 
 ## 👥 Credenciais de Acesso
 
@@ -146,9 +144,11 @@ Certifique-se de configurar as variáveis de ambiente do Supabase se necessário
 
 ## 🔒 Segurança
 
-- Autenticação via Supabase Auth
+- Autenticação customizada com tabela própria `users`
+- Hash bcrypt para senhas
 - Row Level Security (RLS) configurado
 - Dados criptografados em trânsito
+- Sessão via localStorage
 - Políticas de acesso granulares
 
 ## 📊 Estrutura do Projeto
@@ -163,7 +163,7 @@ src/
 │   ├── OSIPanel.tsx          # 🆕 Painel OSI
 │   └── ServiceOrderForm.tsx  # 🆕 Formulário de ordem
 ├── contexts/
-│   └── AuthContext.tsx       # 🆕 Contexto de autenticação
+│   └── AuthContext.tsx       # 🆕 Autenticação customizada
 ├── services/
 │   ├── pdf.ts
 │   ├── storage.ts

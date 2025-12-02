@@ -1,13 +1,18 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from '../services/supabase';
-import { User, Session } from '@supabase/supabase-js';
+
+interface User {
+  id: string;
+  email: string;
+  full_name: string;
+  role: string;
+}
 
 interface AuthContextType {
   user: User | null;
-  session: Session | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
-  signOut: () => Promise<void>;
+  signOut: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -24,50 +29,73 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+const USER_STORAGE_KEY = 'terraplanagem_user';
+
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
+    // Carregar usuário do localStorage
+    const storedUser = localStorage.getItem(USER_STORAGE_KEY);
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (error) {
+        console.error('Error parsing stored user:', error);
+        localStorage.removeItem(USER_STORAGE_KEY);
+      }
+    }
+    setLoading(false);
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    try {
+      // Chamar função de login do banco
+      const { data, error } = await supabase.rpc('login_user', {
+        p_email: email,
+        p_password: password
+      });
 
-    if (error) {
+      if (error) {
+        throw new Error('Erro ao conectar com o servidor');
+      }
+
+      if (!data || data.length === 0) {
+        throw new Error('Email ou senha incorretos');
+      }
+
+      const loginResult = data[0];
+
+      if (!loginResult.success) {
+        throw new Error(loginResult.message || 'Email ou senha incorretos');
+      }
+
+      // Criar objeto de usuário
+      const userObj: User = {
+        id: loginResult.user_id,
+        email: loginResult.email,
+        full_name: loginResult.full_name,
+        role: loginResult.role
+      };
+
+      // Salvar no state e localStorage
+      setUser(userObj);
+      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userObj));
+
+    } catch (error: any) {
+      console.error('Login error:', error);
       throw error;
     }
   };
 
-  const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      throw error;
-    }
+  const signOut = () => {
+    setUser(null);
+    localStorage.removeItem(USER_STORAGE_KEY);
   };
 
   const value = {
     user,
-    session,
     loading,
     signIn,
     signOut,
