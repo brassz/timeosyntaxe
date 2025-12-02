@@ -29,13 +29,15 @@ Se não tem projeto ainda:
 
 ### 2️⃣ Criar Usuário Admin (1 minuto)
 
-**Opção A - Criar Todos os Usuários (Recomendado):**
+**Opção A - Script Corrigido (RECOMENDADO):**
 
-Execute o script pronto:
-1. Abra o arquivo `create-users-all.sql`
+Use o script que previne erros:
+1. Abra o arquivo **`create-users-fixed.sql`** ⭐
 2. Copie todo o conteúdo
 3. Cole no SQL Editor do Supabase
 4. Execute
+
+*Este script corrige automaticamente o erro "profiles does not exist"*
 
 **Credenciais criadas:**
 

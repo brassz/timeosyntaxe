@@ -92,6 +92,8 @@ Para instruções completas, consulte [SETUP_SUPABASE.md](SETUP_SUPABASE.md)
 ## 📚 Documentação Adicional
 
 - [QUICK_SETUP.md](QUICK_SETUP.md) - ⚡ Configuração rápida em 5 minutos
+- [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - 🔧 Solução de problemas
+- [CREDENCIAIS.md](CREDENCIAIS.md) - 🔐 Credenciais de acesso
 - [README_OSI.md](README_OSI.md) - Guia completo do Sistema OSI
 - [SETUP_SUPABASE.md](SETUP_SUPABASE.md) - Configuração detalhada do banco
 - [USUARIOS.md](USUARIOS.md) - Gerenciamento de usuários
@@ -105,8 +107,9 @@ Para instruções completas, consulte [SETUP_SUPABASE.md](SETUP_SUPABASE.md)
 - `supabase-setup.sql` - Script básico de instalação
 
 ### Criação de Usuários:
-- `create-users-all.sql` - ⭐ Criar todos os usuários (RECOMENDADO)
-- `create-user-gustavo.sql` - Criar usuários Gustavo e Admin
+- `create-users-fixed.sql` - ⭐ Script corrigido sem erros (RECOMENDADO)
+- `create-users-all.sql` - Script alternativo
+- `create-user-gustavo.sql` - Script básico
 
 ## 👥 Credenciais de Acesso
 
