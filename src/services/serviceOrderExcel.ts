@@ -10,7 +10,7 @@ export const generateServiceOrderExcel = async (order: ServiceOrder) => {
   // ═══════════════════════════════════════════════════════════
   const data: any[][] = [
     // LINHA 1: CABEÇALHO
-    ['[LOGO]', 'TERRAPLENAGEM GUIMARÃES SERRA LTDA', '', '', 'ORDEM DE SERVIÇO INTERNA'],
+    ['', 'TERRAPLENAGEM GUIMARÃES SERRA LTDA', '', '', 'ORDEM DE SERVIÇO INTERNA'],
     
     // LINHA 2: ENDEREÇO E NÚMERO
     ['', 'Endereço: Rod Celso Mello Azevedo nº24 321', '', '', `Nº ${order.order_number}`],

@@ -1,6 +1,24 @@
 import jsPDF from 'jspdf';
 import { ServiceOrder } from '../types';
 
+// Função para carregar imagem como base64
+const loadImageAsBase64 = (url: string): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'Anonymous';
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      ctx?.drawImage(img, 0, 0);
+      resolve(canvas.toDataURL('image/png'));
+    };
+    img.onerror = reject;
+    img.src = url;
+  });
+};
+
 export const generateServiceOrderPDF = async (order: ServiceOrder) => {
   const pdf = new jsPDF({
     orientation: 'portrait',
@@ -15,9 +33,16 @@ export const generateServiceOrderPDF = async (order: ServiceOrder) => {
   pdf.setLineWidth(0.5);
   pdf.rect(10, 10, pageWidth - 20, 35);
 
-  // Logo placeholder (you can add actual logo if available)
-  pdf.setFontSize(8);
-  pdf.text('[LOGO]', 15, 20);
+  // Logo - Tentar carregar do arquivo, se falhar usa placeholder
+  try {
+    const logoBase64 = await loadImageAsBase64('/logo.png');
+    pdf.addImage(logoBase64, 'PNG', 12, 12, 25, 25);
+  } catch (error) {
+    // Fallback para texto se o logo não carregar
+    pdf.setFontSize(8);
+    pdf.text('[LOGO]', 15, 20);
+    console.warn('Logo não pôde ser carregado:', error);
+  }
 
   // Company info
   pdf.setFontSize(10);
