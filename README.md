@@ -100,9 +100,27 @@ Para instruções completas, consulte [SETUP_SUPABASE.md](SETUP_SUPABASE.md)
 
 ## 🔑 Scripts SQL Disponíveis
 
-- `supabase-complete-setup.sql` - Script completo de instalação (RECOMENDADO)
-- `create-user-gustavo.sql` - Criar usuário administrativo pré-configurado
+### Configuração Inicial:
+- `supabase-complete-setup.sql` - ⭐ Script completo de instalação (RECOMENDADO)
 - `supabase-setup.sql` - Script básico de instalação
+
+### Criação de Usuários:
+- `create-users-all.sql` - ⭐ Criar todos os usuários (RECOMENDADO)
+- `create-user-gustavo.sql` - Criar usuários Gustavo e Admin
+
+## 👥 Credenciais de Acesso
+
+Para acessar o Painel OSI, use uma das credenciais:
+
+**Usuário 1 - Gustavo:**
+- Email: `gustavo@terraplanagemguimaraes.com`
+- Senha: `terraplanagem2025`
+
+**Usuário 2 - Admin:**
+- Email: `admin@terraplanagemguimaraes.com`
+- Senha: `administrador2025`
+
+📄 Ver detalhes completos em: [CREDENCIAIS.md](CREDENCIAIS.md)
 
 ## 🚀 Deploy
 

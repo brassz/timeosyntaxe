@@ -2,17 +2,27 @@
 
 ## 🔐 Credenciais Configuradas
 
-### Usuário Administrativo - Gustavo
+### Usuário 1 - Gustavo
 
 - **Email:** `gustavo@terraplanagemguimaraes.com`
 - **Senha:** `terraplanagem2025`
 - **Perfil:** Administrador
 - **Acesso:** Painel OSI completo
 
-**Para criar este usuário:**
+### Usuário 2 - Admin
+
+- **Email:** `admin@terraplanagemguimaraes.com`
+- **Senha:** `administrador2025`
+- **Perfil:** Administrador
+- **Acesso:** Painel OSI completo
+
+**Para criar TODOS os usuários de uma vez:**
 1. Acesse o Supabase Dashboard
 2. Vá em **SQL Editor**
-3. Execute o script `create-user-gustavo.sql`
+3. Execute o script **`create-users-all.sql`** (RECOMENDADO)
+
+**Ou use o script individual:**
+- `create-user-gustavo.sql` - Cria ambos os usuários
 
 ## 📝 Como Criar Novos Usuários
 

@@ -29,17 +29,23 @@ Se não tem projeto ainda:
 
 ### 2️⃣ Criar Usuário Admin (1 minuto)
 
-**Opção A - Usuário Gustavo (Recomendado):**
+**Opção A - Criar Todos os Usuários (Recomendado):**
 
 Execute o script pronto:
-1. Abra o arquivo `create-user-gustavo.sql`
+1. Abra o arquivo `create-users-all.sql`
 2. Copie todo o conteúdo
 3. Cole no SQL Editor do Supabase
 4. Execute
 
 **Credenciais criadas:**
+
+**Usuário 1 - Gustavo:**
 - 📧 Email: `gustavo@terraplanagemguimaraes.com`
 - 🔑 Senha: `terraplanagem2025`
+
+**Usuário 2 - Admin:**
+- 📧 Email: `admin@terraplanagemguimaraes.com`
+- 🔑 Senha: `administrador2025`
 
 **Opção B - Criar usuário customizado:**
 
