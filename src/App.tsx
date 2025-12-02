@@ -29,11 +29,11 @@ function AppContent() {
 
   // Redirect to OSI panel when user logs in
   useEffect(() => {
-    if (user && showLoginModal) {
+    if (user) {
       setShowLoginModal(false);
       setView('osi');
     }
-  }, [user, showLoginModal]);
+  }, [user]);
 
   const handleStartChecklist = (data: Partial<ChecklistData>) => {
     setChecklistData(data);
