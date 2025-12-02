@@ -91,9 +91,18 @@ Para instruções completas, consulte [SETUP_SUPABASE.md](SETUP_SUPABASE.md)
 
 ## 📚 Documentação Adicional
 
+- [QUICK_SETUP.md](QUICK_SETUP.md) - ⚡ Configuração rápida em 5 minutos
 - [README_OSI.md](README_OSI.md) - Guia completo do Sistema OSI
-- [SETUP_SUPABASE.md](SETUP_SUPABASE.md) - Configuração do banco de dados
+- [SETUP_SUPABASE.md](SETUP_SUPABASE.md) - Configuração detalhada do banco
+- [USUARIOS.md](USUARIOS.md) - Gerenciamento de usuários
+- [POLITICA_RETENCAO.md](POLITICA_RETENCAO.md) - Política de retenção de dados
 - [CHANGELOG_NEW_FEATURES.md](CHANGELOG_NEW_FEATURES.md) - Detalhes das novas funcionalidades
+
+## 🔑 Scripts SQL Disponíveis
+
+- `supabase-complete-setup.sql` - Script completo de instalação (RECOMENDADO)
+- `create-user-gustavo.sql` - Criar usuário administrativo pré-configurado
+- `supabase-setup.sql` - Script básico de instalação
 
 ## 🚀 Deploy
 

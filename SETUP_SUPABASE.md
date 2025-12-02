@@ -61,10 +61,22 @@ SELECT cron.schedule(
 
 ### Criar Primeiro Usuário Administrativo
 
+**Opção 1 - Script Pronto (Recomendado):**
+
+Execute o script `create-user-gustavo.sql` no SQL Editor:
+
+```sql
+-- Ver arquivo: create-user-gustavo.sql
+-- Email: gustavo@terraplanagemguimaraes.com
+-- Senha: terraplanagem2025
+```
+
+**Opção 2 - Criar Manualmente:**
+
 No SQL Editor, execute:
 
 ```sql
--- Criar usuário admin
+-- Criar usuário admin customizado
 INSERT INTO auth.users (
     instance_id,
     id,
@@ -73,23 +85,31 @@ INSERT INTO auth.users (
     email,
     encrypted_password,
     email_confirmed_at,
+    raw_app_meta_data,
+    raw_user_meta_data,
     created_at,
     updated_at
 )
-VALUES (
+SELECT
     '00000000-0000-0000-0000-000000000000',
     gen_random_uuid(),
     'authenticated',
     'authenticated',
-    'admin@terraplanagem.com',
-    crypt('senha_segura_aqui', gen_salt('bf')),
+    'seu@email.com',  -- ← TROCAR
+    crypt('senha_segura_aqui', gen_salt('bf')),  -- ← TROCAR SENHA
     NOW(),
+    '{"provider":"email","providers":["email"]}'::jsonb,
+    '{"name":"Seu Nome"}'::jsonb,  -- ← TROCAR NOME
     NOW(),
     NOW()
+WHERE NOT EXISTS (
+    SELECT 1 FROM auth.users WHERE email = 'seu@email.com'
 );
 ```
 
-**IMPORTANTE:** Troque `senha_segura_aqui` por uma senha forte!
+**IMPORTANTE:** Use senhas fortes e troque após primeiro acesso!
+
+Para mais informações sobre gerenciamento de usuários, consulte `USUARIOS.md`.
 
 ## Passo 4: Verificar Configuração
 

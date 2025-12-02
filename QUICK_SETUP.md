@@ -29,10 +29,24 @@ Se não tem projeto ainda:
 
 ### 2️⃣ Criar Usuário Admin (1 minuto)
 
-No mesmo SQL Editor, execute:
+**Opção A - Usuário Gustavo (Recomendado):**
+
+Execute o script pronto:
+1. Abra o arquivo `create-user-gustavo.sql`
+2. Copie todo o conteúdo
+3. Cole no SQL Editor do Supabase
+4. Execute
+
+**Credenciais criadas:**
+- 📧 Email: `gustavo@terraplanagemguimaraes.com`
+- 🔑 Senha: `terraplanagem2025`
+
+**Opção B - Criar usuário customizado:**
+
+No SQL Editor, execute:
 
 ```sql
--- Criar primeiro usuário administrativo
+-- Criar usuário administrativo personalizado
 INSERT INTO auth.users (
     instance_id,
     id,
@@ -41,37 +55,27 @@ INSERT INTO auth.users (
     email,
     encrypted_password,
     email_confirmed_at,
-    recovery_sent_at,
+    raw_app_meta_data,
+    raw_user_meta_data,
     created_at,
-    updated_at,
-    confirmation_token,
-    email_change,
-    email_change_token_new,
-    recovery_token
+    updated_at
 )
 SELECT
     '00000000-0000-0000-0000-000000000000',
     gen_random_uuid(),
     'authenticated',
     'authenticated',
-    'admin@terraplanagem.com',
-    crypt('Admin@2025', gen_salt('bf')),
+    'seu@email.com',  -- ← TROCAR
+    crypt('sua_senha', gen_salt('bf')),  -- ← TROCAR
     NOW(),
+    '{"provider":"email","providers":["email"]}'::jsonb,
+    '{"name":"Seu Nome"}'::jsonb,  -- ← TROCAR
     NOW(),
-    NOW(),
-    NOW(),
-    '',
-    '',
-    '',
-    ''
+    NOW()
 WHERE NOT EXISTS (
-    SELECT 1 FROM auth.users WHERE email = 'admin@terraplanagem.com'
+    SELECT 1 FROM auth.users WHERE email = 'seu@email.com'
 );
 ```
-
-**Credenciais criadas:**
-- 📧 Email: `admin@terraplanagem.com`
-- 🔑 Senha: `Admin@2025`
 
 ⚠️ **IMPORTANTE:** Troque a senha após primeiro login!
 
