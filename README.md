@@ -6,7 +6,7 @@ Sistema completo, web e mobile-friendly, para checklist de máquinas pesadas e g
 
 - ✅ **Sistema OSI (Ordem de Serviço Interno)** - Gestão completa de ordens
 - ✅ **Autenticação** - Login seguro para administradores
-- ✅ **Banco de Dados Supabase** - Armazenamento em nuvem com retenção de 7 dias
+- ✅ **Banco de Dados Supabase** - Checklists com retenção de 7 dias, OSI permanente
 - ✅ **Exportação para Excel** - Ordens de serviço em planilha
 - ✅ **Numeração Automática** - Sistema inteligente de numeração de ordens
 - ✅ **Formulário Profissional** - Layout idêntico ao documento impresso
@@ -20,7 +20,7 @@ Sistema completo, web e mobile-friendly, para checklist de máquinas pesadas e g
 - ✅ **Upload de múltiplas fotos** por item
 - ✅ **Geração de PDF profissional** - com logo da empresa
 - ✅ **Salvamento automático** de rascunhos
-- ✅ **Retenção de 7 dias** - Limpeza automática de dados antigos
+- ✅ **Retenção de 7 dias** - Checklists antigos são deletados automaticamente
 - ✅ **Modo escuro** opcional
 
 ### Sistema OSI (Novo!)
@@ -28,7 +28,7 @@ Sistema completo, web e mobile-friendly, para checklist de máquinas pesadas e g
 - ✅ **Criação de ordens** - Formulário completo e profissional
 - ✅ **Exportação PDF e Excel** - Múltiplos formatos de saída
 - ✅ **Numeração automática** - Controle sequencial de ordens
-- ✅ **Banco de dados** - Histórico completo no Supabase
+- ✅ **Armazenamento permanente** - Ordens nunca são deletadas
 - ✅ **Dados do equipamento** - KM, TAG, horímetro, etc.
 - ✅ **Tipos de manutenção** - Preditiva, preventiva, corretiva, etc.
 - ✅ **Assinaturas digitais** - Mecânico e responsável

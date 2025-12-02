@@ -7,7 +7,8 @@
 #### 1. Sistema de Banco de Dados com Supabase
 - ✅ Integração completa com Supabase
 - ✅ Checklists salvos automaticamente no banco de dados
-- ✅ Retenção de 7 dias (dados antigos são automaticamente deletados)
+- ✅ **Retenção de 7 dias para CHECKLISTS** (dados antigos são automaticamente deletados)
+- ✅ **Ordens de serviço (OSI) mantidas PERMANENTEMENTE** (nunca deletadas)
 - ✅ Sistema de fallback para localStorage (funciona offline)
 - ✅ Sincronização automática quando online
 
@@ -120,6 +121,7 @@
 
 #### Tabela: service_orders
 - Armazena todas as ordens de serviço
+- **ARMAZENAMENTO PERMANENTE** - Ordens nunca são deletadas
 - Numeração automática sequencial
 - Campos: id, order_number, date, time, vehicle, km_initial, km_final, equipment, tag, horimeter, maintenance_type, service_description, parts_applied, observations, mechanic, responsible, created_at
 

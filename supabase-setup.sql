@@ -110,11 +110,16 @@ CREATE TRIGGER trigger_auto_order_number
     EXECUTE FUNCTION auto_order_number();
 
 -- Create function to clean up old checklists (older than 7 days)
+-- IMPORTANTE: Esta limpeza se aplica APENAS aos checklists, NÃO às ordens de serviço (OSI)
+-- As ordens de serviço são mantidas permanentemente no banco de dados
 CREATE OR REPLACE FUNCTION cleanup_old_checklists()
 RETURNS void AS $$
 BEGIN
+    -- Remove apenas checklists com mais de 7 dias
     DELETE FROM public.checklists
     WHERE created_at < NOW() - INTERVAL '7 days';
+    
+    -- As ordens de serviço (service_orders) NÃO são afetadas e permanecem no banco
 END;
 $$ LANGUAGE plpgsql;
 
@@ -123,3 +128,10 @@ GRANT EXECUTE ON FUNCTION cleanup_old_checklists() TO anon, authenticated;
 
 -- Note: You may want to set up a cron job to run this function daily
 -- This can be done using pg_cron extension or an external scheduler
+-- 
+-- Configuração do cron (executar diariamente à meia-noite):
+-- SELECT cron.schedule(
+--     'cleanup-old-checklists',
+--     '0 0 * * *',
+--     'SELECT cleanup_old_checklists();'
+-- );

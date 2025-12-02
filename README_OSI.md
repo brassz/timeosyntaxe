@@ -112,8 +112,11 @@ Após preencher a ordem, você pode exportá-la em dois formatos:
 
 ### Armazenamento
 - Todas as ordens são salvas automaticamente no banco de dados Supabase
-- Histórico completo disponível
+- **Armazenamento permanente** - Ordens de serviço NUNCA são deletadas
+- Histórico completo disponível indefinidamente
 - Dados seguros e backupeados
+
+**IMPORTANTE:** Ao contrário dos checklists (que são mantidos por 7 dias), as ordens de serviço são documentos oficiais e permanecem no banco de dados permanentemente.
 
 ## 🎨 Layout da Ordem
 

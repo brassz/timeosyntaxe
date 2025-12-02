@@ -10,8 +10,9 @@ Todas as funcionalidades solicitadas foram implementadas com sucesso!
 - [x] Integração com Supabase configurada
 - [x] Credenciais fornecidas implementadas
 - [x] Salvamento automático de checklists
-- [x] Retenção de 7 dias implementada
-- [x] Limpeza automática de dados antigos
+- [x] **Retenção de 7 dias APENAS para checklists**
+- [x] **Ordens de serviço (OSI) mantidas permanentemente**
+- [x] Limpeza automática apenas de checklists antigos
 - [x] Fallback para localStorage (funciona offline)
 
 ### 2. Botão de Login ✅

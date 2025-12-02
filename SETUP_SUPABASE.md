@@ -16,7 +16,10 @@ O script irá criar:
 - Função de limpeza automática de checklists antigos
 - Índices para otimizar as consultas
 
-## Passo 2: Configurar Limpeza Automática (Opcional)
+## Passo 2: Configurar Limpeza Automática de Checklists (Opcional)
+
+**IMPORTANTE:** A limpeza automática se aplica APENAS aos checklists, NÃO às ordens de serviço (OSI).
+As ordens de serviço são mantidas permanentemente no banco de dados.
 
 Para que os checklists sejam automaticamente deletados após 7 dias, você pode configurar um cron job no Supabase:
 
@@ -25,13 +28,16 @@ Para que os checklists sejam automaticamente deletados após 7 dias, você pode 
 3. No SQL Editor, execute:
 
 ```sql
--- Executar a limpeza todos os dias à meia-noite
+-- Executar a limpeza de CHECKLISTS todos os dias à meia-noite
+-- As ordens de serviço (OSI) NÃO são afetadas
 SELECT cron.schedule(
     'cleanup-old-checklists',
     '0 0 * * *',
     'SELECT cleanup_old_checklists();'
 );
 ```
+
+**Nota:** As ordens de serviço (service_orders) são documentos oficiais e permanecem no banco indefinidamente.
 
 ## Passo 3: Configurar Autenticação
 
@@ -85,7 +91,7 @@ const supabaseAnonKey = 'eyJ...';
 
 ### Sistema de Checklists
 - ✅ Salvamento automático em Supabase
-- ✅ Retenção de 7 dias (configurável)
+- ✅ **Retenção de 7 dias** - Checklists antigos são deletados automaticamente
 - ✅ Fallback para localStorage se Supabase estiver indisponível
 - ✅ Sincronização automática
 
@@ -95,7 +101,7 @@ const supabaseAnonKey = 'eyJ...';
 - ✅ Exportação para PDF
 - ✅ Exportação para Excel
 - ✅ Numeração automática de ordens
-- ✅ Armazenamento em banco de dados
+- ✅ **Armazenamento permanente** - Ordens de serviço nunca são deletadas
 
 ## Troubleshooting
 
