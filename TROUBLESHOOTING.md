@@ -18,21 +18,45 @@ O Supabase tem um trigger automático que tenta criar um perfil de usuário na t
 
 ### Solução:
 
-**Use o script corrigido: `create-users-fixed.sql`**
+**Use o script simplificado: `create-users-simple.sql`** ⭐
 
 Este script:
 1. ✅ Cria a tabela `profiles` se não existir
-2. ✅ Cria a função `handle_new_user()` corretamente
-3. ✅ Cria os usuários sem erro
-4. ✅ Cria os perfis manualmente
+2. ✅ Cria a função `handle_new_user()` com tratamento de erros
+3. ✅ Cria os usuários sem precisar de permissões especiais
+4. ✅ Garante que os perfis são criados
 
 **Passo a passo:**
 1. Acesse o Supabase SQL Editor
-2. Abra o arquivo `create-users-fixed.sql`
+2. Abra o arquivo `create-users-simple.sql`
 3. Copie TODO o conteúdo
 4. Cole no editor SQL
 5. Execute
 6. Aguarde confirmação ✅
+
+---
+
+## ❌ Erro: must be owner of table users
+
+### Sintoma:
+```
+ERROR: 42501: must be owner of table users
+```
+
+### Causa:
+Tentativa de modificar triggers da tabela `auth.users` sem permissão.
+
+### Solução:
+
+**Use o script simplificado: `create-users-simple.sql`**
+
+Este script NÃO tenta desabilitar triggers, funciona sem precisar de permissões especiais.
+
+**Execute:**
+```sql
+-- Use o script create-users-simple.sql
+-- Ele funciona sem tentar modificar a tabela auth.users
+```
 
 ---
 

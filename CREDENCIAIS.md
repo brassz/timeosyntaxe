@@ -47,15 +47,18 @@
 
 ## 🔧 Criar Usuários no Supabase
 
-### Script Completo (Recomendado):
+### Script Simplificado (Recomendado):
 
-Execute o arquivo **`create-users-all.sql`** no Supabase SQL Editor.
+Execute o arquivo **`create-users-simple.sql`** no Supabase SQL Editor.
 
 Este script irá:
+- ✅ Criar a tabela profiles (se não existir)
 - ✅ Criar o usuário Gustavo
 - ✅ Criar o usuário Admin
 - ✅ Confirmar emails automaticamente
-- ✅ Exibir relatório de criação
+- ✅ Garantir que profiles sejam criados
+- ✅ Exibir relatório detalhado
+- ✅ Funciona sem erros de permissão
 
 ### Passo a Passo:
 

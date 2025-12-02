@@ -107,8 +107,9 @@ Para instruções completas, consulte [SETUP_SUPABASE.md](SETUP_SUPABASE.md)
 - `supabase-setup.sql` - Script básico de instalação
 
 ### Criação de Usuários:
-- `create-users-fixed.sql` - ⭐ Script corrigido sem erros (RECOMENDADO)
-- `create-users-all.sql` - Script alternativo
+- `create-users-simple.sql` - ⭐ Script simplificado e funcional (RECOMENDADO)
+- `create-users-fixed.sql` - Script com correções
+- `create-users-all.sql` - Script completo
 - `create-user-gustavo.sql` - Script básico
 
 ## 👥 Credenciais de Acesso
