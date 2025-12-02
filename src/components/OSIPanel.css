@@ -1,0 +1,92 @@
+.osi-panel {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.osi-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 2rem;
+}
+
+.osi-header h2 {
+  margin: 0 0 0.5rem 0;
+  color: var(--color-primary);
+}
+
+.osi-header p {
+  margin: 0 0 0.25rem 0;
+  color: var(--color-gray);
+}
+
+.user-info {
+  display: inline-block;
+  font-size: 0.85rem;
+  color: var(--color-text);
+  background: var(--color-light-gray);
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  margin-top: 0.5rem;
+}
+
+.osi-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.osi-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.osi-card {
+  text-align: center;
+  padding: 3rem 2rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.osi-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.osi-card button {
+  pointer-events: none;
+}
+
+.osi-card-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.osi-card h3 {
+  margin: 0 0 0.5rem 0;
+  color: var(--color-text);
+}
+
+.osi-card p {
+  color: var(--color-gray);
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .osi-panel {
+    padding: 1rem;
+  }
+
+  .osi-header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .osi-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+}

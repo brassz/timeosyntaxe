@@ -2,16 +2,21 @@ import { useState, useEffect } from 'react';
 import { Home } from './components/Home';
 import { Checklist } from './components/Checklist';
 import { History } from './components/History';
+import { LoginModal } from './components/LoginModal';
+import { OSIPanel } from './components/OSIPanel';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ChecklistData } from './types';
 import { getDarkMode, setDarkMode, initDB } from './services/storage';
 import './App.css';
 
-type View = 'home' | 'checklist' | 'history';
+type View = 'home' | 'checklist' | 'history' | 'osi';
 
-function App() {
+function AppContent() {
   const [view, setView] = useState<View>('home');
   const [checklistData, setChecklistData] = useState<Partial<ChecklistData> | null>(null);
   const [darkMode, setDarkModeState] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const { user } = useAuth();
 
   useEffect(() => {
     initDB();
@@ -21,6 +26,14 @@ function App() {
       document.documentElement.setAttribute('data-theme', 'dark');
     }
   }, []);
+
+  // Redirect to OSI panel when user logs in
+  useEffect(() => {
+    if (user) {
+      setShowLoginModal(false);
+      setView('osi');
+    }
+  }, [user]);
 
   const handleStartChecklist = (data: Partial<ChecklistData>) => {
     setChecklistData(data);
@@ -34,6 +47,14 @@ function App() {
   const handleBack = () => {
     setView('home');
     setChecklistData(null);
+  };
+
+  const handleLoginClick = () => {
+    if (user) {
+      setView('osi');
+    } else {
+      setShowLoginModal(true);
+    }
   };
 
   const toggleDarkMode = () => {
@@ -59,6 +80,9 @@ function App() {
             </div>
           </div>
           <div className="header-actions">
+            <button className="btn-login" onClick={handleLoginClick}>
+              {user ? '🔓 Painel OSI' : '🔐 Login'}
+            </button>
             <label className="toggle-switch">
               <input
                 type="checkbox"
@@ -80,6 +104,7 @@ function App() {
           <Checklist initialData={checklistData} onBack={handleBack} />
         )}
         {view === 'history' && <History onBack={handleBack} />}
+        {view === 'osi' && user && <OSIPanel onBack={handleBack} />}
       </main>
 
       <footer style={{
@@ -90,7 +115,17 @@ function App() {
       }}>
         © 2025 Terraplanagem Guimarães - Todos os direitos reservados
       </footer>
+
+      <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 

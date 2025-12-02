@@ -1,0 +1,259 @@
+.service-order-form {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.form-header h2 {
+  margin: 0;
+  color: var(--color-primary);
+}
+
+.export-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.order-form-container {
+  padding: 2rem;
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border: 2px solid #000;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  background: white;
+}
+
+.company-info {
+  display: flex;
+  gap: 1rem;
+  flex: 1;
+}
+
+.company-logo {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}
+
+.company-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+  color: #000;
+}
+
+.company-details strong {
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+}
+
+.order-number-box {
+  border: 2px solid #000;
+  padding: 0.5rem 1rem;
+  text-align: center;
+  min-width: 150px;
+}
+
+.order-label {
+  font-weight: bold;
+  font-size: 0.75rem;
+  margin-bottom: 0.25rem;
+  color: #000;
+}
+
+.order-number-label {
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+  color: #000;
+}
+
+.order-number {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #000;
+}
+
+.form-section {
+  margin-bottom: 1.5rem;
+  border: 1px solid #ddd;
+  padding: 1rem;
+  background: white;
+}
+
+.form-section h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #000;
+  text-align: center;
+  background: #f0f0f0;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.form-row:last-child {
+  margin-bottom: 0;
+}
+
+.form-field {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form-field label {
+  font-weight: bold;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  color: #000;
+}
+
+.form-field input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #000;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  background: white;
+  color: #000;
+}
+
+.maintenance-types {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  color: #000;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.description-textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #000;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  resize: vertical;
+  background: white;
+  color: #000;
+}
+
+.signatures {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  border: none;
+  padding: 2rem 1rem;
+}
+
+.signature-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.signature-field label {
+  font-weight: bold;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #000;
+}
+
+.signature-field input {
+  padding: 0.5rem;
+  border: 1px solid #000;
+  border-radius: 4px;
+  text-align: center;
+  background: white;
+  color: #000;
+}
+
+.signature-line {
+  border-top: 2px solid #000;
+  margin-top: 2rem;
+}
+
+@media print {
+  .form-header,
+  .export-buttons {
+    display: none;
+  }
+
+  .service-order-form {
+    padding: 0;
+  }
+
+  .order-form-container {
+    padding: 1rem;
+    box-shadow: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .service-order-form {
+    padding: 1rem;
+  }
+
+  .form-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .export-buttons {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .order-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .order-number-box {
+    width: 100%;
+  }
+
+  .maintenance-types {
+    grid-template-columns: 1fr;
+  }
+
+  .signatures {
+    grid-template-columns: 1fr;
+  }
+}
