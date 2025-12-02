@@ -7,6 +7,10 @@
   --color-success: #00b300;
   --color-error: #cc0000;
   --color-warning: #ff9900;
+  --color-primary: #ffcc00;
+  --color-primary-dark: #e6b800;
+  --color-text: #1a1a1a;
+  --color-card-bg: #ffffff;
 }
 
 [data-theme="dark"] {
@@ -14,6 +18,10 @@
   --color-light-gray: #2a2a2a;
   --color-black: #f5f5f5;
   --color-gray: #cccccc;
+  --color-text: #f5f5f5;
+  --color-card-bg: #2a2a2a;
+  --color-success: #00e600;
+  --color-error: #ff3333;
 }
 
 * {
@@ -90,6 +98,26 @@ body {
   gap: 1rem;
   flex-wrap: wrap;
   justify-content: center;
+}
+
+.btn-login {
+  padding: 0.75rem 1.5rem;
+  background: var(--color-black);
+  color: var(--color-yellow);
+  border: 2px solid var(--color-yellow);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-login:hover {
+  background: var(--color-yellow);
+  color: var(--color-black);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 204, 0, 0.3);
 }
 
 .main {

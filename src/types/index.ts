@@ -29,3 +29,23 @@ export interface Photo {
   data: string; // base64
   timestamp: number;
 }
+
+export interface ServiceOrder {
+  id?: string;
+  order_number?: number;
+  date: string;
+  time: string;
+  vehicle: string;
+  km_initial: string;
+  km_final: string;
+  equipment: string;
+  tag: string;
+  horimeter: string;
+  maintenance_type: string[];
+  service_description: string;
+  parts_applied: string;
+  observations: string;
+  mechanic: string;
+  responsible: string;
+  created_at?: string;
+}

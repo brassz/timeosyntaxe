@@ -1,5 +1,11 @@
 import { openDB, DBSchema, IDBPDatabase } from 'idb';
 import { ChecklistData, Photo } from '../types';
+import { 
+  saveChecklistToSupabase, 
+  getChecklistsFromSupabase, 
+  deleteChecklistFromSupabase,
+  cleanupOldChecklists 
+} from './supabase';
 
 interface ChecklistDB extends DBSchema {
   photos: {
@@ -21,10 +27,13 @@ export const initDB = async () => {
     },
   });
   
+  // Run cleanup on init
+  cleanupOldChecklists().catch(console.error);
+  
   return db;
 };
 
-// LocalStorage para dados de checklist
+// LocalStorage para dados de checklist (draft)
 export const saveDraft = (data: ChecklistData) => {
   localStorage.setItem('checklist-draft', JSON.stringify(data));
 };
@@ -38,20 +47,44 @@ export const deleteDraft = () => {
   localStorage.removeItem('checklist-draft');
 };
 
-export const saveCompletedChecklist = (data: ChecklistData) => {
-  const checklists = getCompletedChecklists();
-  checklists.unshift(data);
-  localStorage.setItem('completed-checklists', JSON.stringify(checklists));
+// Supabase para checklists completos (com fallback para localStorage)
+export const saveCompletedChecklist = async (data: ChecklistData) => {
+  try {
+    // Try to save to Supabase first
+    await saveChecklistToSupabase(data);
+  } catch (error) {
+    console.error('Error saving to Supabase, using localStorage fallback:', error);
+    // Fallback to localStorage
+    const checklists = await getCompletedChecklists();
+    checklists.unshift(data);
+    localStorage.setItem('completed-checklists', JSON.stringify(checklists));
+  }
 };
 
-export const getCompletedChecklists = (): ChecklistData[] => {
-  const checklists = localStorage.getItem('completed-checklists');
-  return checklists ? JSON.parse(checklists) : [];
+export const getCompletedChecklists = async (): Promise<ChecklistData[]> => {
+  try {
+    // Try to get from Supabase first
+    const data = await getChecklistsFromSupabase();
+    return data;
+  } catch (error) {
+    console.error('Error fetching from Supabase, using localStorage fallback:', error);
+    // Fallback to localStorage
+    const checklists = localStorage.getItem('completed-checklists');
+    return checklists ? JSON.parse(checklists) : [];
+  }
 };
 
-export const deleteCompletedChecklist = (id: string) => {
-  const checklists = getCompletedChecklists().filter(c => c.id !== id);
-  localStorage.setItem('completed-checklists', JSON.stringify(checklists));
+export const deleteCompletedChecklist = async (id: string) => {
+  try {
+    // Try to delete from Supabase first
+    await deleteChecklistFromSupabase(id);
+  } catch (error) {
+    console.error('Error deleting from Supabase, using localStorage fallback:', error);
+    // Fallback to localStorage
+    const checklists = await getCompletedChecklists();
+    const filtered = checklists.filter(c => c.id !== id);
+    localStorage.setItem('completed-checklists', JSON.stringify(filtered));
+  }
 };
 
 // IndexedDB para fotos
