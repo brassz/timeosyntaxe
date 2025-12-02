@@ -91,6 +91,7 @@ Para instruções completas, consulte [SETUP_SUPABASE.md](SETUP_SUPABASE.md)
 
 ## 📚 Documentação Adicional
 
+- [SOLUCAO_RAPIDA.md](SOLUCAO_RAPIDA.md) - 🚨 LEIA PRIMEIRO - Solução dos problemas mais comuns
 - [QUICK_SETUP.md](QUICK_SETUP.md) - ⚡ Configuração rápida em 5 minutos
 - [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - 🔧 Solução de problemas
 - [CREDENCIAIS.md](CREDENCIAIS.md) - 🔐 Credenciais de acesso
@@ -107,10 +108,11 @@ Para instruções completas, consulte [SETUP_SUPABASE.md](SETUP_SUPABASE.md)
 - `supabase-setup.sql` - Script básico de instalação
 
 ### Criação de Usuários:
-- `create-users-simple.sql` - ⭐ Script simplificado e funcional (RECOMENDADO)
-- `create-users-fixed.sql` - Script com correções
+- `create-users-basic.sql` - ⭐⭐⭐ Script mais simples e confiável (RECOMENDADO)
+- `create-users-simple.sql` - ⭐⭐ Script alternativo
+- `fix-supabase-auth.sql` - 🔧 Correção de erros de schema
+- `create-users-fixed.sql` - Script com correções avançadas
 - `create-users-all.sql` - Script completo
-- `create-user-gustavo.sql` - Script básico
 
 ## 👥 Credenciais de Acesso
 
