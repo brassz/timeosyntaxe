@@ -255,9 +255,7 @@ export const Checklist: React.FC<ChecklistProps> = ({ initialData, onBack }) => 
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [showAllItems, setShowAllItems] = useState(false);
   const [headerCollapsed, setHeaderCollapsed] = useState(false);
-  const [showPhotoSourceModal, setShowPhotoSourceModal] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const loadPhotoPreviews = async () => {
@@ -524,7 +522,6 @@ export const Checklist: React.FC<ChecklistProps> = ({ initialData, onBack }) => 
 
         <div className="photo-section">
           <label>Fotos ({currentItem.photos.length})</label>
-          {/* Input para galeria */}
           <input
             ref={fileInputRef}
             type="file"
@@ -533,19 +530,9 @@ export const Checklist: React.FC<ChecklistProps> = ({ initialData, onBack }) => 
             style={{ display: 'none' }}
             onChange={(e) => handlePhotoUpload(currentItemIndex, e.target.files)}
           />
-          {/* Input para câmera */}
-          <input
-            ref={cameraInputRef}
-            type="file"
-            accept="image/*"
-            multiple
-            capture="environment"
-            style={{ display: 'none' }}
-            onChange={(e) => handlePhotoUpload(currentItemIndex, e.target.files)}
-          />
           <button
             className="btn btn-secondary"
-            onClick={() => setShowPhotoSourceModal(true)}
+            onClick={() => fileInputRef.current?.click()}
           >
             📷 Adicionar Fotos
           </button>
@@ -610,42 +597,6 @@ export const Checklist: React.FC<ChecklistProps> = ({ initialData, onBack }) => 
                 <span className="badge-status">{item.status || '?'}</span>
               </button>
             ))}
-          </div>
-        </div>
-      )}
-
-      {/* Modal de escolha de fonte da foto */}
-      {showPhotoSourceModal && (
-        <div className="photo-source-modal-overlay" onClick={() => setShowPhotoSourceModal(false)}>
-          <div className="photo-source-modal" onClick={(e) => e.stopPropagation()}>
-            <h3>Adicionar Foto</h3>
-            <p>Escolha a origem da foto:</p>
-            <div className="photo-source-buttons">
-              <button
-                className="btn btn-primary"
-                onClick={() => {
-                  setShowPhotoSourceModal(false);
-                  cameraInputRef.current?.click();
-                }}
-              >
-                📸 Tirar Foto
-              </button>
-              <button
-                className="btn btn-secondary"
-                onClick={() => {
-                  setShowPhotoSourceModal(false);
-                  fileInputRef.current?.click();
-                }}
-              >
-                🖼️ Escolher da Galeria
-              </button>
-            </div>
-            <button
-              className="btn btn-text"
-              onClick={() => setShowPhotoSourceModal(false)}
-            >
-              Cancelar
-            </button>
           </div>
         </div>
       )}
