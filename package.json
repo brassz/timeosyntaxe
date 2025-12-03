@@ -9,12 +9,19 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.86.0",
+    "@types/bcryptjs": "^2.4.6",
+    "bcryptjs": "^3.0.3",
+    "exceljs": "^4.4.0",
+    "idb": "^8.0.0",
+    "jspdf": "^2.5.1",
+    "pdfmake": "^0.2.20",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "jspdf": "^2.5.1",
-    "idb": "^8.0.0"
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@types/pdfmake": "^0.2.12",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
     "@vitejs/plugin-react": "^4.2.1",

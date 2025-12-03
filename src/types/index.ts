@@ -29,3 +29,40 @@ export interface Photo {
   data: string; // base64
   timestamp: number;
 }
+
+// ============ OSI Types ============
+
+export interface Usuario {
+  id: string;
+  usuario: string;
+  senha: string;
+  nome: string;
+  cargo: string;
+}
+
+export interface OSIOrdem {
+  id?: string;
+  numero_os?: number;
+  data: string;
+  hora: string;
+  veiculo: string;
+  equipamento: string;
+  km_inicial: string;
+  km_final: string;
+  tag: string;
+  horimetro: string;
+  manut_preditiva: boolean;
+  manut_preventiva: boolean;
+  manut_corretiva: boolean;
+  manut_avaria: boolean;
+  manut_oportunidade: boolean;
+  manut_outros: boolean;
+  descricao_servicos: string;
+  pecas_aplicadas: string;
+  observacoes: string;
+  mecanico: string;
+  responsavel: string;
+  pdf_url?: string;
+  excel_url?: string;
+  criado_em?: string;
+}
