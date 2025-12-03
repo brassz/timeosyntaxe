@@ -89,18 +89,22 @@ export const OSI: React.FC<OSIProps> = ({ user, onBack }) => {
         created_by: user.username
       };
 
+      console.log('📝 Salvando OSI:', osiData);
       const saved = await saveOSI(osiData);
+      
       if (saved) {
+        console.log('✅ OSI salva, recarregando histórico...');
         alert('✅ Ordem de Serviço salva com sucesso!');
         resetForm();
-        loadNextOrderNumber();
-        loadHistory();
+        await loadNextOrderNumber();
+        await loadHistory();
       } else {
-        alert('❌ Erro ao salvar Ordem de Serviço');
+        console.error('❌ Falha ao salvar OSI');
+        alert('❌ Erro ao salvar Ordem de Serviço. Verifique o console para detalhes.');
       }
     } catch (error) {
-      console.error('Error saving OSI:', error);
-      alert('❌ Erro ao salvar Ordem de Serviço');
+      console.error('❌ Exception ao salvar OSI:', error);
+      alert('❌ Erro ao salvar Ordem de Serviço. Verifique o console para detalhes.');
     } finally {
       setLoading(false);
     }

@@ -247,19 +247,23 @@ export const saveOSI = async (osi: Omit<DBOSI, 'id' | 'created_at'>) => {
   }
 
   try {
+    console.log('🔵 Tentando salvar OSI no Supabase:', osi);
+    
     const { data, error } = await supabase
       .from('osi_orders')
       .insert([osi])
       .select();
 
     if (error) {
-      console.error('Error saving OSI:', error);
+      console.error('❌ Error saving OSI:', error);
+      console.error('Detalhes:', JSON.stringify(error, null, 2));
       return null;
     }
 
+    console.log('✅ OSI salva com sucesso:', data[0]);
     return data[0];
   } catch (error) {
-    console.error('Exception saving OSI:', error);
+    console.error('❌ Exception saving OSI:', error);
     return null;
   }
 };
