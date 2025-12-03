@@ -24,6 +24,11 @@ function App() {
     if (isDarkMode) {
       document.documentElement.setAttribute('data-theme', 'dark');
     }
+    
+    // Debug: verificar variáveis de ambiente
+    console.log('🔍 Debug - Variáveis de ambiente:');
+    console.log('URL:', import.meta.env.VITE_SUPABASE_URL);
+    console.log('Key:', import.meta.env.VITE_SUPABASE_ANON_KEY ? 'Definida ✅' : 'NÃO definida ❌');
   }, []);
 
   const handleStartChecklist = (data: Partial<ChecklistData>) => {
