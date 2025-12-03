@@ -1,6 +1,23 @@
 import jsPDF from 'jspdf';
 import { OSIData } from '../types';
 
+// Função para carregar a logo
+const loadLogo = async (): Promise<string | null> => {
+  try {
+    const response = await fetch('/logo.png');
+    const blob = await response.blob();
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = () => resolve(null);
+      reader.readAsDataURL(blob);
+    });
+  } catch (error) {
+    console.error('Erro ao carregar logo:', error);
+    return null;
+  }
+};
+
 export const generateOSIPDF = async (osi: OSIData): Promise<void> => {
   const doc = new jsPDF({
     orientation: 'portrait',
@@ -12,18 +29,33 @@ export const generateOSIPDF = async (osi: OSIData): Promise<void> => {
   const margin = 10;
   const contentWidth = pageWidth - (2 * margin);
 
-  // Logo e Cabeçalho
-  doc.setFillColor(255, 165, 0); // Laranja
-  doc.circle(30, 20, 10, 'F');
+  // Carregar e adicionar logo
+  const logoData = await loadLogo();
+  if (logoData) {
+    try {
+      // Logo no canto superior esquerdo (20x20mm)
+      doc.addImage(logoData, 'PNG', margin, 10, 20, 20);
+    } catch (error) {
+      console.error('Erro ao adicionar logo ao PDF:', error);
+      // Fallback: círculo laranja
+      doc.setFillColor(255, 165, 0);
+      doc.circle(20, 20, 10, 'F');
+    }
+  } else {
+    // Fallback: círculo laranja se não conseguir carregar a logo
+    doc.setFillColor(255, 165, 0);
+    doc.circle(20, 20, 10, 'F');
+  }
   
+  // Cabeçalho da empresa (ao lado da logo)
   doc.setFontSize(10);
   doc.setFont('helvetica', 'bold');
-  doc.text('TERRAPLANAGEM GUIMARÃES SERRA LTDA', 45, 15);
+  doc.text('TERRAPLANAGEM GUIMARÃES SERRA LTDA', 35, 15);
   doc.setFontSize(8);
   doc.setFont('helvetica', 'normal');
-  doc.text('Endereço: Rod Celso Mello Azevedo nº24 321', 45, 20);
-  doc.text('Dom Silverio - BH/MG  CEP: 31.985-203', 45, 24);
-  doc.text('CNPJ: 00.514.564/0001-42 TELEFONE: 31.3495-9108', 45, 28);
+  doc.text('Endereço: Rod Celso Mello Azevedo nº24 321', 35, 20);
+  doc.text('Dom Silverio - BH/MG  CEP: 31.985-203', 35, 24);
+  doc.text('CNPJ: 00.514.564/0001-42 TELEFONE: 31.3495-9108', 35, 28);
 
   // Título e Número da OS
   doc.setFillColor(240, 240, 240);

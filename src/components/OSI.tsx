@@ -118,11 +118,11 @@ export const OSI: React.FC<OSIProps> = ({ user, onBack }) => {
     }
   };
 
-  const handleGenerateExcel = (data?: OSIData) => {
+  const handleGenerateExcel = async (data?: OSIData) => {
     const osiData = data || { order_number: orderNumber, ...formData, created_by: user.username };
     
     try {
-      generateOSIExcel(osiData as OSIData);
+      await generateOSIExcel(osiData as OSIData);
       alert('✅ Excel gerado com sucesso!');
     } catch (error) {
       console.error('Error generating Excel:', error);
@@ -178,7 +178,7 @@ export const OSI: React.FC<OSIProps> = ({ user, onBack }) => {
 
       const saved = await saveOSI(osiData);
       if (saved) {
-        generateOSIExcel(saved);
+        await generateOSIExcel(saved);
         alert('✅ Ordem de Serviço salva e Excel gerado com sucesso!');
         resetForm();
         loadNextOrderNumber();

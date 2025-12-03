@@ -1,10 +1,10 @@
 import * as XLSX from 'xlsx';
 import { OSIData } from '../types';
 
-export const generateOSIExcel = (osi: OSIData): void => {
+export const generateOSIExcel = async (osi: OSIData): Promise<void> => {
   // Criar estrutura similar ao formulário PDF
   const data = [
-    ['TERRAPLANAGEM GUIMARÃES SERRA LTDA'],
+    ['🏗️ TERRAPLANAGEM GUIMARÃES SERRA LTDA'],
     ['Endereço: Rod Celso Mello Azevedo nº24 321'],
     ['Dom Silverio - BH/MG  CEP: 31.985-203'],
     ['CNPJ: 00.514.564/0001-42 TELEFONE: 31.3495-9108'],
@@ -84,6 +84,9 @@ export const generateOSIExcel = (osi: OSIData): void => {
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'OSI');
 
+  // Tentar adicionar logo (Excel não suporta nativamente imagens via XLSX simples)
+  // A logo será representada por um emoji no cabeçalho
+  
   // Salvar arquivo
   XLSX.writeFile(wb, `OSI_${osi.order_number}_${new Date().toISOString().split('T')[0]}.xlsx`);
 };
