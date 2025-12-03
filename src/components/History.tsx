@@ -17,14 +17,14 @@ export const History: React.FC<HistoryProps> = ({ onBack }) => {
     loadChecklists();
   }, []);
 
-  const loadChecklists = () => {
-    const data = getCompletedChecklists();
+  const loadChecklists = async () => {
+    const data = await getCompletedChecklists();
     setChecklists(data);
   };
 
   const handleDelete = async (id: string) => {
     if (confirm('Tem certeza que deseja excluir este checklist? Esta ação não pode ser desfeita.')) {
-      deleteCompletedChecklist(id);
+      await deleteCompletedChecklist(id);
       loadChecklists();
       if (selectedChecklist?.id === id) {
         setSelectedChecklist(null);

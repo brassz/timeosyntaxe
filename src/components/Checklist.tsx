@@ -390,7 +390,7 @@ export const Checklist: React.FC<ChecklistProps> = ({ initialData, onBack }) => 
 
     try {
       const completedChecklist = { ...checklist, completed: true };
-      saveCompletedChecklist(completedChecklist);
+      await saveCompletedChecklist(completedChecklist);
       deleteDraft();
       
       await generatePDF(completedChecklist);
