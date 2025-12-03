@@ -146,8 +146,10 @@ export const generateOSIPDF = async (osi: OSIData): Promise<void> => {
     const xPos = margin + (index * checkboxSpacing);
     doc.rect(xPos, yPos, checkboxSize, checkboxSize, 'S');
     if (type.value) {
-      doc.setFontSize(10);
-      doc.text('✓', xPos + 1.5, yPos + 4);
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'bold');
+      doc.text('O', xPos + 1.2, yPos + 4);
+      doc.setFont('helvetica', 'normal');
       doc.setFontSize(8);
     }
     doc.text(type.label, xPos + checkboxSize + 2, yPos + 4);
