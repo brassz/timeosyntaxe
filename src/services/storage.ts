@@ -1,5 +1,6 @@
 import { openDB, DBSchema, IDBPDatabase } from 'idb';
 import { ChecklistData, Photo } from '../types';
+import { saveChecklistToDB, getChecklistsFromDB, deleteChecklistFromDB, cleanOldChecklists } from './supabase';
 
 interface ChecklistDB extends DBSchema {
   photos: {
@@ -21,6 +22,9 @@ export const initDB = async () => {
     },
   });
   
+  // Limpar checklists antigos ao inicializar
+  await cleanOldChecklists();
+  
   return db;
 };
 
@@ -38,20 +42,68 @@ export const deleteDraft = () => {
   localStorage.removeItem('checklist-draft');
 };
 
-export const saveCompletedChecklist = (data: ChecklistData) => {
-  const checklists = getCompletedChecklists();
+// Salvar checklist completado (agora no Supabase + localStorage como backup)
+export const saveCompletedChecklist = async (data: ChecklistData) => {
+  // Salvar no Supabase
+  try {
+    await saveChecklistToDB(data);
+  } catch (error) {
+    console.error('Error saving to Supabase, using localStorage as backup:', error);
+  }
+  
+  // Manter no localStorage como backup
+  const checklists = getCompletedChecklistsLocal();
   checklists.unshift(data);
   localStorage.setItem('completed-checklists', JSON.stringify(checklists));
 };
 
-export const getCompletedChecklists = (): ChecklistData[] => {
+// Buscar checklists do Supabase (com fallback para localStorage)
+export const getCompletedChecklists = async (): Promise<ChecklistData[]> => {
+  try {
+    const checklists = await getChecklistsFromDB();
+    if (checklists && checklists.length > 0) {
+      return checklists;
+    }
+  } catch (error) {
+    console.error('Error fetching from Supabase, using localStorage:', error);
+  }
+  
+  // Fallback para localStorage
+  return getCompletedChecklistsLocal();
+};
+
+// Função local para buscar do localStorage
+const getCompletedChecklistsLocal = (): ChecklistData[] => {
   const checklists = localStorage.getItem('completed-checklists');
   return checklists ? JSON.parse(checklists) : [];
 };
 
-export const deleteCompletedChecklist = (id: string) => {
-  const checklists = getCompletedChecklists().filter(c => c.id !== id);
+// Deletar checklist (do Supabase e localStorage)
+export const deleteCompletedChecklist = async (id: string) => {
+  try {
+    await deleteChecklistFromDB(id);
+  } catch (error) {
+    console.error('Error deleting from Supabase:', error);
+  }
+  
+  const checklists = getCompletedChecklistsLocal().filter(c => c.id !== id);
   localStorage.setItem('completed-checklists', JSON.stringify(checklists));
+};
+
+// Limpar checklists locais antigos (mais de 7 dias)
+export const cleanOldLocalChecklists = () => {
+  const checklists = getCompletedChecklistsLocal();
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  
+  const filtered = checklists.filter(c => {
+    const checklistDate = new Date(c.date);
+    return checklistDate > sevenDaysAgo;
+  });
+  
+  localStorage.setItem('completed-checklists', JSON.stringify(filtered));
+  
+  return checklists.length - filtered.length; // Retorna quantos foram removidos
 };
 
 // IndexedDB para fotos

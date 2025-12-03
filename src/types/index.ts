@@ -29,3 +29,41 @@ export interface Photo {
   data: string; // base64
   timestamp: number;
 }
+
+// Tipos para OSI (Ordem de Serviço Interna)
+export interface MaintenanceType {
+  preditiva: boolean;
+  preventiva: boolean;
+  corretiva: boolean;
+  avaria: boolean;
+  oportunidade: boolean;
+  outros: boolean;
+}
+
+export interface OSIData {
+  id?: number;
+  order_number: number;
+  date: string;
+  time: string;
+  vehicle: string;
+  equipment: string;
+  km_inicial: string;
+  km_final: string;
+  tag: string;
+  horimeter: string;
+  maintenance_type: MaintenanceType;
+  services_description: string;
+  parts_applied: string;
+  observations: string;
+  mechanic: string;
+  responsible: string;
+  created_at?: string;
+  created_by: string;
+}
+
+export interface User {
+  id: number;
+  username: string;
+  name: string;
+  created_at: string;
+}

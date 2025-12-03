@@ -2,16 +2,20 @@ import { useState, useEffect } from 'react';
 import { Home } from './components/Home';
 import { Checklist } from './components/Checklist';
 import { History } from './components/History';
-import { ChecklistData } from './types';
+import { Login } from './components/Login';
+import { OSI } from './components/OSI';
+import { ChecklistData, User } from './types';
 import { getDarkMode, setDarkMode, initDB } from './services/storage';
 import './App.css';
 
-type View = 'home' | 'checklist' | 'history';
+type View = 'home' | 'checklist' | 'history' | 'osi';
 
 function App() {
   const [view, setView] = useState<View>('home');
   const [checklistData, setChecklistData] = useState<Partial<ChecklistData> | null>(null);
   const [darkMode, setDarkModeState] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   useEffect(() => {
     initDB();
@@ -20,6 +24,11 @@ function App() {
     if (isDarkMode) {
       document.documentElement.setAttribute('data-theme', 'dark');
     }
+    
+    // Debug: verificar variáveis de ambiente
+    console.log('🔍 Debug - Variáveis de ambiente:');
+    console.log('URL:', import.meta.env.VITE_SUPABASE_URL);
+    console.log('Key:', import.meta.env.VITE_SUPABASE_ANON_KEY ? 'Definida ✅' : 'NÃO definida ❌');
   }, []);
 
   const handleStartChecklist = (data: Partial<ChecklistData>) => {
@@ -34,6 +43,21 @@ function App() {
   const handleBack = () => {
     setView('home');
     setChecklistData(null);
+  };
+
+  const handleLoginClick = () => {
+    setShowLogin(true);
+  };
+
+  const handleLogin = (user: User) => {
+    setCurrentUser(user);
+    setShowLogin(false);
+    setView('osi');
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    setView('home');
   };
 
   const toggleDarkMode = () => {
@@ -59,6 +83,16 @@ function App() {
             </div>
           </div>
           <div className="header-actions">
+            {view === 'home' && (
+              <button className="btn btn-primary btn-login" onClick={handleLoginClick}>
+                🔐 OSI - Login
+              </button>
+            )}
+            {currentUser && view === 'osi' && (
+              <button className="btn btn-secondary btn-logout" onClick={handleLogout}>
+                🚪 Sair
+              </button>
+            )}
             <label className="toggle-switch">
               <input
                 type="checkbox"
@@ -80,7 +114,12 @@ function App() {
           <Checklist initialData={checklistData} onBack={handleBack} />
         )}
         {view === 'history' && <History onBack={handleBack} />}
+        {view === 'osi' && currentUser && (
+          <OSI user={currentUser} onBack={handleBack} />
+        )}
       </main>
+
+      {showLogin && <Login onLogin={handleLogin} onCancel={() => setShowLogin(false)} />}
 
       <footer style={{
         textAlign: 'center',
