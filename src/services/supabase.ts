@@ -1,11 +1,21 @@
 import { createClient } from '@supabase/supabase-js';
 
 // Configuração do Supabase
-// IMPORTANTE: Adicione suas credenciais do Supabase aqui
+// IMPORTANTE: Adicione suas credenciais do Supabase no arquivo .env
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://your-project.supabase.co';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'your-anon-key';
 
+// Verificar se as credenciais foram configuradas
+const isSupabaseConfigured = 
+  supabaseUrl !== 'https://your-project.supabase.co' && 
+  supabaseAnonKey !== 'your-anon-key';
+
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+// Função auxiliar para verificar configuração
+export const checkSupabaseConfig = (): boolean => {
+  return isSupabaseConfigured;
+};
 
 // Interfaces para o banco de dados
 export interface DBUser {
@@ -58,8 +68,22 @@ export interface DBOSI {
   created_by: string;
 }
 
+// Usuários de teste (quando Supabase não está configurado)
+const mockUsers: DBUser[] = [
+  { id: 1, username: 'admin', password: 'admin123', name: 'Administrador', created_at: new Date().toISOString() },
+  { id: 2, username: 'mecanico', password: 'mecanico123', name: 'João Silva', created_at: new Date().toISOString() },
+  { id: 3, username: 'supervisor', password: 'supervisor123', name: 'Maria Santos', created_at: new Date().toISOString() }
+];
+
 // Funções de autenticação (sem usar Supabase Auth)
 export const loginUser = async (username: string, password: string): Promise<DBUser | null> => {
+  // Modo offline: usar usuários mockados
+  if (!isSupabaseConfigured) {
+    console.warn('⚠️ Supabase não configurado! Usando modo offline com usuários de teste.');
+    const user = mockUsers.find(u => u.username === username && u.password === password);
+    return user || null;
+  }
+
   try {
     const { data, error } = await supabase
       .from('users')
@@ -82,6 +106,11 @@ export const loginUser = async (username: string, password: string): Promise<DBU
 
 // Funções para Checklists
 export const saveChecklistToDB = async (checklist: any) => {
+  if (!isSupabaseConfigured) {
+    console.warn('⚠️ Supabase não configurado! Checklist salvo apenas localmente.');
+    return true; // Simula sucesso
+  }
+
   try {
     const { error } = await supabase
       .from('checklists')
@@ -111,6 +140,10 @@ export const saveChecklistToDB = async (checklist: any) => {
 };
 
 export const getChecklistsFromDB = async () => {
+  if (!isSupabaseConfigured) {
+    return []; // Retorna vazio no modo offline
+  }
+
   try {
     const { data, error } = await supabase
       .from('checklists')
@@ -130,6 +163,10 @@ export const getChecklistsFromDB = async () => {
 };
 
 export const deleteChecklistFromDB = async (id: string) => {
+  if (!isSupabaseConfigured) {
+    return true; // Simula sucesso
+  }
+
   try {
     const { error } = await supabase
       .from('checklists')
@@ -145,6 +182,10 @@ export const deleteChecklistFromDB = async (id: string) => {
 
 // Função para limpar checklists antigos (mais de 7 dias)
 export const cleanOldChecklists = async () => {
+  if (!isSupabaseConfigured) {
+    return true; // Simula sucesso no modo offline
+  }
+
   try {
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
@@ -167,7 +208,14 @@ export const cleanOldChecklists = async () => {
 };
 
 // Funções para OSI (Ordem de Serviço Interna)
+let mockOrderNumber = 2200; // Contador offline
+const mockOSIOrders: DBOSI[] = []; // Storage offline
+
 export const getNextOrderNumber = async (): Promise<number> => {
+  if (!isSupabaseConfigured) {
+    return mockOrderNumber++;
+  }
+
   try {
     const { data, error } = await supabase
       .from('osi_orders')
@@ -176,7 +224,7 @@ export const getNextOrderNumber = async (): Promise<number> => {
       .limit(1);
 
     if (error || !data || data.length === 0) {
-      return 2200; // Número inicial baseado na imagem
+      return 2200;
     }
 
     return data[0].order_number + 1;
@@ -187,6 +235,17 @@ export const getNextOrderNumber = async (): Promise<number> => {
 };
 
 export const saveOSI = async (osi: Omit<DBOSI, 'id' | 'created_at'>) => {
+  if (!isSupabaseConfigured) {
+    console.warn('⚠️ Supabase não configurado! OSI salva apenas em memória (será perdida ao recarregar).');
+    const mockOSI = {
+      id: mockOSIOrders.length + 1,
+      ...osi,
+      created_at: new Date().toISOString()
+    };
+    mockOSIOrders.unshift(mockOSI);
+    return mockOSI;
+  }
+
   try {
     const { data, error } = await supabase
       .from('osi_orders')
@@ -206,6 +265,10 @@ export const saveOSI = async (osi: Omit<DBOSI, 'id' | 'created_at'>) => {
 };
 
 export const getOSIHistory = async () => {
+  if (!isSupabaseConfigured) {
+    return mockOSIOrders; // Retorna dados offline
+  }
+
   try {
     const { data, error } = await supabase
       .from('osi_orders')
@@ -225,6 +288,10 @@ export const getOSIHistory = async () => {
 };
 
 export const getOSIById = async (id: number) => {
+  if (!isSupabaseConfigured) {
+    return mockOSIOrders.find(o => o.id === id) || null;
+  }
+
   try {
     const { data, error } = await supabase
       .from('osi_orders')

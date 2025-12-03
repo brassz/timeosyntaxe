@@ -32,8 +32,8 @@ export const Login: React.FC<LoginProps> = ({ onLogin, onCancel }) => {
       } else {
         setError('Usuário ou senha incorretos');
       }
-    } catch (err) {
-      setError('Erro ao fazer login. Tente novamente.');
+    } catch (err: any) {
+      setError('Erro ao fazer login. Verifique sua conexão.');
       console.error('Login error:', err);
     } finally {
       setLoading(false);
