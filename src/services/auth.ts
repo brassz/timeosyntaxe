@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import * as bcrypt from 'bcryptjs';
+import bcrypt from 'bcryptjs';
 
 const SESSION_KEY = 'osi_user_session';
 
