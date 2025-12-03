@@ -57,12 +57,7 @@ export const generateOSIPDF = async (osi: OSIData): Promise<void> => {
   doc.text('Dom Silverio - BH/MG  CEP: 31.985-203', 35, 24);
   doc.text('CNPJ: 00.514.564/0001-42 TELEFONE: 31.3495-9108', 35, 28);
 
-  // Título e Número da OS
-  doc.setFillColor(240, 240, 240);
-  doc.rect(pageWidth - 60, 10, 50, 20, 'F');
-  doc.setDrawColor(0);
-  doc.rect(pageWidth - 60, 10, 50, 20, 'S');
-  
+  // Título e Número da OS (sem quadrado)
   doc.setFontSize(9);
   doc.setFont('helvetica', 'bold');
   doc.text('ORDEM DE SERVIÇO INTERNA', pageWidth - 55, 17);
