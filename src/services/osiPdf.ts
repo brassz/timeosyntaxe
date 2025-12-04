@@ -221,8 +221,85 @@ export const generateOSIPDF = async (osi: OSIData): Promise<void> => {
   const obsLines = doc.splitTextToSize(osi.observations || '', contentWidth - 4);
   doc.text(obsLines, margin + 2, yPos + 5);
 
+  // Fotos (se existirem)
+  if (osi.photos && osi.photos.length > 0) {
+    yPos += obsHeight + 10;
+    
+    // Verificar se precisa de uma nova página
+    if (yPos > 250) {
+      doc.addPage();
+      yPos = 20;
+    }
+    
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    doc.setFillColor(240, 240, 240);
+    doc.rect(margin, yPos - 5, contentWidth, 8, 'F');
+    doc.rect(margin, yPos - 5, contentWidth, 8, 'S');
+    doc.text('FOTOS', pageWidth / 2, yPos, { align: 'center' });
+    
+    yPos += 8;
+    
+    // Configuração das fotos: 2 por linha
+    const photosPerRow = 2;
+    const photoMargin = 5;
+    const photoWidth = (contentWidth - photoMargin) / photosPerRow;
+    const photoHeight = 60; // Altura fixa para as fotos
+    
+    for (let i = 0; i < osi.photos.length; i++) {
+      const col = i % photosPerRow;
+      const row = Math.floor(i / photosPerRow);
+      
+      const xPos = margin + (col * (photoWidth + photoMargin));
+      const currentYPos = yPos + (row * (photoHeight + photoMargin + 5));
+      
+      // Verificar se precisa de uma nova página
+      if (currentYPos + photoHeight > doc.internal.pageSize.getHeight() - 20) {
+        doc.addPage();
+        yPos = 20;
+        
+        // Recalcular posição
+        const newRow = Math.floor((i - (row * photosPerRow)) / photosPerRow);
+        const newYPos = yPos + (newRow * (photoHeight + photoMargin + 5));
+        
+        try {
+          doc.addImage(osi.photos[i], 'JPEG', xPos, newYPos, photoWidth, photoHeight);
+          
+          // Adicionar número da foto
+          doc.setFontSize(7);
+          doc.setFont('helvetica', 'normal');
+          doc.text(`Foto ${i + 1}`, xPos + photoWidth / 2, newYPos + photoHeight + 3, { align: 'center' });
+        } catch (error) {
+          console.error(`Erro ao adicionar foto ${i + 1}:`, error);
+        }
+      } else {
+        try {
+          doc.addImage(osi.photos[i], 'JPEG', xPos, currentYPos, photoWidth, photoHeight);
+          
+          // Adicionar número da foto
+          doc.setFontSize(7);
+          doc.setFont('helvetica', 'normal');
+          doc.text(`Foto ${i + 1}`, xPos + photoWidth / 2, currentYPos + photoHeight + 3, { align: 'center' });
+        } catch (error) {
+          console.error(`Erro ao adicionar foto ${i + 1}:`, error);
+        }
+      }
+    }
+    
+    // Atualizar yPos para depois das fotos
+    const totalRows = Math.ceil(osi.photos.length / photosPerRow);
+    yPos += (totalRows * (photoHeight + photoMargin + 5)) + 5;
+  }
+
   // Assinaturas
   yPos += obsHeight + 15;
+  
+  // Verificar se precisa de uma nova página para as assinaturas
+  if (yPos > 250) {
+    doc.addPage();
+    yPos = 20;
+  }
+  
   const signatureWidth = (contentWidth - 10) / 2;
   
   doc.setFontSize(9);
