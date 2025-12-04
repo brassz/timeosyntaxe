@@ -76,8 +76,8 @@ export const OSI: React.FC<OSIProps> = ({ user, onBack }) => {
   };
 
   const handleSaveOSI = async () => {
-    if (!formData.vehicle || !formData.services_description) {
-      alert('Por favor, preencha pelo menos o Veículo e a Descrição dos Serviços');
+    if ((!formData.vehicle && !formData.equipment) || !formData.services_description) {
+      alert('Por favor, preencha pelo menos Veículo ou Equipamento e a Descrição dos Serviços');
       return;
     }
 
@@ -135,8 +135,8 @@ export const OSI: React.FC<OSIProps> = ({ user, onBack }) => {
   };
 
   const handleSaveAndGeneratePDF = async () => {
-    if (!formData.vehicle || !formData.services_description) {
-      alert('Por favor, preencha pelo menos o Veículo e a Descrição dos Serviços');
+    if ((!formData.vehicle && !formData.equipment) || !formData.services_description) {
+      alert('Por favor, preencha pelo menos Veículo ou Equipamento e a Descrição dos Serviços');
       return;
     }
 
@@ -167,8 +167,8 @@ export const OSI: React.FC<OSIProps> = ({ user, onBack }) => {
   };
 
   const handleSaveAndGenerateExcel = async () => {
-    if (!formData.vehicle || !formData.services_description) {
-      alert('Por favor, preencha pelo menos o Veículo e a Descrição dos Serviços');
+    if ((!formData.vehicle && !formData.equipment) || !formData.services_description) {
+      alert('Por favor, preencha pelo menos Veículo ou Equipamento e a Descrição dos Serviços');
       return;
     }
 
@@ -280,16 +280,18 @@ export const OSI: React.FC<OSIProps> = ({ user, onBack }) => {
           </div>
 
           <div className="section-title">Dados do Veículo</div>
+          <p style={{ fontSize: '0.85em', color: '#666', marginTop: '-5px', marginBottom: '10px' }}>
+            * Preencha pelo menos Veículo ou Equipamento
+          </p>
 
           <div className="form-row">
             <div className="form-group">
-              <label>Veículo *</label>
+              <label>Veículo</label>
               <input
                 type="text"
                 value={formData.vehicle}
                 onChange={(e) => handleInputChange('vehicle', e.target.value)}
                 placeholder="Ex: Caminhão Mercedes"
-                required
               />
             </div>
           </div>
