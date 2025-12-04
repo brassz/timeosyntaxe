@@ -56,6 +56,7 @@ CREATE TABLE osi_orders (
   observations TEXT,
   mechanic VARCHAR(100),
   responsible VARCHAR(100),
+  photos JSONB,
   created_by VARCHAR(50) NOT NULL,
   created_at TIMESTAMP DEFAULT NOW()
 );

@@ -57,6 +57,7 @@ export interface OSIData {
   observations: string;
   mechanic: string;
   responsible: string;
+  photos?: string[]; // Array de fotos em base64
   created_at?: string;
   created_by: string;
 }

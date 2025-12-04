@@ -1,5 +1,38 @@
 # Mudanças Implementadas no Sistema
 
+## 🆕 Última Atualização - Dezembro 2024
+
+### 📷 Adicionado: Upload de Fotos no Painel OSI
+
+#### Funcionalidades Implementadas
+- ✅ **Upload de múltiplas fotos** por ordem de serviço
+- ✅ **Limite de 5MB** por foto com validação
+- ✅ **Pré-visualização** em grade após upload
+- ✅ **Remoção individual** de fotos
+- ✅ **Armazenamento em base64** no banco de dados (campo JSONB)
+- ✅ **Visualização no histórico** com opção de ampliar
+- ✅ **Design responsivo** para mobile e desktop
+- ✅ **Integração completa** com modo online/offline
+
+#### Arquivos Modificados
+- `src/types/index.ts` - Adicionado campo `photos` ao tipo OSIData
+- `src/components/OSI.tsx` - Adicionados handlers e UI para upload de fotos
+- `src/components/OSI.css` - Estilos para galeria de fotos
+- `src/services/supabase.ts` - Interface DBOSI atualizada
+- `CRIAR_TABELAS.sql` - Adicionado campo `photos JSONB`
+- `ADICIONAR_FOTOS_OSI.sql` - Script de migração para bancos existentes
+- `FOTOS_OSI.md` - Documentação completa da funcionalidade
+
+#### Como Usar
+1. Acesse a aba "Nova Ordem" no painel OSI
+2. Role até a seção "📷 Fotos"
+3. Clique em "📸 Adicionar Fotos"
+4. Selecione uma ou mais imagens
+5. As fotos aparecerão em grade
+6. Para remover, clique no "✕" na foto
+
+---
+
 ## 📋 Resumo
 
 Foi implementado um sistema completo de banco de dados com Supabase, login de usuários e painel OSI (Ordem de Serviço Interna) com geração de PDF e Excel.

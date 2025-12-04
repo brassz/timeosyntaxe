@@ -75,6 +75,22 @@
 - Excluir checklists antigos
 - Busca visual por data e máquina
 
+### 📋 OSI - Ordem de Serviço Interna
+- Formulário completo para ordens de serviço
+- Numeração automática sequencial
+- Dados de veículo (KM inicial/final)
+- Dados de equipamento (TAG, horímetro)
+- 6 tipos de manutenção (preditiva, preventiva, corretiva, avaria, oportunidade, outros)
+- Descrição detalhada dos serviços
+- Registro de peças aplicadas
+- Campo de observações
+- Identificação de mecânico e responsável
+- **📷 Upload de múltiplas fotos**
+- Histórico de OSIs com busca
+- Geração de PDF profissional
+- Exportação para Excel
+- Integração com Supabase (online/offline)
+
 ---
 
 ## 🎁 Funcionalidades Extras

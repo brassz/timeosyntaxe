@@ -54,6 +54,7 @@ Com banco configurado você tem:
 - ✅ Login de usuários
 - ✅ Criar novas ordens
 - ✅ Tipos de manutenção (Preditiva, Preventiva, etc.)
+- ✅ **📷 Adicionar múltiplas fotos** (novo!)
 - ✅ Gerar PDF (layout profissional)
 - ✅ Gerar Excel
 - ✅ Histórico completo
@@ -72,6 +73,7 @@ Com banco configurado você tem:
 - **`CONFIGURACAO_RAPIDA.md`** - Configurar banco de dados (5 min)
 - **`INSTALACAO.md`** - Guia completo de instalação
 - **`SUPABASE_SETUP.md`** - Detalhes do banco de dados
+- **`FOTOS_OSI.md`** - Como usar fotos no painel OSI (novo!)
 - **`MUDANCAS_IMPLEMENTADAS.md`** - Changelog detalhado
 
 ## 🛠️ Comandos
