@@ -40,7 +40,8 @@ export const OSI: React.FC<OSIProps> = ({ user, onBack }) => {
     parts_applied: '',
     observations: '',
     mechanic: '',
-    responsible: ''
+    responsible: '',
+    photos: []
   });
 
   useEffect(() => {
@@ -72,6 +73,37 @@ export const OSI: React.FC<OSIProps> = ({ user, onBack }) => {
         ...prev.maintenance_type,
         [type]: !prev.maintenance_type[type]
       }
+    }));
+  };
+
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    Array.from(files).forEach(file => {
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Arquivo muito grande! Tamanho máximo: 5MB');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64 = reader.result as string;
+        setFormData(prev => ({
+          ...prev,
+          photos: [...(prev.photos || []), base64]
+        }));
+      };
+      reader.readAsDataURL(file);
+    });
+
+    e.target.value = '';
+  };
+
+  const handleRemovePhoto = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      photos: prev.photos?.filter((_, i) => i !== index) || []
     }));
   };
 
@@ -220,7 +252,8 @@ export const OSI: React.FC<OSIProps> = ({ user, onBack }) => {
       parts_applied: '',
       observations: '',
       mechanic: '',
-      responsible: ''
+      responsible: '',
+      photos: []
     });
   };
 
@@ -436,6 +469,44 @@ export const OSI: React.FC<OSIProps> = ({ user, onBack }) => {
             />
           </div>
 
+          <div className="section-title">📷 Fotos</div>
+          <div className="photo-upload-section">
+            <label className="photo-upload-button">
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handlePhotoUpload}
+                style={{ display: 'none' }}
+              />
+              <span>📸 Adicionar Fotos</span>
+            </label>
+            
+            {formData.photos && formData.photos.length > 0 && (
+              <div className="photos-grid">
+                {formData.photos.map((photo, index) => (
+                  <div key={index} className="photo-item">
+                    <img src={photo} alt={`Foto ${index + 1}`} />
+                    <button
+                      type="button"
+                      className="remove-photo-btn"
+                      onClick={() => handleRemovePhoto(index)}
+                      title="Remover foto"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            {(!formData.photos || formData.photos.length === 0) && (
+              <div className="no-photos">
+                <p>Nenhuma foto adicionada</p>
+              </div>
+            )}
+          </div>
+
           <div className="form-row">
             <div className="form-group">
               <label>Mecânico</label>
@@ -564,6 +635,24 @@ export const OSI: React.FC<OSIProps> = ({ user, onBack }) => {
                         <strong>Responsável:</strong>
                         <span>{item.responsible || 'N/A'}</span>
                       </div>
+                      
+                      {item.photos && item.photos.length > 0 && (
+                        <div className="detail-row detail-photos">
+                          <strong>Fotos:</strong>
+                          <div className="history-photos-grid">
+                            {item.photos.map((photo, idx) => (
+                              <div key={idx} className="history-photo-item">
+                                <img 
+                                  src={photo} 
+                                  alt={`Foto ${idx + 1}`}
+                                  onClick={() => window.open(photo, '_blank')}
+                                  title="Clique para ampliar"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                       
                       <div className="history-actions">
                         <button
