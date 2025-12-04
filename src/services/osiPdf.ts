@@ -72,7 +72,7 @@ export const generateOSIPDF = async (osi: OSIData): Promise<void> => {
   doc.text(`HORA:`, pageWidth - 60, yPos);
   doc.text(osi.time, pageWidth - 30, yPos);
 
-  // Dados do Equipamento
+  // Dados do Veículo
   yPos += 10;
   doc.setFillColor(240, 240, 240);
   doc.rect(margin, yPos - 5, contentWidth, 8, 'F');
@@ -80,39 +80,51 @@ export const generateOSIPDF = async (osi: OSIData): Promise<void> => {
   doc.rect(margin, yPos - 5, contentWidth, 8, 'S');
   doc.setFontSize(9);
   doc.setFont('helvetica', 'bold');
-  doc.text('DADOS DO EQUIPAMENTO', pageWidth / 2, yPos, { align: 'center' });
+  doc.text('DADOS DO VEÍCULO', pageWidth / 2, yPos, { align: 'center' });
 
   yPos += 8;
   doc.setFontSize(9);
   doc.setFont('helvetica', 'normal');
   
-  // Linha 1: Veículo e Equipamento
+  // Linha 1: Veículo
+  doc.rect(margin, yPos, contentWidth, 8, 'S');
+  doc.text('VEÍCULO:', margin + 2, yPos + 5);
+  doc.text(osi.vehicle || '', margin + 25, yPos + 5);
+
+  // Linha 2: KM Inicial e KM Final
+  yPos += 8;
   const col1Width = contentWidth * 0.5;
   const col2Width = contentWidth * 0.5;
   
-  doc.rect(margin, yPos, col1Width, 8, 'S');
-  doc.text('VEÍCULO:', margin + 2, yPos + 5);
-  doc.text(osi.vehicle || '', margin + 25, yPos + 5);
-  
-  doc.rect(margin + col1Width, yPos, col2Width, 8, 'S');
-  doc.text('EQUIPAMENTO:', margin + col1Width + 2, yPos + 5);
-  doc.text(osi.equipment || '', margin + col1Width + 35, yPos + 5);
-
-  // Linha 2: KM Inicial e TAG
-  yPos += 8;
   doc.rect(margin, yPos, col1Width, 8, 'S');
   doc.text('KM INICIAL:', margin + 2, yPos + 5);
   doc.text(osi.km_inicial || '', margin + 25, yPos + 5);
   
   doc.rect(margin + col1Width, yPos, col2Width, 8, 'S');
-  doc.text('TAG:', margin + col1Width + 2, yPos + 5);
-  doc.text(osi.tag || '', margin + col1Width + 15, yPos + 5);
+  doc.text('KM FINAL:', margin + col1Width + 2, yPos + 5);
+  doc.text(osi.km_final || '', margin + col1Width + 25, yPos + 5);
 
-  // Linha 3: KM Final e Horímetro
+  // Dados do Equipamento
+  yPos += 12;
+  doc.setFillColor(240, 240, 240);
+  doc.rect(margin, yPos - 5, contentWidth, 8, 'F');
+  doc.rect(margin, yPos - 5, contentWidth, 8, 'S');
+  doc.setFont('helvetica', 'bold');
+  doc.text('DADOS DO EQUIPAMENTO', pageWidth / 2, yPos, { align: 'center' });
+
+  yPos += 8;
+  doc.setFont('helvetica', 'normal');
+  
+  // Linha 1: Equipamento
+  doc.rect(margin, yPos, contentWidth, 8, 'S');
+  doc.text('EQUIPAMENTO:', margin + 2, yPos + 5);
+  doc.text(osi.equipment || '', margin + 35, yPos + 5);
+
+  // Linha 2: TAG e Horímetro
   yPos += 8;
   doc.rect(margin, yPos, col1Width, 8, 'S');
-  doc.text('KM FINAL:', margin + 2, yPos + 5);
-  doc.text(osi.km_final || '', margin + 25, yPos + 5);
+  doc.text('TAG:', margin + 2, yPos + 5);
+  doc.text(osi.tag || '', margin + 15, yPos + 5);
   
   doc.rect(margin + col1Width, yPos, col2Width, 8, 'S');
   doc.text('HORÍMETRO:', margin + col1Width + 2, yPos + 5);

@@ -13,10 +13,13 @@ export const generateOSIExcel = async (osi: OSIData): Promise<void> => {
     [],
     ['DATA:', osi.date, '', 'HORA:', osi.time],
     [],
+    ['DADOS DO VEÍCULO'],
+    ['VEÍCULO:', osi.vehicle || ''],
+    ['KM INICIAL:', osi.km_inicial || '', 'KM FINAL:', osi.km_final || ''],
+    [],
     ['DADOS DO EQUIPAMENTO'],
-    ['VEÍCULO:', osi.vehicle || '', 'EQUIPAMENTO:', osi.equipment || ''],
-    ['KM INICIAL:', osi.km_inicial || '', 'TAG:', osi.tag || ''],
-    ['KM FINAL:', osi.km_final || '', 'HORÍMETRO:', osi.horimeter || ''],
+    ['EQUIPAMENTO:', osi.equipment || ''],
+    ['TAG:', osi.tag || '', 'HORÍMETRO:', osi.horimeter || ''],
     [],
     ['TIPO DE MANUTENÇÃO'],
     [
@@ -70,14 +73,17 @@ export const generateOSIExcel = async (osi: OSIData): Promise<void> => {
     { s: { r: 1, c: 0 }, e: { r: 1, c: 4 } }, // Endereço
     { s: { r: 2, c: 0 }, e: { r: 2, c: 4 } }, // Cidade
     { s: { r: 3, c: 0 }, e: { r: 3, c: 4 } }, // CNPJ
-    { s: { r: 9, c: 0 }, e: { r: 9, c: 4 } }, // DADOS DO EQUIPAMENTO
-    { s: { r: 14, c: 0 }, e: { r: 14, c: 4 } }, // TIPO DE MANUTENÇÃO
-    { s: { r: 18, c: 0 }, e: { r: 18, c: 4 } }, // DESCRIÇÃO DOS SERVIÇOS
-    { s: { r: 19, c: 0 }, e: { r: 23, c: 4 } }, // Área de descrição
-    { s: { r: 24, c: 0 }, e: { r: 24, c: 4 } }, // PEÇAS APLICADAS
-    { s: { r: 25, c: 0 }, e: { r: 27, c: 4 } }, // Área de peças
-    { s: { r: 28, c: 0 }, e: { r: 28, c: 4 } }, // OBSERVAÇÕES
-    { s: { r: 29, c: 0 }, e: { r: 32, c: 4 } }  // Área de observações
+    { s: { r: 9, c: 0 }, e: { r: 9, c: 4 } }, // DADOS DO VEÍCULO
+    { s: { r: 10, c: 0 }, e: { r: 10, c: 4 } }, // Veículo
+    { s: { r: 13, c: 0 }, e: { r: 13, c: 4 } }, // DADOS DO EQUIPAMENTO
+    { s: { r: 14, c: 0 }, e: { r: 14, c: 4 } }, // Equipamento
+    { s: { r: 17, c: 0 }, e: { r: 17, c: 4 } }, // TIPO DE MANUTENÇÃO
+    { s: { r: 21, c: 0 }, e: { r: 21, c: 4 } }, // DESCRIÇÃO DOS SERVIÇOS
+    { s: { r: 22, c: 0 }, e: { r: 26, c: 4 } }, // Área de descrição
+    { s: { r: 27, c: 0 }, e: { r: 27, c: 4 } }, // PEÇAS APLICADAS
+    { s: { r: 28, c: 0 }, e: { r: 30, c: 4 } }, // Área de peças
+    { s: { r: 31, c: 0 }, e: { r: 31, c: 4 } }, // OBSERVAÇÕES
+    { s: { r: 32, c: 0 }, e: { r: 35, c: 4 } }  // Área de observações
   );
 
   // Criar workbook

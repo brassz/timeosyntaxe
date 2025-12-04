@@ -76,8 +76,8 @@ export const OSI: React.FC<OSIProps> = ({ user, onBack }) => {
   };
 
   const handleSaveOSI = async () => {
-    if (!formData.vehicle || !formData.services_description) {
-      alert('Por favor, preencha pelo menos o Veículo e a Descrição dos Serviços');
+    if ((!formData.vehicle && !formData.equipment) || !formData.services_description) {
+      alert('Por favor, preencha pelo menos Veículo ou Equipamento e a Descrição dos Serviços');
       return;
     }
 
@@ -135,8 +135,8 @@ export const OSI: React.FC<OSIProps> = ({ user, onBack }) => {
   };
 
   const handleSaveAndGeneratePDF = async () => {
-    if (!formData.vehicle || !formData.services_description) {
-      alert('Por favor, preencha pelo menos o Veículo e a Descrição dos Serviços');
+    if ((!formData.vehicle && !formData.equipment) || !formData.services_description) {
+      alert('Por favor, preencha pelo menos Veículo ou Equipamento e a Descrição dos Serviços');
       return;
     }
 
@@ -167,8 +167,8 @@ export const OSI: React.FC<OSIProps> = ({ user, onBack }) => {
   };
 
   const handleSaveAndGenerateExcel = async () => {
-    if (!formData.vehicle || !formData.services_description) {
-      alert('Por favor, preencha pelo menos o Veículo e a Descrição dos Serviços');
+    if ((!formData.vehicle && !formData.equipment) || !formData.services_description) {
+      alert('Por favor, preencha pelo menos Veículo ou Equipamento e a Descrição dos Serviços');
       return;
     }
 
@@ -279,26 +279,19 @@ export const OSI: React.FC<OSIProps> = ({ user, onBack }) => {
             </div>
           </div>
 
-          <div className="section-title">Dados do Equipamento</div>
+          <div className="section-title">Dados do Veículo</div>
+          <p style={{ fontSize: '0.85em', color: '#666', marginTop: '-5px', marginBottom: '10px' }}>
+            * Preencha pelo menos Veículo ou Equipamento
+          </p>
 
           <div className="form-row">
             <div className="form-group">
-              <label>Veículo *</label>
+              <label>Veículo</label>
               <input
                 type="text"
                 value={formData.vehicle}
                 onChange={(e) => handleInputChange('vehicle', e.target.value)}
                 placeholder="Ex: Caminhão Mercedes"
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Equipamento</label>
-              <input
-                type="text"
-                value={formData.equipment}
-                onChange={(e) => handleInputChange('equipment', e.target.value)}
-                placeholder="Ex: Caçamba"
               />
             </div>
           </div>
@@ -314,24 +307,38 @@ export const OSI: React.FC<OSIProps> = ({ user, onBack }) => {
               />
             </div>
             <div className="form-group">
-              <label>TAG</label>
-              <input
-                type="text"
-                value={formData.tag}
-                onChange={(e) => handleInputChange('tag', e.target.value)}
-                placeholder="Ex: TG-001"
-              />
-            </div>
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
               <label>KM Final</label>
               <input
                 type="text"
                 value={formData.km_final}
                 onChange={(e) => handleInputChange('km_final', e.target.value)}
                 placeholder="Ex: 12450"
+              />
+            </div>
+          </div>
+
+          <div className="section-title">Dados do Equipamento</div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label>Equipamento</label>
+              <input
+                type="text"
+                value={formData.equipment}
+                onChange={(e) => handleInputChange('equipment', e.target.value)}
+                placeholder="Ex: Caçamba"
+              />
+            </div>
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label>TAG</label>
+              <input
+                type="text"
+                value={formData.tag}
+                onChange={(e) => handleInputChange('tag', e.target.value)}
+                placeholder="Ex: TG-001"
               />
             </div>
             <div className="form-group">
