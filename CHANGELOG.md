@@ -2,6 +2,22 @@
 
 Todas as mudanças notáveis neste projeto serão documentadas aqui.
 
+## [1.0.2] - 2025-12-18
+
+### 🔧 Alterado
+- **Limite de fotos no painel OSI aumentado de 4 para 10**
+  - Usuários agora podem adicionar até 10 fotos por ordem de serviço
+  - Contador visual mostra fotos adicionadas (ex: 3/10)
+  - Botão de upload desabilitado automaticamente ao atingir o limite
+  - Mensagens informativas quando o limite é atingido
+
+### 🎨 Melhorado
+- Interface do upload de fotos com feedback visual claro
+- Estilos para botão desabilitado quando limite é atingido
+- Documentação atualizada com novo limite
+
+---
+
 ## [1.0.1] - 2025-11-27
 
 ### ✨ Adicionado
