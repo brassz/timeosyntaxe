@@ -321,6 +321,17 @@
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
+.photo-upload-button.disabled {
+  background: linear-gradient(135deg, #999 0%, #666 100%);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.photo-upload-button.disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
 .photo-upload-button span {
   display: flex;
   align-items: center;

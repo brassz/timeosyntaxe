@@ -7,11 +7,13 @@ A funcionalidade de fotos foi adicionada ao painel OSI (Ordem de Serviço Intern
 ## Funcionalidades Implementadas
 
 ### 1. Upload de Fotos
-- **Múltiplas Fotos**: Permite adicionar várias fotos por ordem de serviço
+- **Múltiplas Fotos**: Permite adicionar até 10 fotos por ordem de serviço
+- **Limite de Quantidade**: Máximo de 10 fotos por OSI
 - **Limite de Tamanho**: Máximo de 5MB por foto
 - **Formatos Aceitos**: Todos os formatos de imagem (JPG, PNG, GIF, etc.)
 - **Pré-visualização**: As fotos aparecem em grade após o upload
 - **Remoção**: Botão de remoção individual para cada foto
+- **Contador Visual**: Mostra quantas fotos foram adicionadas (ex: 3/10)
 
 ### 2. Armazenamento
 - As fotos são armazenadas em formato **base64** no banco de dados
@@ -78,9 +80,10 @@ interface OSIData {
 
 ## Limitações
 
-1. **Tamanho**: Fotos maiores que 5MB serão rejeitadas
-2. **Armazenamento**: Como usa base64, o tamanho do banco pode crescer rapidamente
-3. **Performance**: Muitas fotos podem aumentar o tempo de carregamento
+1. **Quantidade**: Máximo de 10 fotos por OSI
+2. **Tamanho**: Fotos maiores que 5MB serão rejeitadas
+3. **Armazenamento**: Como usa base64, o tamanho do banco pode crescer rapidamente
+4. **Performance**: Muitas fotos podem aumentar o tempo de carregamento
 
 ## Melhorias Futuras Possíveis
 

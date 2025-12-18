@@ -80,7 +80,23 @@ export const OSI: React.FC<OSIProps> = ({ user, onBack }) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    Array.from(files).forEach(file => {
+    const currentPhotosCount = formData.photos?.length || 0;
+    const MAX_PHOTOS = 10;
+
+    if (currentPhotosCount >= MAX_PHOTOS) {
+      alert(`Limite de ${MAX_PHOTOS} fotos atingido!`);
+      e.target.value = '';
+      return;
+    }
+
+    const remainingSlots = MAX_PHOTOS - currentPhotosCount;
+    const filesToProcess = Array.from(files).slice(0, remainingSlots);
+
+    if (files.length > remainingSlots) {
+      alert(`Você pode adicionar apenas mais ${remainingSlots} foto(s). Limite: ${MAX_PHOTOS} fotos.`);
+    }
+
+    filesToProcess.forEach(file => {
       if (file.size > 5 * 1024 * 1024) {
         alert('Arquivo muito grande! Tamanho máximo: 5MB');
         return;
@@ -89,10 +105,16 @@ export const OSI: React.FC<OSIProps> = ({ user, onBack }) => {
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64 = reader.result as string;
-        setFormData(prev => ({
-          ...prev,
-          photos: [...(prev.photos || []), base64]
-        }));
+        setFormData(prev => {
+          const currentCount = prev.photos?.length || 0;
+          if (currentCount >= MAX_PHOTOS) {
+            return prev;
+          }
+          return {
+            ...prev,
+            photos: [...(prev.photos || []), base64]
+          };
+        });
       };
       reader.readAsDataURL(file);
     });
@@ -469,17 +491,18 @@ export const OSI: React.FC<OSIProps> = ({ user, onBack }) => {
             />
           </div>
 
-          <div className="section-title">📷 Fotos</div>
+          <div className="section-title">📷 Fotos ({formData.photos?.length || 0}/10)</div>
           <div className="photo-upload-section">
-            <label className="photo-upload-button">
+            <label className={`photo-upload-button ${(formData.photos?.length || 0) >= 10 ? 'disabled' : ''}`}>
               <input
                 type="file"
                 accept="image/*"
                 multiple
                 onChange={handlePhotoUpload}
+                disabled={(formData.photos?.length || 0) >= 10}
                 style={{ display: 'none' }}
               />
-              <span>📸 Adicionar Fotos</span>
+              <span>📸 Adicionar Fotos {(formData.photos?.length || 0) >= 10 ? '(Limite Atingido)' : ''}</span>
             </label>
             
             {formData.photos && formData.photos.length > 0 && (
