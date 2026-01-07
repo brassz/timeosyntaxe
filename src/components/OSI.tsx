@@ -97,11 +97,6 @@ export const OSI: React.FC<OSIProps> = ({ user, onBack }) => {
     }
 
     filesToProcess.forEach(file => {
-      if (file.size > 5 * 1024 * 1024) {
-        alert('Arquivo muito grande! Tamanho máximo: 5MB');
-        return;
-      }
-
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64 = reader.result as string;
