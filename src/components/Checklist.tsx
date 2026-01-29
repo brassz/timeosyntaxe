@@ -242,8 +242,8 @@ export const Checklist: React.FC<ChecklistProps> = ({ initialData, onBack }) => 
       machine: initialData.machine || '',
       location: initialData.location || '',
       date: new Date().toISOString(),
-      horimeter: '',
-      mileage: '',
+      horimeter: initialData.horimeter || '',
+      mileage: initialData.mileage || '',
       tag: initialData.tag || '',
       items: selectedChecklist.map((item, index) => ({
         id: `item-${index}`,

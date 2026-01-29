@@ -28,6 +28,8 @@ export const Home: React.FC<HomeProps> = ({ onStartChecklist, onViewHistory }) =
   const [machine, setMachine] = useState('');
   const [location, setLocation] = useState('');
   const [tag, setTag] = useState('');
+  const [horimeter, setHorimeter] = useState('');
+  const [mileage, setMileage] = useState('');
   const [hasDraft, setHasDraft] = useState(false);
 
   useEffect(() => {
@@ -38,8 +40,8 @@ export const Home: React.FC<HomeProps> = ({ onStartChecklist, onViewHistory }) =
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!operator.trim() || !machine.trim() || !location.trim() || !tag.trim()) {
-      alert('Por favor, preencha todos os campos.');
+    if (!operator.trim() || !machine.trim() || !location.trim() || !tag.trim() || !horimeter.trim()) {
+      alert('Por favor, preencha todos os campos obrigatórios.');
       return;
     }
 
@@ -48,6 +50,8 @@ export const Home: React.FC<HomeProps> = ({ onStartChecklist, onViewHistory }) =
       machine: machine.trim(),
       location: location.trim(),
       tag: tag.trim(),
+      horimeter: horimeter.trim(),
+      mileage: mileage.trim(),
     });
   };
 
@@ -120,6 +124,29 @@ export const Home: React.FC<HomeProps> = ({ onStartChecklist, onViewHistory }) =
               onChange={(e) => setLocation(e.target.value)}
               placeholder="Ex: Obra Centro, Canteiro A, etc."
               required
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="horimeter">Horímetro Atual *</label>
+            <input
+              id="horimeter"
+              type="text"
+              value={horimeter}
+              onChange={(e) => setHorimeter(e.target.value)}
+              placeholder="Ex: 1234.5"
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="mileage">Quilometragem (se aplicável)</label>
+            <input
+              id="mileage"
+              type="text"
+              value={mileage}
+              onChange={(e) => setMileage(e.target.value)}
+              placeholder="Ex: 45678"
             />
           </div>
 
