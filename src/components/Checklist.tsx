@@ -443,31 +443,29 @@ export const Checklist: React.FC<ChecklistProps> = ({ initialData, onBack }) => 
                 <span className="info-value">{checklist.location}</span>
               </div>
               <div className="info-row">
+                <span className="info-label">Horímetro atual:</span>
+                <input
+                  type="text"
+                  value={checklist.horimeter}
+                  onChange={(e) => setChecklist({ ...checklist, horimeter: e.target.value })}
+                  placeholder="Ex: 1234.5"
+                  className="info-input"
+                />
+              </div>
+              <div className="info-row">
+                <span className="info-label">Quilometragem (se aplicável):</span>
+                <input
+                  type="text"
+                  value={checklist.mileage}
+                  onChange={(e) => setChecklist({ ...checklist, mileage: e.target.value })}
+                  placeholder="Ex: 45678"
+                  className="info-input"
+                />
+              </div>
+              <div className="info-row">
                 <span className="info-label">Data/Hora:</span>
                 <span className="info-value">{new Date(checklist.date).toLocaleString('pt-BR')}</span>
               </div>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="horimeter">Horímetro *</label>
-              <input
-                id="horimeter"
-                type="text"
-                value={checklist.horimeter}
-                onChange={(e) => setChecklist({ ...checklist, horimeter: e.target.value })}
-                placeholder="Ex: 1234.5"
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="mileage">Quilometragem (se aplicável)</label>
-              <input
-                id="mileage"
-                type="text"
-                value={checklist.mileage}
-                onChange={(e) => setChecklist({ ...checklist, mileage: e.target.value })}
-                placeholder="Ex: 45678"
-              />
             </div>
           </div>
         )}
