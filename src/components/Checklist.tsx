@@ -261,7 +261,7 @@ export const Checklist: React.FC<ChecklistProps> = ({ initialData, onBack }) => 
   const [photoPreview, setPhotoPreview] = useState<{ [key: string]: string[] }>({});
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [showAllItems, setShowAllItems] = useState(false);
-  const [headerCollapsed, setHeaderCollapsed] = useState(false);
+  const [headerCollapsed, setHeaderCollapsed] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -421,7 +421,7 @@ export const Checklist: React.FC<ChecklistProps> = ({ initialData, onBack }) => 
               onClick={() => setHeaderCollapsed(!headerCollapsed)}
               aria-label="Toggle detalhes"
             >
-              {headerCollapsed ? '▼' : '▲'}
+              {headerCollapsed ? '▼ Mostrar mais' : '▲ Ocultar'}
             </button>
           </div>
           
