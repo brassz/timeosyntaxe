@@ -261,10 +261,16 @@ export const saveOSI = async (osi: Omit<DBOSI, 'id' | 'created_at'>) => {
       return null;
     }
 
+    if (!data || data.length === 0) {
+      console.error('❌ Nenhum dado retornado do Supabase');
+      return null;
+    }
+
     console.log('✅ OSI salva com sucesso:', data[0]);
-    return data[0];
+    return data[0] as DBOSI;
   } catch (error) {
     console.error('❌ Exception saving OSI:', error);
+    console.error('Stack:', (error as Error).stack);
     return null;
   }
 };

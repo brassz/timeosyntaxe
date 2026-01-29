@@ -318,5 +318,24 @@ export const generateOSIPDF = async (osi: OSIData): Promise<void> => {
   doc.text(osi.responsible || '', margin + signatureWidth + 10 + signatureWidth / 2, yPos, { align: 'center' });
 
   // Salvar PDF
-  doc.save(`OSI_${osi.order_number}_${new Date().toISOString().split('T')[0]}.pdf`);
+  try {
+    doc.save(`OSI_${osi.order_number}_${new Date().toISOString().split('T')[0]}.pdf`);
+  } catch (error) {
+    console.error('Erro ao salvar PDF:', error);
+    // Tentar método alternativo para mobile
+    try {
+      const pdfBlob = doc.output('blob');
+      const url = URL.createObjectURL(pdfBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `OSI_${osi.order_number}_${new Date().toISOString().split('T')[0]}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (fallbackError) {
+      console.error('Erro no método alternativo de download:', fallbackError);
+      throw new Error('Não foi possível gerar o PDF. Tente novamente.');
+    }
+  }
 };

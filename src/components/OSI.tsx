@@ -197,19 +197,58 @@ export const OSI: React.FC<OSIProps> = ({ user, onBack }) => {
         created_by: user.username
       };
 
+      console.log('📝 Salvando OSI antes de gerar PDF...');
       const saved = await saveOSI(osiData);
-      if (saved) {
-        await generateOSIPDF(saved);
-        alert('✅ Ordem de Serviço salva e PDF gerado com sucesso!');
-        resetForm();
-        loadNextOrderNumber();
-        loadHistory();
-      } else {
-        alert('❌ Erro ao salvar Ordem de Serviço');
+      
+      if (!saved) {
+        console.error('❌ saveOSI retornou null ou undefined');
+        alert('❌ Erro ao salvar Ordem de Serviço. Verifique o console para detalhes.');
+        setLoading(false);
+        return;
       }
+
+      console.log('✅ OSI salva:', saved);
+
+      // Converter DBOSI para OSIData (garantir compatibilidade)
+      const osiForPDF: OSIData = {
+        id: saved.id,
+        order_number: saved.order_number,
+        date: saved.date || osiData.date,
+        time: saved.time || osiData.time,
+        vehicle: saved.vehicle || osiData.vehicle,
+        equipment: saved.equipment || osiData.equipment,
+        km_inicial: saved.km_inicial || osiData.km_inicial,
+        km_final: saved.km_final || osiData.km_final,
+        tag: saved.tag || osiData.tag,
+        horimeter: saved.horimeter || osiData.horimeter,
+        maintenance_type: saved.maintenance_type || osiData.maintenance_type,
+        services_description: saved.services_description || osiData.services_description,
+        parts_applied: saved.parts_applied || osiData.parts_applied,
+        observations: saved.observations || osiData.observations,
+        mechanic: saved.mechanic || osiData.mechanic,
+        responsible: saved.responsible || osiData.responsible,
+        photos: saved.photos || osiData.photos || [],
+        created_by: saved.created_by || osiData.created_by,
+        created_at: saved.created_at
+      };
+
+      console.log('📄 Gerando PDF com dados:', osiForPDF);
+      try {
+        await generateOSIPDF(osiForPDF);
+        console.log('✅ PDF gerado com sucesso');
+        alert('✅ Ordem de Serviço salva e PDF gerado com sucesso!');
+      } catch (pdfError) {
+        console.error('❌ Erro ao gerar PDF:', pdfError);
+        console.error('Stack:', (pdfError as Error).stack);
+        alert('⚠️ OSI salva com sucesso, mas houve erro ao gerar PDF. Tente gerar o PDF novamente pelo histórico.');
+      }
+      
+      resetForm();
+      await loadNextOrderNumber();
+      await loadHistory();
     } catch (error) {
-      console.error('Error:', error);
-      alert('❌ Erro ao processar Ordem de Serviço');
+      console.error('❌ Erro ao processar Ordem de Serviço:', error);
+      alert('❌ Erro ao processar Ordem de Serviço. Verifique o console para detalhes.');
     } finally {
       setLoading(false);
     }
@@ -229,19 +268,58 @@ export const OSI: React.FC<OSIProps> = ({ user, onBack }) => {
         created_by: user.username
       };
 
+      console.log('📝 Salvando OSI antes de gerar Excel...');
       const saved = await saveOSI(osiData);
-      if (saved) {
-        await generateOSIExcel(saved);
-        alert('✅ Ordem de Serviço salva e Excel gerado com sucesso!');
-        resetForm();
-        loadNextOrderNumber();
-        loadHistory();
-      } else {
-        alert('❌ Erro ao salvar Ordem de Serviço');
+      
+      if (!saved) {
+        console.error('❌ saveOSI retornou null ou undefined');
+        alert('❌ Erro ao salvar Ordem de Serviço. Verifique o console para detalhes.');
+        setLoading(false);
+        return;
       }
+
+      console.log('✅ OSI salva:', saved);
+
+      // Converter DBOSI para OSIData (garantir compatibilidade)
+      const osiForExcel: OSIData = {
+        id: saved.id,
+        order_number: saved.order_number,
+        date: saved.date || osiData.date,
+        time: saved.time || osiData.time,
+        vehicle: saved.vehicle || osiData.vehicle,
+        equipment: saved.equipment || osiData.equipment,
+        km_inicial: saved.km_inicial || osiData.km_inicial,
+        km_final: saved.km_final || osiData.km_final,
+        tag: saved.tag || osiData.tag,
+        horimeter: saved.horimeter || osiData.horimeter,
+        maintenance_type: saved.maintenance_type || osiData.maintenance_type,
+        services_description: saved.services_description || osiData.services_description,
+        parts_applied: saved.parts_applied || osiData.parts_applied,
+        observations: saved.observations || osiData.observations,
+        mechanic: saved.mechanic || osiData.mechanic,
+        responsible: saved.responsible || osiData.responsible,
+        photos: saved.photos || osiData.photos || [],
+        created_by: saved.created_by || osiData.created_by,
+        created_at: saved.created_at
+      };
+
+      console.log('📊 Gerando Excel com dados:', osiForExcel);
+      try {
+        await generateOSIExcel(osiForExcel);
+        console.log('✅ Excel gerado com sucesso');
+        alert('✅ Ordem de Serviço salva e Excel gerado com sucesso!');
+      } catch (excelError) {
+        console.error('❌ Erro ao gerar Excel:', excelError);
+        console.error('Stack:', (excelError as Error).stack);
+        alert('⚠️ OSI salva com sucesso, mas houve erro ao gerar Excel. Tente gerar o Excel novamente pelo histórico.');
+      }
+      
+      resetForm();
+      await loadNextOrderNumber();
+      await loadHistory();
     } catch (error) {
-      console.error('Error:', error);
-      alert('❌ Erro ao processar Ordem de Serviço');
+      console.error('❌ Erro ao processar Ordem de Serviço:', error);
+      alert('❌ Erro ao processar Ordem de Serviço. Verifique o console para detalhes.');
     } finally {
       setLoading(false);
     }
