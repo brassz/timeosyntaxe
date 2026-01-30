@@ -224,56 +224,59 @@ export const generateOSIPDF = async (osi: OSIData): Promise<void> => {
 
   // Fotos (se existirem)
   if (osi.photos && osi.photos.length > 0) {
-    yPos += obsHeight + 10;
-    
-    // Verificar se precisa de uma nova página
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 20;
-    }
-    
-    doc.setFontSize(9);
-    doc.setFont('helvetica', 'bold');
-    doc.setFillColor(240, 240, 240);
-    doc.rect(margin, yPos - 5, contentWidth, 8, 'F');
-    doc.rect(margin, yPos - 5, contentWidth, 8, 'S');
-    doc.text('FOTOS', pageWidth / 2, yPos, { align: 'center' });
-    
-    yPos += 8;
-    
-    // Configuração das fotos: 2 por linha
-    const photosPerRow = 2;
+    // Configuração das fotos: 2 colunas, 3 linhas por página = 6 fotos por página
+    const photosPerPage = 6;
+    const photosPerRow = 2; // 2 colunas
+    const rowsPerPage = 3; // 3 linhas por página
     const photoMargin = 5;
+    const photoSpacing = 5;
     const photoWidth = (contentWidth - photoMargin) / photosPerRow;
-    const photoHeight = 60; // Altura fixa para as fotos
+    const photoHeight = 60;
+    const rowHeight = photoHeight + photoSpacing;
+    const pageHeight = doc.internal.pageSize.getHeight();
     
-    for (let i = 0; i < osi.photos.length; i++) {
-      const col = i % photosPerRow;
-      const row = Math.floor(i / photosPerRow);
-      
-      const xPos = margin + (col * (photoWidth + photoMargin));
-      const currentYPos = yPos + (row * (photoHeight + photoMargin + 5));
-      
-      // Verificar se precisa de uma nova página
-      if (currentYPos + photoHeight > doc.internal.pageSize.getHeight() - 20) {
-        doc.addPage();
-        yPos = 20;
+    // Processar fotos página por página
+    for (let pageIndex = 0; pageIndex < Math.ceil(osi.photos.length / photosPerPage); pageIndex++) {
+      // Criar nova página para fotos (exceto a primeira, se couber na página atual)
+      if (pageIndex === 0) {
+        yPos += obsHeight + 10;
         
-        // Recalcular posição
-        const newRow = Math.floor((i - (row * photosPerRow)) / photosPerRow);
-        const newYPos = yPos + (newRow * (photoHeight + photoMargin + 5));
-        
-        try {
-          doc.addImage(osi.photos[i], 'JPEG', xPos, newYPos, photoWidth, photoHeight);
-          
-          // Adicionar número da foto
-          doc.setFontSize(7);
-          doc.setFont('helvetica', 'normal');
-          doc.text(`Foto ${i + 1}`, xPos + photoWidth / 2, newYPos + photoHeight + 3, { align: 'center' });
-        } catch (error) {
-          console.error(`Erro ao adicionar foto ${i + 1}:`, error);
+        // Verificar se precisa de uma nova página
+        if (yPos + (rowsPerPage * rowHeight) + 20 > pageHeight - margin) {
+          doc.addPage();
+          yPos = margin;
         }
       } else {
+        doc.addPage();
+        yPos = margin;
+      }
+      
+      // Título da seção de fotos (apenas na primeira página de fotos)
+      if (pageIndex === 0) {
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'bold');
+        doc.setFillColor(240, 240, 240);
+        doc.rect(margin, yPos - 5, contentWidth, 8, 'F');
+        doc.rect(margin, yPos - 5, contentWidth, 8, 'S');
+        doc.text('FOTOS', pageWidth / 2, yPos, { align: 'center' });
+        yPos += 8;
+      }
+      
+      // Calcular quais fotos vão nesta página
+      const startIndex = pageIndex * photosPerPage;
+      const endIndex = Math.min(startIndex + photosPerPage, osi.photos.length);
+      const photosInThisPage = endIndex - startIndex;
+      const rowsInThisPage = Math.ceil(photosInThisPage / photosPerRow);
+      
+      // Adicionar fotos desta página
+      for (let i = startIndex; i < endIndex; i++) {
+        const photoIndex = i - startIndex; // Índice dentro da página (0-5)
+        const col = photoIndex % photosPerRow; // Coluna (0 ou 1)
+        const row = Math.floor(photoIndex / photosPerRow); // Linha (0, 1 ou 2)
+        
+        const xPos = margin + (col * (photoWidth + photoMargin));
+        const currentYPos = yPos + (row * rowHeight);
+        
         try {
           doc.addImage(osi.photos[i], 'JPEG', xPos, currentYPos, photoWidth, photoHeight);
           
@@ -285,11 +288,12 @@ export const generateOSIPDF = async (osi: OSIData): Promise<void> => {
           console.error(`Erro ao adicionar foto ${i + 1}:`, error);
         }
       }
+      
+      // Atualizar yPos para a próxima seção (apenas na última página de fotos)
+      if (pageIndex === Math.ceil(osi.photos.length / photosPerPage) - 1) {
+        yPos += rowsInThisPage * rowHeight + 5;
+      }
     }
-    
-    // Atualizar yPos para depois das fotos
-    const totalRows = Math.ceil(osi.photos.length / photosPerRow);
-    yPos += (totalRows * (photoHeight + photoMargin + 5)) + 5;
   }
 
   // Assinaturas
