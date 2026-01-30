@@ -49,6 +49,13 @@ export const OSI: React.FC<OSIProps> = ({ user, onBack }) => {
     loadHistory();
   }, []);
 
+  // Recarregar histórico quando a aba de histórico for aberta
+  useEffect(() => {
+    if (activeTab === 'history') {
+      loadHistory();
+    }
+  }, [activeTab]);
+
   const loadNextOrderNumber = async () => {
     const nextNumber = await getNextOrderNumber();
     setOrderNumber(nextNumber);
@@ -659,13 +666,27 @@ export const OSI: React.FC<OSIProps> = ({ user, onBack }) => {
 
       {activeTab === 'history' && (
         <div className="osi-history card">
-          <h3>Histórico de Ordens de Serviço</h3>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <h3>Histórico de Ordens de Serviço</h3>
+            <button
+              className="btn btn-secondary"
+              onClick={loadHistory}
+              disabled={loading}
+              style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }}
+            >
+              🔄 Atualizar
+            </button>
+          </div>
           
           {history.length === 0 ? (
             <div className="empty-state">
               <p>📭 Nenhuma ordem de serviço encontrada</p>
             </div>
           ) : (
+            <>
+              <div style={{ marginBottom: '1rem', fontSize: '0.9rem', color: '#666' }}>
+                Total: <strong>{history.length}</strong> ordem(ns) de serviço
+              </div>
             <div className="history-list">
               {history.map((item) => (
                 <div key={item.id} className="history-item">
@@ -769,6 +790,7 @@ export const OSI: React.FC<OSIProps> = ({ user, onBack }) => {
                 </div>
               ))}
             </div>
+            </>
           )}
         </div>
       )}

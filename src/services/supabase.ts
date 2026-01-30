@@ -344,10 +344,18 @@ export const getOSIHistory = async () => {
   console.log(`📦 ${localOrders.length} OSI encontradas no localStorage`);
 
   if (!isSupabaseConfigured) {
-    return localOrders.length > 0 ? localOrders : mockOSIOrders;
+    const allOrders = localOrders.length > 0 ? localOrders : mockOSIOrders;
+    // Ordenar por data (mais recente primeiro)
+    allOrders.sort((a: any, b: any) => {
+      const dateA = new Date(a.created_at || a.date).getTime();
+      const dateB = new Date(b.created_at || b.date).getTime();
+      return dateB - dateA;
+    });
+    return allOrders;
   }
 
   // Tentar buscar do Supabase com timeout
+  let supabaseOrders: any[] = [];
   try {
     const timeout = isMobileDevice() ? 10000 : 5000;
     const fetchPromise = supabase
@@ -364,39 +372,41 @@ export const getOSIHistory = async () => {
     if (error) {
       console.error('Error fetching OSI history:', error);
       console.warn('⚠️ Usando dados do localStorage');
-      return localOrders;
-    }
-
-    if (data && data.length > 0) {
+    } else if (data && data.length > 0) {
       console.log(`✅ ${data.length} OSI encontradas no Supabase`);
-      
-      // Mesclar com dados locais (priorizar Supabase)
-      const localMap = new Map(localOrders.map((o: any) => [o.order_number, o]));
-      const merged = [...data];
-      
-      // Adicionar OSI locais que não estão no Supabase
-      localOrders.forEach((localOSI: any) => {
-        if (!merged.find((o: any) => o.order_number === localOSI.order_number)) {
-          merged.push(localOSI);
-        }
-      });
-      
-      // Ordenar por data
-      merged.sort((a: any, b: any) => {
-        const dateA = new Date(a.created_at || a.date).getTime();
-        const dateB = new Date(b.created_at || b.date).getTime();
-        return dateB - dateA;
-      });
-      
-      return merged;
+      supabaseOrders = data;
     }
-
-    return localOrders;
   } catch (error) {
     console.error('Exception fetching OSI history:', error);
     console.warn('⚠️ Usando dados do localStorage devido ao erro');
-    return localOrders;
   }
+
+  // Mesclar todas as OSI (Supabase + localStorage)
+  const mergedMap = new Map<number, any>();
+  
+  // Primeiro adicionar todas do Supabase (prioridade)
+  supabaseOrders.forEach((osi: any) => {
+    mergedMap.set(osi.order_number, osi);
+  });
+  
+  // Depois adicionar as locais que não estão no Supabase
+  localOrders.forEach((localOSI: any) => {
+    if (!mergedMap.has(localOSI.order_number)) {
+      mergedMap.set(localOSI.order_number, localOSI);
+    }
+  });
+  
+  // Converter map para array e ordenar por data (mais recente primeiro)
+  const allOrders = Array.from(mergedMap.values());
+  allOrders.sort((a: any, b: any) => {
+    const dateA = new Date(a.created_at || a.date).getTime();
+    const dateB = new Date(b.created_at || b.date).getTime();
+    return dateB - dateA;
+  });
+  
+  console.log(`📋 Total de ${allOrders.length} OSI no histórico (${supabaseOrders.length} do Supabase + ${localOrders.length} locais)`);
+  
+  return allOrders;
 };
 
 export const getOSIById = async (id: number) => {
