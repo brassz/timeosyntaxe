@@ -146,7 +146,8 @@ export const generatePDF = async (checklist: ChecklistData): Promise<void> => {
 
     // Fotos do item
     if (item.photos.length > 0) {
-      addNewPageIfNeeded(60);
+      // Verificar espaço para o título das fotos
+      addNewPageIfNeeded(10);
 
       doc.setFontSize(8);
       doc.setTextColor(100, 100, 100);
@@ -157,33 +158,44 @@ export const generatePDF = async (checklist: ChecklistData): Promise<void> => {
       const photoWidth = 50;
       const photoHeight = 40;
       const photoSpacing = 5;
+      const rowHeight = photoHeight + photoSpacing;
 
-      for (let i = 0; i < item.photos.length; i++) {
-        const photo = await getPhoto(item.photos[i]);
-        if (!photo) continue;
+      // Processar fotos linha por linha
+      const totalRows = Math.ceil(item.photos.length / photosPerRow);
+      
+      for (let row = 0; row < totalRows; row++) {
+        // Verificar se há espaço suficiente para uma linha completa de fotos
+        if (yPos + rowHeight > pageHeight - margin) {
+          // Não há espaço, criar nova página
+          doc.addPage();
+          yPos = margin;
+        }
 
-        const col = i % photosPerRow;
-        const row = Math.floor(i / photosPerRow);
+        // Adicionar todas as fotos desta linha
+        const startIndex = row * photosPerRow;
+        const endIndex = Math.min(startIndex + photosPerRow, item.photos.length);
+        const rowYPos = yPos;
 
-        if (col === 0 && row > 0) {
-          addNewPageIfNeeded(photoHeight + photoSpacing);
-          if (yPos === margin) {
-            // Nova página, reajustar
+        for (let i = startIndex; i < endIndex; i++) {
+          const photo = await getPhoto(item.photos[i]);
+          if (!photo) continue;
+
+          const col = i % photosPerRow;
+          const xPos = margin + 10 + col * (photoWidth + photoSpacing);
+
+          try {
+            doc.addImage(photo.data, 'JPEG', xPos, rowYPos, photoWidth, photoHeight);
+          } catch (error) {
+            console.error('Erro ao adicionar foto:', error);
           }
         }
 
-        const xPos = margin + 10 + col * (photoWidth + photoSpacing);
-        const currentYPos = yPos + row * (photoHeight + photoSpacing);
-
-        try {
-          doc.addImage(photo.data, 'JPEG', xPos, currentYPos, photoWidth, photoHeight);
-        } catch (error) {
-          console.error('Erro ao adicionar foto:', error);
-        }
+        // Avançar Y para a próxima linha
+        yPos += rowHeight;
       }
 
-      const totalRows = Math.ceil(item.photos.length / photosPerRow);
-      yPos += totalRows * (photoHeight + photoSpacing) + 5;
+      // Adicionar espaço após as fotos
+      yPos += 5;
     }
 
     yPos += 2;
