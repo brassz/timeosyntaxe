@@ -432,3 +432,170 @@ export const getOSIById = async (id: number) => {
     return null;
   }
 };
+
+// ============================================
+// FUNÇÕES PARA SUPABASE STORAGE (PDFs)
+// ============================================
+
+const PDF_BUCKET_NAME = 'pdfs';
+
+// Criar bucket se não existir (deve ser feito manualmente no Supabase Dashboard)
+// Storage > Create bucket > Nome: "pdfs" > Public: false (ou true se quiser acesso público)
+
+/**
+ * Faz upload de um PDF para o Supabase Storage
+ * @param pdfBlob Blob do PDF gerado
+ * @param fileName Nome do arquivo (ex: "Checklist_123_2024-01-01.pdf")
+ * @param folder Pasta dentro do bucket (ex: "checklists" ou "osi")
+ * @returns URL pública do PDF ou null em caso de erro
+ */
+export const uploadPDFToStorage = async (
+  pdfBlob: Blob,
+  fileName: string,
+  folder: 'checklists' | 'osi'
+): Promise<string | null> => {
+  if (!isSupabaseConfigured) {
+    console.warn('⚠️ Supabase não configurado! PDF não será salvo no storage.');
+    return null;
+  }
+
+  try {
+    const filePath = `${folder}/${fileName}`;
+    
+    console.log(`📤 Fazendo upload do PDF: ${filePath}`);
+    
+    // Verificar se o bucket existe
+    const { data: buckets, error: bucketError } = await supabase.storage.listBuckets();
+    
+    if (bucketError) {
+      console.warn('⚠️ Erro ao verificar buckets:', bucketError);
+    } else {
+      const bucketExists = buckets?.some(b => b.name === PDF_BUCKET_NAME);
+      if (!bucketExists) {
+        console.warn(`⚠️ Bucket "${PDF_BUCKET_NAME}" não encontrado! Crie o bucket no Supabase Dashboard.`);
+        console.warn('📖 Consulte o arquivo CONFIGURAR_BUCKET_PDFS.md para instruções.');
+        return null;
+      }
+    }
+    
+    const { data, error } = await supabase.storage
+      .from(PDF_BUCKET_NAME)
+      .upload(filePath, pdfBlob, {
+        contentType: 'application/pdf',
+        upsert: true // Substitui se já existir
+      });
+
+    if (error) {
+      // Se o erro for "Bucket not found", dar mensagem mais clara
+      if (error.message?.includes('not found') || error.message?.includes('Bucket')) {
+        console.error('❌ Bucket não encontrado! Crie o bucket "pdfs" no Supabase Dashboard.');
+        console.error('📖 Consulte o arquivo CONFIGURAR_BUCKET_PDFS.md para instruções.');
+      } else {
+        console.error('❌ Erro ao fazer upload do PDF:', error);
+      }
+      return null;
+    }
+
+    console.log('✅ PDF enviado com sucesso:', data.path);
+
+    // Obter URL pública do arquivo
+    const { data: urlData } = supabase.storage
+      .from(PDF_BUCKET_NAME)
+      .getPublicUrl(filePath);
+
+    if (urlData?.publicUrl) {
+      console.log('🔗 URL pública do PDF:', urlData.publicUrl);
+      return urlData.publicUrl;
+    }
+
+    return null;
+  } catch (error) {
+    console.error('❌ Exception ao fazer upload do PDF:', error);
+    return null;
+  }
+};
+
+/**
+ * Faz download de um PDF do Supabase Storage
+ * @param filePath Caminho do arquivo (ex: "checklists/Checklist_123.pdf")
+ * @returns Blob do PDF ou null em caso de erro
+ */
+export const downloadPDFFromStorage = async (filePath: string): Promise<Blob | null> => {
+  if (!isSupabaseConfigured) {
+    return null;
+  }
+
+  try {
+    const { data, error } = await supabase.storage
+      .from(PDF_BUCKET_NAME)
+      .download(filePath);
+
+    if (error) {
+      console.error('❌ Erro ao baixar PDF:', error);
+      return null;
+    }
+
+    return data;
+  } catch (error) {
+    console.error('❌ Exception ao baixar PDF:', error);
+    return null;
+  }
+};
+
+/**
+ * Lista todos os PDFs de uma pasta
+ * @param folder Pasta dentro do bucket (ex: "checklists" ou "osi")
+ * @returns Lista de arquivos ou array vazio
+ */
+export const listPDFsFromStorage = async (folder: 'checklists' | 'osi'): Promise<any[]> => {
+  if (!isSupabaseConfigured) {
+    return [];
+  }
+
+  try {
+    const { data, error } = await supabase.storage
+      .from(PDF_BUCKET_NAME)
+      .list(folder, {
+        limit: 100,
+        offset: 0,
+        sortBy: { column: 'created_at', order: 'desc' }
+      });
+
+    if (error) {
+      console.error('❌ Erro ao listar PDFs:', error);
+      return [];
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('❌ Exception ao listar PDFs:', error);
+    return [];
+  }
+};
+
+/**
+ * Deleta um PDF do Supabase Storage
+ * @param filePath Caminho do arquivo (ex: "checklists/Checklist_123.pdf")
+ * @returns true se deletado com sucesso
+ */
+export const deletePDFFromStorage = async (filePath: string): Promise<boolean> => {
+  if (!isSupabaseConfigured) {
+    return false;
+  }
+
+  try {
+    const { error } = await supabase.storage
+      .from(PDF_BUCKET_NAME)
+      .remove([filePath]);
+
+    if (error) {
+      console.error('❌ Erro ao deletar PDF:', error);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error('❌ Exception ao deletar PDF:', error);
+    return false;
+  }
+};

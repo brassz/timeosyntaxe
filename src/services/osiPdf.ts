@@ -1,5 +1,6 @@
 import jsPDF from 'jspdf';
 import { OSIData } from '../types';
+import { uploadPDFToStorage } from './supabase';
 
 // Função para carregar a logo
 const loadLogo = async (): Promise<string | null> => {
@@ -318,17 +319,38 @@ export const generateOSIPDF = async (osi: OSIData): Promise<void> => {
   doc.text(osi.responsible || '', margin + signatureWidth + 10 + signatureWidth / 2, yPos, { align: 'center' });
 
   // Salvar PDF
+  const fileName = `OSI_${osi.order_number}_${new Date().toISOString().split('T')[0]}.pdf`;
+  
   try {
-    doc.save(`OSI_${osi.order_number}_${new Date().toISOString().split('T')[0]}.pdf`);
+    // Salvar no dispositivo
+    doc.save(fileName);
+    
+    // Fazer upload para o Supabase Storage
+    const pdfBlob = doc.output('blob');
+    const pdfUrl = await uploadPDFToStorage(pdfBlob, fileName, 'osi');
+    
+    if (pdfUrl) {
+      console.log('✅ PDF salvo no Supabase Storage:', pdfUrl);
+    } else {
+      console.warn('⚠️ PDF salvo localmente, mas não foi possível fazer upload para o storage');
+    }
   } catch (error) {
     console.error('Erro ao salvar PDF:', error);
     // Tentar método alternativo para mobile
     try {
       const pdfBlob = doc.output('blob');
+      
+      // Fazer upload para o Supabase Storage antes de fazer download
+      const pdfUrl = await uploadPDFToStorage(pdfBlob, fileName, 'osi');
+      if (pdfUrl) {
+        console.log('✅ PDF salvo no Supabase Storage:', pdfUrl);
+      }
+      
+      // Fazer download local
       const url = URL.createObjectURL(pdfBlob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `OSI_${osi.order_number}_${new Date().toISOString().split('T')[0]}.pdf`;
+      link.download = fileName;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
