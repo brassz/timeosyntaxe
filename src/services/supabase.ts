@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { saveOSILocal, getOSILocal, saveOSIPending, removeOSIPending } from './storage';
 
 // Configuração do Supabase
 // IMPORTANTE: Adicione suas credenciais do Supabase no arquivo .env
@@ -213,88 +214,188 @@ let mockOrderNumber = 2200; // Contador offline
 const mockOSIOrders: DBOSI[] = []; // Storage offline
 
 export const getNextOrderNumber = async (): Promise<number> => {
+  // Verificar no localStorage primeiro
+  const localOrders = getOSILocal();
+  let maxLocalNumber = 0;
+  if (localOrders.length > 0) {
+    maxLocalNumber = Math.max(...localOrders.map((o: any) => o.order_number || 0));
+  }
+
   if (!isSupabaseConfigured) {
-    return mockOrderNumber++;
+    const nextNumber = Math.max(mockOrderNumber, maxLocalNumber + 1);
+    mockOrderNumber = nextNumber + 1;
+    return nextNumber;
   }
 
   try {
-    const { data, error } = await supabase
+    const timeout = isMobileDevice() ? 8000 : 4000;
+    const fetchPromise = supabase
       .from('osi_orders')
       .select('order_number')
       .order('order_number', { ascending: false })
       .limit(1);
 
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('Timeout')), timeout);
+    });
+
+    const { data, error } = await Promise.race([fetchPromise, timeoutPromise]) as any;
+
     if (error || !data || data.length === 0) {
-      return 2200;
+      const nextNumber = Math.max(2200, maxLocalNumber + 1);
+      return nextNumber;
     }
 
-    return data[0].order_number + 1;
+    const maxSupabaseNumber = data[0].order_number || 0;
+    const nextNumber = Math.max(maxSupabaseNumber, maxLocalNumber) + 1;
+    return nextNumber;
   } catch (error) {
     console.error('Exception getting next order number:', error);
-    return 2200;
+    console.warn('⚠️ Usando número baseado em localStorage');
+    const nextNumber = Math.max(2200, maxLocalNumber + 1);
+    return nextNumber;
   }
 };
 
+// Detectar se é dispositivo móvel
+const isMobileDevice = (): boolean => {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+};
+
 export const saveOSI = async (osi: Omit<DBOSI, 'id' | 'created_at'>) => {
+  // Sempre salvar no localStorage primeiro (backup imediato)
+  const osiWithId = {
+    id: Date.now(), // ID temporário
+    ...osi,
+    created_at: new Date().toISOString()
+  };
+  saveOSILocal(osiWithId);
+  console.log('💾 OSI salva no localStorage como backup');
+
   if (!isSupabaseConfigured) {
-    console.warn('⚠️ Supabase não configurado! OSI salva apenas em memória (será perdida ao recarregar).');
-    const mockOSI = {
-      id: mockOSIOrders.length + 1,
-      ...osi,
-      created_at: new Date().toISOString()
-    };
-    mockOSIOrders.unshift(mockOSI);
-    return mockOSI;
+    console.warn('⚠️ Supabase não configurado! OSI salva apenas localmente.');
+    return osiWithId as DBOSI;
   }
 
+  // Tentar salvar no Supabase com timeout
   try {
     console.log('🔵 Tentando salvar OSI no Supabase:', osi);
     
-    const { data, error } = await supabase
+    // Timeout de 10 segundos para mobile
+    const timeout = isMobileDevice() ? 10000 : 5000;
+    const savePromise = supabase
       .from('osi_orders')
       .insert([osi])
       .select();
 
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('Timeout ao salvar no Supabase')), timeout);
+    });
+
+    const { data, error } = await Promise.race([savePromise, timeoutPromise]) as any;
+
     if (error) {
       console.error('❌ Error saving OSI:', error);
       console.error('Detalhes:', JSON.stringify(error, null, 2));
-      return null;
+      
+      // Em caso de erro, marcar como pendente para sincronização posterior
+      saveOSIPending(osi);
+      console.warn('⚠️ OSI salva localmente e marcada para sincronização posterior');
+      
+      // Retornar a versão local
+      return osiWithId as DBOSI;
     }
 
     if (!data || data.length === 0) {
       console.error('❌ Nenhum dado retornado do Supabase');
-      return null;
+      saveOSIPending(osi);
+      return osiWithId as DBOSI;
     }
 
-    console.log('✅ OSI salva com sucesso:', data[0]);
-    return data[0] as DBOSI;
+    console.log('✅ OSI salva com sucesso no Supabase:', data[0]);
+    
+    // Atualizar localStorage com o ID real do Supabase
+    const savedOSI = data[0] as DBOSI;
+    const localOrders = getOSILocal();
+    const updatedOrders = localOrders.map((o: any) => 
+      o.order_number === savedOSI.order_number ? savedOSI : o
+    );
+    localStorage.setItem('osi-orders', JSON.stringify(updatedOrders));
+    
+    // Remover da lista de pendentes se estava lá
+    removeOSIPending(savedOSI.order_number);
+    
+    return savedOSI;
   } catch (error) {
     console.error('❌ Exception saving OSI:', error);
     console.error('Stack:', (error as Error).stack);
-    return null;
+    
+    // Em caso de exceção (timeout, network error, etc), usar localStorage
+    saveOSIPending(osi);
+    console.warn('⚠️ Erro ao salvar no Supabase, usando armazenamento local');
+    
+    return osiWithId as DBOSI;
   }
 };
 
 export const getOSIHistory = async () => {
+  // Sempre buscar do localStorage primeiro (mais rápido e funciona offline)
+  const localOrders = getOSILocal();
+  console.log(`📦 ${localOrders.length} OSI encontradas no localStorage`);
+
   if (!isSupabaseConfigured) {
-    return mockOSIOrders; // Retorna dados offline
+    return localOrders.length > 0 ? localOrders : mockOSIOrders;
   }
 
+  // Tentar buscar do Supabase com timeout
   try {
-    const { data, error } = await supabase
+    const timeout = isMobileDevice() ? 10000 : 5000;
+    const fetchPromise = supabase
       .from('osi_orders')
       .select('*')
       .order('created_at', { ascending: false });
 
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('Timeout ao buscar do Supabase')), timeout);
+    });
+
+    const { data, error } = await Promise.race([fetchPromise, timeoutPromise]) as any;
+
     if (error) {
       console.error('Error fetching OSI history:', error);
-      return [];
+      console.warn('⚠️ Usando dados do localStorage');
+      return localOrders;
     }
 
-    return data || [];
+    if (data && data.length > 0) {
+      console.log(`✅ ${data.length} OSI encontradas no Supabase`);
+      
+      // Mesclar com dados locais (priorizar Supabase)
+      const localMap = new Map(localOrders.map((o: any) => [o.order_number, o]));
+      const merged = [...data];
+      
+      // Adicionar OSI locais que não estão no Supabase
+      localOrders.forEach((localOSI: any) => {
+        if (!merged.find((o: any) => o.order_number === localOSI.order_number)) {
+          merged.push(localOSI);
+        }
+      });
+      
+      // Ordenar por data
+      merged.sort((a: any, b: any) => {
+        const dateA = new Date(a.created_at || a.date).getTime();
+        const dateB = new Date(b.created_at || b.date).getTime();
+        return dateB - dateA;
+      });
+      
+      return merged;
+    }
+
+    return localOrders;
   } catch (error) {
     console.error('Exception fetching OSI history:', error);
-    return [];
+    console.warn('⚠️ Usando dados do localStorage devido ao erro');
+    return localOrders;
   }
 };
 

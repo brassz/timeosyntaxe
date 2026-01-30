@@ -144,3 +144,73 @@ export const getDarkMode = (): boolean => {
 export const setDarkMode = (enabled: boolean): void => {
   localStorage.setItem('dark-mode', enabled ? 'true' : 'false');
 };
+
+// Funções para OSI (Ordem de Serviço Interna) - localStorage como fallback
+const OSI_STORAGE_KEY = 'osi-orders';
+const OSI_PENDING_KEY = 'osi-pending-sync';
+
+// Salvar OSI no localStorage
+export const saveOSILocal = (osi: any): void => {
+  try {
+    const orders = getOSILocal();
+    orders.unshift(osi);
+    // Manter apenas as últimas 1000 ordens
+    const limited = orders.slice(0, 1000);
+    localStorage.setItem(OSI_STORAGE_KEY, JSON.stringify(limited));
+  } catch (error) {
+    console.error('Erro ao salvar OSI no localStorage:', error);
+  }
+};
+
+// Buscar OSI do localStorage
+export const getOSILocal = (): any[] => {
+  try {
+    const orders = localStorage.getItem(OSI_STORAGE_KEY);
+    return orders ? JSON.parse(orders) : [];
+  } catch (error) {
+    console.error('Erro ao buscar OSI do localStorage:', error);
+    return [];
+  }
+};
+
+// Salvar OSI pendente de sincronização
+export const saveOSIPending = (osi: any): void => {
+  try {
+    const pending = getOSIPending();
+    pending.push(osi);
+    localStorage.setItem(OSI_PENDING_KEY, JSON.stringify(pending));
+  } catch (error) {
+    console.error('Erro ao salvar OSI pendente:', error);
+  }
+};
+
+// Buscar OSI pendentes
+export const getOSIPending = (): any[] => {
+  try {
+    const pending = localStorage.getItem(OSI_PENDING_KEY);
+    return pending ? JSON.parse(pending) : [];
+  } catch (error) {
+    console.error('Erro ao buscar OSI pendentes:', error);
+    return [];
+  }
+};
+
+// Remover OSI pendente após sincronização bem-sucedida
+export const removeOSIPending = (orderNumber: number): void => {
+  try {
+    const pending = getOSIPending();
+    const filtered = pending.filter((osi: any) => osi.order_number !== orderNumber);
+    localStorage.setItem(OSI_PENDING_KEY, JSON.stringify(filtered));
+  } catch (error) {
+    console.error('Erro ao remover OSI pendente:', error);
+  }
+};
+
+// Limpar todas as OSI pendentes
+export const clearOSIPending = (): void => {
+  try {
+    localStorage.removeItem(OSI_PENDING_KEY);
+  } catch (error) {
+    console.error('Erro ao limpar OSI pendentes:', error);
+  }
+};
