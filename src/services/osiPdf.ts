@@ -2,6 +2,26 @@ import jsPDF from 'jspdf';
 import { OSIData } from '../types';
 import { uploadPDFToStorage } from './supabase';
 
+/**
+ * Converte foto (URL ou base64) para base64 para uso no PDF
+ */
+const photoToBase64 = async (photo: string): Promise<string> => {
+  if (photo.startsWith('data:')) return photo;
+  try {
+    const response = await fetch(photo);
+    const blob = await response.blob();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  } catch (error) {
+    console.error('Erro ao carregar foto da URL:', error);
+    return photo; // Retorna original em caso de erro
+  }
+};
+
 // Função para carregar a logo
 const loadLogo = async (): Promise<string | null> => {
   try {
@@ -222,8 +242,10 @@ export const generateOSIPDF = async (osi: OSIData): Promise<void> => {
   const obsLines = doc.splitTextToSize(osi.observations || '', contentWidth - 4);
   doc.text(obsLines, margin + 2, yPos + 5);
 
-  // Fotos (se existirem)
+  // Fotos (se existirem) - converter URLs do bucket para base64
   if (osi.photos && osi.photos.length > 0) {
+    const photosBase64 = await Promise.all(osi.photos.map(photoToBase64));
+
     // Configuração das fotos: 2 colunas, 3 linhas por página = 6 fotos por página
     const photosPerPage = 6;
     const photosPerRow = 2; // 2 colunas
@@ -236,7 +258,7 @@ export const generateOSIPDF = async (osi: OSIData): Promise<void> => {
     const pageHeight = doc.internal.pageSize.getHeight();
     
     // Processar fotos página por página
-    for (let pageIndex = 0; pageIndex < Math.ceil(osi.photos.length / photosPerPage); pageIndex++) {
+    for (let pageIndex = 0; pageIndex < Math.ceil(photosBase64.length / photosPerPage); pageIndex++) {
       // Criar nova página para fotos (exceto a primeira, se couber na página atual)
       if (pageIndex === 0) {
         yPos += obsHeight + 10;
@@ -264,7 +286,7 @@ export const generateOSIPDF = async (osi: OSIData): Promise<void> => {
       
       // Calcular quais fotos vão nesta página
       const startIndex = pageIndex * photosPerPage;
-      const endIndex = Math.min(startIndex + photosPerPage, osi.photos.length);
+      const endIndex = Math.min(startIndex + photosPerPage, photosBase64.length);
       const photosInThisPage = endIndex - startIndex;
       const rowsInThisPage = Math.ceil(photosInThisPage / photosPerRow);
       
@@ -278,7 +300,9 @@ export const generateOSIPDF = async (osi: OSIData): Promise<void> => {
         const currentYPos = yPos + (row * rowHeight);
         
         try {
-          doc.addImage(osi.photos[i], 'JPEG', xPos, currentYPos, photoWidth, photoHeight);
+          const imgData = photosBase64[i];
+          const format = imgData.startsWith('data:image/png') ? 'PNG' : 'JPEG';
+          doc.addImage(imgData, format, xPos, currentYPos, photoWidth, photoHeight);
           
           // Adicionar número da foto
           doc.setFontSize(7);
@@ -290,7 +314,7 @@ export const generateOSIPDF = async (osi: OSIData): Promise<void> => {
       }
       
       // Atualizar yPos para a próxima seção (apenas na última página de fotos)
-      if (pageIndex === Math.ceil(osi.photos.length / photosPerPage) - 1) {
+      if (pageIndex === Math.ceil(photosBase64.length / photosPerPage) - 1) {
         yPos += rowsInThisPage * rowHeight + 5;
       }
     }

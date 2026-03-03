@@ -263,10 +263,26 @@ const isMobileDevice = (): boolean => {
 };
 
 export const saveOSI = async (osi: Omit<DBOSI, 'id' | 'created_at'>) => {
+  // Processar fotos: enviar base64 para o bucket do Supabase
+  let osiToSave = { ...osi };
+  if (osi.photos && osi.photos.length > 0 && isSupabaseConfigured) {
+    const photoUrls: string[] = [];
+    for (let i = 0; i < osi.photos.length; i++) {
+      const photo = osi.photos[i];
+      if (photo.startsWith('data:')) {
+        const url = await uploadOSIPhotoToStorage(photo, osi.order_number, i);
+        photoUrls.push(url || photo); // Se falhar upload, mantém base64
+      } else {
+        photoUrls.push(photo); // Já é URL
+      }
+    }
+    osiToSave = { ...osiToSave, photos: photoUrls };
+  }
+
   // Sempre salvar no localStorage primeiro (backup imediato)
   const osiWithId = {
     id: Date.now(), // ID temporário
-    ...osi,
+    ...osiToSave,
     created_at: new Date().toISOString()
   };
   saveOSILocal(osiWithId);
@@ -279,13 +295,13 @@ export const saveOSI = async (osi: Omit<DBOSI, 'id' | 'created_at'>) => {
 
   // Tentar salvar no Supabase com timeout
   try {
-    console.log('🔵 Tentando salvar OSI no Supabase:', osi);
+    console.log('🔵 Tentando salvar OSI no Supabase:', osiToSave);
     
     // Timeout de 10 segundos para mobile
     const timeout = isMobileDevice() ? 10000 : 5000;
     const savePromise = supabase
       .from('osi_orders')
-      .insert([osi])
+      .insert([osiToSave])
       .select();
 
     const timeoutPromise = new Promise((_, reject) => {
@@ -299,7 +315,7 @@ export const saveOSI = async (osi: Omit<DBOSI, 'id' | 'created_at'>) => {
       console.error('Detalhes:', JSON.stringify(error, null, 2));
       
       // Em caso de erro, marcar como pendente para sincronização posterior
-      saveOSIPending(osi);
+      saveOSIPending(osiToSave);
       console.warn('⚠️ OSI salva localmente e marcada para sincronização posterior');
       
       // Retornar a versão local
@@ -308,7 +324,7 @@ export const saveOSI = async (osi: Omit<DBOSI, 'id' | 'created_at'>) => {
 
     if (!data || data.length === 0) {
       console.error('❌ Nenhum dado retornado do Supabase');
-      saveOSIPending(osi);
+      saveOSIPending(osiToSave);
       return osiWithId as DBOSI;
     }
 
@@ -331,7 +347,7 @@ export const saveOSI = async (osi: Omit<DBOSI, 'id' | 'created_at'>) => {
     console.error('Stack:', (error as Error).stack);
     
     // Em caso de exceção (timeout, network error, etc), usar localStorage
-    saveOSIPending(osi);
+    saveOSIPending(osiToSave);
     console.warn('⚠️ Erro ao salvar no Supabase, usando armazenamento local');
     
     return osiWithId as DBOSI;
@@ -441,6 +457,74 @@ const PDF_BUCKET_NAME = 'pdfs';
 
 // Criar bucket se não existir (deve ser feito manualmente no Supabase Dashboard)
 // Storage > Create bucket > Nome: "pdfs" > Public: false (ou true se quiser acesso público)
+
+/**
+ * Converte base64 data URL em Blob
+ */
+const dataURLtoBlob = (dataUrl: string): Blob => {
+  const arr = dataUrl.split(',');
+  const mime = arr[0].match(/:(.*?);/)?.[1] || 'image/jpeg';
+  const bstr = atob(arr[1]);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+  while (n--) u8arr[n] = bstr.charCodeAt(n);
+  return new Blob([u8arr], { type: mime });
+};
+
+/**
+ * Faz upload de uma foto de OSI para o Supabase Storage
+ * @param photoData Base64 data URL ou Blob da foto
+ * @param orderNumber Número da ordem
+ * @param index Índice da foto
+ * @returns URL pública da foto ou null em caso de erro
+ */
+export const uploadOSIPhotoToStorage = async (
+  photoData: string | Blob,
+  orderNumber: number,
+  index: number
+): Promise<string | null> => {
+  if (!isSupabaseConfigured) {
+    console.warn('⚠️ Supabase não configurado! Foto não será salva no storage.');
+    return null;
+  }
+
+  try {
+    const blob = typeof photoData === 'string' 
+      ? dataURLtoBlob(photoData) 
+      : photoData;
+    
+    const ext = blob.type === 'image/png' ? 'png' : 'jpg';
+    const timestamp = Date.now();
+    const filePath = `osi/photos/OSI_${orderNumber}_${timestamp}_${index}.${ext}`;
+
+    console.log(`📤 Enviando foto OSI: ${filePath}`);
+
+    const { data, error } = await supabase.storage
+      .from(PDF_BUCKET_NAME)
+      .upload(filePath, blob, {
+        contentType: blob.type,
+        upsert: true
+      });
+
+    if (error) {
+      console.error('❌ Erro ao fazer upload da foto:', error);
+      return null;
+    }
+
+    const { data: urlData } = supabase.storage
+      .from(PDF_BUCKET_NAME)
+      .getPublicUrl(filePath);
+
+    if (urlData?.publicUrl) {
+      console.log('✅ Foto enviada:', urlData.publicUrl);
+      return urlData.publicUrl;
+    }
+    return null;
+  } catch (error) {
+    console.error('❌ Exception ao fazer upload da foto:', error);
+    return null;
+  }
+};
 
 /**
  * Faz upload de um PDF para o Supabase Storage

@@ -26,7 +26,7 @@ Este guia explica como configurar o bucket no Supabase Storage para armazenar os
      - ✅ **Recomendado**: Marque como **Público** se quiser acesso direto via URL
      - ❌ Ou deixe **Privado** se quiser controle de acesso
    - **File size limit**: Deixe o padrão ou ajuste conforme necessário (ex: 10MB)
-   - **Allowed MIME types**: `application/pdf` (opcional, para restringir apenas PDFs)
+   - **Allowed MIME types**: Deixe vazio ou adicione `application/pdf, image/jpeg, image/png` para permitir PDFs e fotos das OSI
 4. Clique em **"Create bucket"**
 
 ### 3. Configurar Políticas de Acesso (RLS)
@@ -76,6 +76,7 @@ O sistema criará automaticamente as seguintes pastas dentro do bucket:
 
 - `checklists/` - PDFs dos checklists
 - `osi/` - PDFs das ordens de serviço interna
+- `osi/photos/` - Fotos anexadas às OSI (enviadas automaticamente ao salvar)
 
 **Não é necessário criar essas pastas manualmente!** Elas serão criadas automaticamente quando o primeiro arquivo for enviado.
 
@@ -100,6 +101,10 @@ pdfs/
 └── osi/
     ├── OSI_2200_2024-01-01.pdf
     ├── OSI_2201_2024-01-02.pdf
+    ├── photos/
+    │   ├── OSI_2200_1234567890_0.jpg
+    │   ├── OSI_2200_1234567890_1.png
+    │   └── ...
     └── ...
 ```
 
@@ -160,7 +165,8 @@ Configure backups automáticos no Supabase:
 ## 📝 Notas Importantes
 
 - ✅ Os PDFs são salvos **tanto localmente** (download) **quanto no Supabase Storage**
-- ✅ Se o upload falhar, o PDF ainda será baixado localmente
+- ✅ As **fotos das OSI** são enviadas automaticamente para o bucket ao salvar a ordem (em `osi/photos/`)
+- ✅ Se o upload falhar, o PDF ainda será baixado localmente; fotos usam fallback para base64 no banco
 - ✅ O sistema funciona mesmo sem o bucket configurado (apenas não salva no storage)
 - ✅ PDFs antigos podem ser deletados manualmente ou via função SQL
 

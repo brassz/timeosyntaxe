@@ -16,9 +16,9 @@ A funcionalidade de fotos foi adicionada ao painel OSI (Ordem de Serviço Intern
 - **Contador Visual**: Mostra quantas fotos foram adicionadas (ex: 3/10)
 
 ### 2. Armazenamento
-- As fotos são armazenadas em formato **base64** no banco de dados
-- Campo `photos` do tipo JSONB na tabela `osi_orders`
-- Compatível com modo offline (armazenamento local)
+- As fotos são enviadas para o **bucket do Supabase** (`pdfs/osi/photos/`)
+- No banco de dados, o campo `photos` armazena as **URLs** das fotos (JSONB)
+- Em modo offline ou se o upload falhar, usa fallback para base64
 
 ### 3. Visualização no Histórico
 - Exibição em grade das fotos anexadas
@@ -88,7 +88,7 @@ interface OSIData {
 ## Melhorias Futuras Possíveis
 
 - [ ] Compressão automática de imagens
-- [ ] Upload para Supabase Storage em vez de base64
+- [x] Upload para Supabase Storage em vez de base64 ✅
 - [ ] Galeria com zoom e navegação
 - [ ] Anotações nas fotos
 - [ ] Filtros e edição básica
