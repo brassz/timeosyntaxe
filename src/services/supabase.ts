@@ -499,7 +499,7 @@ export const uploadOSIPhotoToStorage = async (
 
     console.log(`📤 Enviando foto OSI: ${filePath}`);
 
-    const { data, error } = await supabase.storage
+    const { error } = await supabase.storage
       .from(PDF_BUCKET_NAME)
       .upload(filePath, blob, {
         contentType: blob.type,
