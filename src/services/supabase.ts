@@ -17,6 +17,10 @@ const isSupabaseConfigured =
   supabaseUrl !== 'https://your-project.supabase.co' && 
   supabaseAnonKey !== 'your-anon-key';
 
+const isSupabaseMachinesConfigured =
+  supabaseMachinesUrl !== 'https://your-project.supabase.co' &&
+  supabaseMachinesAnonKey !== 'your-anon-key';
+
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 export const supabaseMachines = createClient(supabaseMachinesUrl, supabaseMachinesAnonKey);
 
@@ -207,7 +211,8 @@ export const deleteChecklistFromDB = async (id: string) => {
 };
 
 export const getMachinesFromDB = async (): Promise<DBMachine[]> => {
-  if (!isSupabaseConfigured) {
+  if (!isSupabaseMachinesConfigured) {
+    console.warn('⚠️ Supabase de máquinas não configurado (verifique VITE_SUPABASE_URL_MAQUINAS e VITE_SUPABASE_ANON_KEY_MAQUINAS).');
     return [];
   }
 
