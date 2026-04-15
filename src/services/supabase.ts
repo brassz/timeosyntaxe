@@ -1,10 +1,16 @@
 import { createClient } from '@supabase/supabase-js';
 import { saveOSILocal, getOSILocal, saveOSIPending, removeOSIPending } from './storage';
 
-// Configuração do Supabase
+// Configuração do Supabase (principal)
 // IMPORTANTE: Adicione suas credenciais do Supabase no arquivo .env
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://your-project.supabase.co';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'your-anon-key';
+
+// Configuração do Supabase (máquinas) — pode apontar para outro projeto
+const supabaseMachinesUrl =
+  import.meta.env.VITE_SUPABASE_URL_MAQUINAS || supabaseUrl;
+const supabaseMachinesAnonKey =
+  import.meta.env.VITE_SUPABASE_ANON_KEY_MAQUINAS || supabaseAnonKey;
 
 // Verificar se as credenciais foram configuradas
 const isSupabaseConfigured = 
@@ -12,6 +18,7 @@ const isSupabaseConfigured =
   supabaseAnonKey !== 'your-anon-key';
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabaseMachines = createClient(supabaseMachinesUrl, supabaseMachinesAnonKey);
 
 // Função auxiliar para verificar configuração
 export const checkSupabaseConfig = (): boolean => {
@@ -69,6 +76,23 @@ export interface DBOSI {
   created_at: string;
   created_by: string;
 }
+
+export type MachineStatus = 'NO_PATIO' | 'EM_SERVICO' | 'NA_MECANICA';
+
+export interface DBMachine {
+  id: string;
+  company_id: string;
+  name: string;
+  model: string | null;
+  plate: string | null;
+  current_hourmeter: number | null;
+  status: MachineStatus;
+  active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+const companyId = import.meta.env.VITE_COMPANY_ID as string | undefined;
 
 // Usuários de teste (quando Supabase não está configurado)
 const mockUsers: DBUser[] = [
@@ -179,6 +203,36 @@ export const deleteChecklistFromDB = async (id: string) => {
   } catch (error) {
     console.error('Exception deleting checklist:', error);
     return false;
+  }
+};
+
+export const getMachinesFromDB = async (): Promise<DBMachine[]> => {
+  if (!isSupabaseConfigured) {
+    return [];
+  }
+
+  try {
+    let query = supabaseMachines
+      .from('machines')
+      .select('*')
+      .eq('active', true)
+      .order('name', { ascending: true });
+
+    if (companyId) {
+      query = query.eq('company_id', companyId);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error('Error fetching machines:', error);
+      return [];
+    }
+
+    return (data || []) as DBMachine[];
+  } catch (error) {
+    console.error('Exception fetching machines:', error);
+    return [];
   }
 };
 

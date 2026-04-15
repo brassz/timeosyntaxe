@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ChecklistData } from '../types';
-import { loadDraft } from '../services/storage';
+import { loadDraft, loadMachinesCache, saveMachinesCache, CachedMachineOption } from '../services/storage';
+import { getMachinesFromDB } from '../services/supabase';
 import './Home.css';
 
 interface HomeProps {
@@ -8,19 +9,19 @@ interface HomeProps {
   onViewHistory: () => void;
 }
 
-const MACHINES = [
-  'Escavadeira Hidráulica',
-  'Retroescavadeira',
-  'Pá Carregadeira',
-  'Motoniveladora',
-  'Rolo Compactador',
-  'Trator de Esteiras',
-  'Trator Agrícola',
-  'Caminhão',
-  'Caminhão Basculante',
-  'Mini Escavadeira',
-  'Skid Steer',
-  'Outra',
+const FALLBACK_MACHINES: CachedMachineOption[] = [
+  { value: 'Escavadeira Hidráulica', label: 'Escavadeira Hidráulica' },
+  { value: 'Retroescavadeira', label: 'Retroescavadeira' },
+  { value: 'Pá Carregadeira', label: 'Pá Carregadeira' },
+  { value: 'Motoniveladora', label: 'Motoniveladora' },
+  { value: 'Rolo Compactador', label: 'Rolo Compactador' },
+  { value: 'Trator de Esteiras', label: 'Trator de Esteiras' },
+  { value: 'Trator Agrícola', label: 'Trator Agrícola' },
+  { value: 'Caminhão', label: 'Caminhão' },
+  { value: 'Caminhão Basculante', label: 'Caminhão Basculante' },
+  { value: 'Mini Escavadeira', label: 'Mini Escavadeira' },
+  { value: 'Skid Steer', label: 'Skid Steer' },
+  { value: 'Outra', label: 'Outra' },
 ];
 
 export const Home: React.FC<HomeProps> = ({ onStartChecklist, onViewHistory }) => {
@@ -31,10 +32,51 @@ export const Home: React.FC<HomeProps> = ({ onStartChecklist, onViewHistory }) =
   const [horimeter, setHorimeter] = useState('');
   const [mileage, setMileage] = useState('');
   const [hasDraft, setHasDraft] = useState(false);
+  const [machineOptions, setMachineOptions] = useState<CachedMachineOption[]>(() => {
+    const cached = loadMachinesCache();
+    return cached.length > 0 ? cached : FALLBACK_MACHINES;
+  });
+  const [isLoadingMachines, setIsLoadingMachines] = useState(false);
 
   useEffect(() => {
     const draft = loadDraft();
     setHasDraft(!!draft);
+  }, []);
+
+  useEffect(() => {
+    const loadMachines = async () => {
+      setIsLoadingMachines(true);
+      try {
+        const machines = await getMachinesFromDB();
+        if (!machines || machines.length === 0) return;
+
+        const options: CachedMachineOption[] = machines
+          .filter((m) => m.active)
+          .map((m) => {
+            const plate = m.plate?.trim() || null;
+            const model = m.model?.trim() || '';
+            const labelParts = [m.name, model].filter(Boolean);
+            const label = `${labelParts.join(' - ')}${plate ? ` (${plate})` : ''}`;
+            return {
+              value: m.name,
+              label,
+              status: m.status,
+              plate,
+            };
+          });
+
+        if (options.length > 0) {
+          setMachineOptions(options);
+          saveMachinesCache(options);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar máquinas:', error);
+      } finally {
+        setIsLoadingMachines(false);
+      }
+    };
+
+    void loadMachines();
   }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -105,14 +147,20 @@ export const Home: React.FC<HomeProps> = ({ onStartChecklist, onViewHistory }) =
               value={machine}
               onChange={(e) => setMachine(e.target.value)}
               required
+              disabled={isLoadingMachines && machineOptions.length === 0}
             >
               <option value="">Selecione a máquina</option>
-              {MACHINES.map((m) => (
-                <option key={m} value={m}>
-                  {m}
+              {machineOptions.map((m) => (
+                <option key={m.label} value={m.value}>
+                  {m.label}
                 </option>
               ))}
             </select>
+            {isLoadingMachines && (
+              <small style={{ color: 'var(--color-gray)' }}>
+                Carregando máquinas do sistema...
+              </small>
+            )}
           </div>
 
           <div className="form-group">

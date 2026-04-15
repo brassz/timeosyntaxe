@@ -8,6 +8,10 @@ interface ChecklistDB extends DBSchema {
     value: Photo;
     indexes: { 'by-checklist': string };
   };
+  drafts: {
+    key: string;
+    value: { key: string; data: ChecklistData; updatedAt: number };
+  };
 }
 
 let db: IDBPDatabase<ChecklistDB> | null = null;
@@ -15,10 +19,15 @@ let db: IDBPDatabase<ChecklistDB> | null = null;
 export const initDB = async () => {
   if (db) return db;
   
-  db = await openDB<ChecklistDB>('terraplanagem-db', 1, {
-    upgrade(db) {
-      const photoStore = db.createObjectStore('photos', { keyPath: 'id' });
-      photoStore.createIndex('by-checklist', 'checklistId');
+  db = await openDB<ChecklistDB>('terraplanagem-db', 2, {
+    upgrade(db, oldVersion) {
+      if (oldVersion < 1) {
+        const photoStore = db.createObjectStore('photos', { keyPath: 'id' });
+        photoStore.createIndex('by-checklist', 'checklistId');
+      }
+      if (oldVersion < 2) {
+        db.createObjectStore('drafts', { keyPath: 'key' });
+      }
     },
   });
   
@@ -28,18 +37,63 @@ export const initDB = async () => {
   return db;
 };
 
-// LocalStorage para dados de checklist
-export const saveDraft = (data: ChecklistData) => {
-  localStorage.setItem('checklist-draft', JSON.stringify(data));
+const DRAFT_STORAGE_KEY = 'checklist-draft';
+const DRAFT_DB_KEY = 'active';
+
+// Local cache do rascunho (localStorage + IndexedDB)
+export const saveDraft = async (data: ChecklistData): Promise<void> => {
+  try {
+    localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(data));
+  } catch (error) {
+    console.error('Erro ao salvar rascunho no localStorage:', error);
+  }
+
+  try {
+    const database = await initDB();
+    await database.put('drafts', { key: DRAFT_DB_KEY, data, updatedAt: Date.now() });
+  } catch (error) {
+    console.error('Erro ao salvar rascunho no IndexedDB:', error);
+  }
 };
 
+// Mantém compatibilidade com chamadas síncronas (ex.: Home)
 export const loadDraft = (): ChecklistData | null => {
-  const draft = localStorage.getItem('checklist-draft');
-  return draft ? JSON.parse(draft) : null;
+  try {
+    const draft = localStorage.getItem(DRAFT_STORAGE_KEY);
+    return draft ? JSON.parse(draft) : null;
+  } catch (error) {
+    console.error('Erro ao carregar rascunho do localStorage:', error);
+    return null;
+  }
 };
 
-export const deleteDraft = () => {
-  localStorage.removeItem('checklist-draft');
+export const loadDraftAsync = async (): Promise<ChecklistData | null> => {
+  const fromLocal = loadDraft();
+  if (fromLocal) return fromLocal;
+
+  try {
+    const database = await initDB();
+    const record = await database.get('drafts', DRAFT_DB_KEY);
+    return record?.data ?? null;
+  } catch (error) {
+    console.error('Erro ao carregar rascunho do IndexedDB:', error);
+    return null;
+  }
+};
+
+export const deleteDraft = async (): Promise<void> => {
+  try {
+    localStorage.removeItem(DRAFT_STORAGE_KEY);
+  } catch (error) {
+    console.error('Erro ao remover rascunho do localStorage:', error);
+  }
+
+  try {
+    const database = await initDB();
+    await database.delete('drafts', DRAFT_DB_KEY);
+  } catch (error) {
+    console.error('Erro ao remover rascunho do IndexedDB:', error);
+  }
 };
 
 // Salvar checklist completado (agora no Supabase + localStorage como backup)
@@ -143,6 +197,42 @@ export const getDarkMode = (): boolean => {
 
 export const setDarkMode = (enabled: boolean): void => {
   localStorage.setItem('dark-mode', enabled ? 'true' : 'false');
+};
+
+// Cache de máquinas (para dropdown funcionar offline)
+const MACHINES_CACHE_KEY = 'machines-cache-v1';
+const MACHINES_CACHE_TTL_MS = 1000 * 60 * 60 * 24; // 24h
+
+export type CachedMachineOption = {
+  value: string;
+  label: string;
+  status?: string;
+  plate?: string | null;
+};
+
+export const saveMachinesCache = (machines: CachedMachineOption[]): void => {
+  try {
+    localStorage.setItem(
+      MACHINES_CACHE_KEY,
+      JSON.stringify({ updatedAt: Date.now(), machines })
+    );
+  } catch (error) {
+    console.error('Erro ao salvar cache de máquinas:', error);
+  }
+};
+
+export const loadMachinesCache = (): CachedMachineOption[] => {
+  try {
+    const raw = localStorage.getItem(MACHINES_CACHE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw) as { updatedAt?: number; machines?: CachedMachineOption[] };
+    if (!parsed?.machines || !Array.isArray(parsed.machines)) return [];
+    if (parsed.updatedAt && Date.now() - parsed.updatedAt > MACHINES_CACHE_TTL_MS) return [];
+    return parsed.machines;
+  } catch (error) {
+    console.error('Erro ao carregar cache de máquinas:', error);
+    return [];
+  }
 };
 
 // Funções para OSI (Ordem de Serviço Interna) - localStorage como fallback

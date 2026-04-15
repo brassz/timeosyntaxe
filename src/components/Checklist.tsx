@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { ChecklistData, ChecklistItem, ChecklistStatus, Photo } from '../types';
-import { saveDraft, loadDraft, deleteDraft, saveCompletedChecklist, savePhoto, getPhoto, deletePhoto } from '../services/storage';
+import { saveDraft, loadDraftAsync, deleteDraft, saveCompletedChecklist, savePhoto, getPhoto, deletePhoto } from '../services/storage';
 import { generatePDF } from '../services/pdf';
 import './Checklist.css';
 
@@ -229,11 +229,6 @@ const getChecklistByMachineType = (machine: string) => {
 
 export const Checklist: React.FC<ChecklistProps> = ({ initialData, onBack }) => {
   const [checklist, setChecklist] = useState<ChecklistData>(() => {
-    const draft = loadDraft();
-    if (draft && draft.operator === initialData.operator) {
-      return draft;
-    }
-
     const selectedChecklist = getChecklistByMachineType(initialData.machine || '');
 
     return {
@@ -286,8 +281,40 @@ export const Checklist: React.FC<ChecklistProps> = ({ initialData, onBack }) => 
   }, [checklist.items]);
 
   useEffect(() => {
+    const hydrateDraft = async () => {
+      const draft = await loadDraftAsync();
+      if (!draft) return;
+      if (draft.completed) return;
+
+      setChecklist((prev) => {
+        // Se já existe progresso no estado atual, não sobrescreve.
+        const hasProgress =
+          prev.items.some((i) => i.status || i.observation.trim() || i.photos.length > 0) ||
+          prev.horimeter.trim() ||
+          prev.mileage.trim();
+        if (hasProgress) return prev;
+
+        // Mescla dados iniciais (caso o usuário tenha digitado novos dados na Home)
+        return {
+          ...draft,
+          operator: initialData.operator || draft.operator,
+          machine: initialData.machine || draft.machine,
+          location: initialData.location || draft.location,
+          tag: initialData.tag || draft.tag,
+          horimeter: initialData.horimeter || draft.horimeter,
+          mileage: initialData.mileage || draft.mileage,
+        };
+      });
+    };
+
+    void hydrateDraft();
+    // Só na montagem: queremos restaurar 1x ao entrar na tela
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     if (!checklist.completed) {
-      saveDraft(checklist);
+      void saveDraft(checklist);
     }
   }, [checklist]);
 
@@ -372,7 +399,7 @@ export const Checklist: React.FC<ChecklistProps> = ({ initialData, onBack }) => 
 
   const handleDiscardDraft = () => {
     if (confirm('Tem certeza que deseja descartar este checklist? Todos os dados serão perdidos.')) {
-      deleteDraft();
+      void deleteDraft();
       onBack();
     }
   };
@@ -391,7 +418,7 @@ export const Checklist: React.FC<ChecklistProps> = ({ initialData, onBack }) => 
     try {
       const completedChecklist = { ...checklist, completed: true };
       await saveCompletedChecklist(completedChecklist);
-      deleteDraft();
+      await deleteDraft();
       
       await generatePDF(completedChecklist);
       
