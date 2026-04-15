@@ -34,6 +34,7 @@ const CHECKLIST_MOTONIVELADORA = [
   { name: 'Mangueiras hidráulicas', category: 'DIVERSOS' },
   { name: 'Embuchamentos', category: 'DIVERSOS' },
   { name: 'Estrutura da máquina', category: 'DIVERSOS' },
+  { name: 'Lâmina', category: 'DIVERSOS' },
   { name: 'Mesa', category: 'DIVERSOS' },
   { name: 'Painel', category: 'DIVERSOS' },
   { name: 'Horímetro', category: 'DIVERSOS' },
@@ -47,6 +48,7 @@ const CHECKLIST_MOTONIVELADORA = [
   { name: 'Nível de óleo motor de tração', category: 'ÓLEOS' },
   { name: 'Nível de óleo hidráulico', category: 'ÓLEOS' },
   { name: 'Nível de óleo do motor', category: 'ÓLEOS' },
+  { name: 'Motor', category: 'OUTROS' },
   { name: 'Bateria', category: 'OUTROS' },
   { name: 'Ar condicionado', category: 'OUTROS' },
 ];
@@ -75,6 +77,7 @@ const CHECKLIST_TRATOR_RETRO_PA = [
   { name: 'Mangueiras hidráulicas', category: 'DIVERSOS' },
   { name: 'Embuchamentos', category: 'DIVERSOS' },
   { name: 'Estrutura da máquina', category: 'DIVERSOS' },
+  { name: 'Lâmina', category: 'DIVERSOS' },
   { name: 'Painel', category: 'DIVERSOS' },
   { name: 'Horímetro', category: 'DIVERSOS' },
   { name: 'Cinto de segurança', category: 'SEGURANÇA' },
@@ -87,6 +90,7 @@ const CHECKLIST_TRATOR_RETRO_PA = [
   { name: 'Nível de óleo motor de tração', category: 'ÓLEOS' },
   { name: 'Nível de óleo hidráulico', category: 'ÓLEOS' },
   { name: 'Nível de óleo do motor', category: 'ÓLEOS' },
+  { name: 'Motor', category: 'OUTROS' },
   { name: 'Bateria', category: 'OUTROS' },
   { name: 'Ar condicionado', category: 'OUTROS' },
 ];
@@ -114,6 +118,7 @@ const CHECKLIST_CAMINHAO = [
   { name: 'Mangueiras hidráulicas', category: 'DIVERSOS' },
   { name: 'Embuchamentos', category: 'DIVERSOS' },
   { name: 'Estrutura da máquina', category: 'DIVERSOS' },
+  { name: 'Lâmina', category: 'DIVERSOS' },
   { name: 'Painel', category: 'DIVERSOS' },
   { name: 'Horímetro', category: 'DIVERSOS' },
   { name: 'Cinto de segurança', category: 'SEGURANÇA' },
@@ -125,6 +130,7 @@ const CHECKLIST_CAMINHAO = [
   { name: 'Nível de óleo motor de tração', category: 'ÓLEOS' },
   { name: 'Nível de óleo hidráulico', category: 'ÓLEOS' },
   { name: 'Nível de óleo do motor', category: 'ÓLEOS' },
+  { name: 'Motor', category: 'OUTROS' },
   { name: 'Bateria', category: 'OUTROS' },
   { name: 'Ar condicionado', category: 'OUTROS' },
 ];
@@ -169,6 +175,7 @@ const CHECKLIST_ESCAVADEIRA = [
   { name: 'Nível de óleo motor de tração', category: 'ÓLEOS' },
   { name: 'Nível de óleo hidráulico', category: 'ÓLEOS' },
   { name: 'Nível de óleo do motor', category: 'ÓLEOS' },
+  { name: 'Motor', category: 'OUTROS' },
   { name: 'Bateria', category: 'OUTROS' },
   { name: 'Ar condicionado', category: 'OUTROS' },
 ];
@@ -191,6 +198,7 @@ const CHECKLIST_ROLO = [
   { name: 'Giroflex', category: 'DIVERSOS' },
   { name: 'Mangueiras hidráulicas', category: 'DIVERSOS' },
   { name: 'Estrutura da máquina', category: 'DIVERSOS' },
+  { name: 'Lâmina', category: 'DIVERSOS' },
   { name: 'Painel', category: 'DIVERSOS' },
   { name: 'Horímetro', category: 'DIVERSOS' },
   { name: 'Cinto de segurança', category: 'SEGURANÇA' },
@@ -202,6 +210,7 @@ const CHECKLIST_ROLO = [
   { name: 'Nível de óleo motor de tração', category: 'ÓLEOS' },
   { name: 'Nível de óleo hidráulico', category: 'ÓLEOS' },
   { name: 'Nível de óleo do motor', category: 'ÓLEOS' },
+  { name: 'Motor', category: 'OUTROS' },
   { name: 'Bateria', category: 'OUTROS' },
   { name: 'Ar condicionado', category: 'OUTROS' },
 ];
