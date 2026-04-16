@@ -204,10 +204,11 @@ const MACHINES_CACHE_KEY = 'machines-cache-v1';
 const MACHINES_CACHE_TTL_MS = 1000 * 60 * 60 * 24; // 24h
 
 export type CachedMachineOption = {
-  value: string;
+  id: string;
+  name: string;
   label: string;
   status?: string;
-  plate?: string | null;
+  plate?: string | null; // usado como "TAG" no seletor
 };
 
 export const saveMachinesCache = (machines: CachedMachineOption[]): void => {
@@ -225,10 +226,26 @@ export const loadMachinesCache = (): CachedMachineOption[] => {
   try {
     const raw = localStorage.getItem(MACHINES_CACHE_KEY);
     if (!raw) return [];
-    const parsed = JSON.parse(raw) as { updatedAt?: number; machines?: CachedMachineOption[] };
+    const parsed = JSON.parse(raw) as { updatedAt?: number; machines?: any[] };
     if (!parsed?.machines || !Array.isArray(parsed.machines)) return [];
     if (parsed.updatedAt && Date.now() - parsed.updatedAt > MACHINES_CACHE_TTL_MS) return [];
-    return parsed.machines;
+
+    // Compatibilidade com cache antigo (value/label)
+    return parsed.machines
+      .map((m: any): CachedMachineOption | null => {
+        const id = (m.id ?? m.value ?? m.label) as string | undefined;
+        const name = (m.name ?? m.value ?? m.label) as string | undefined;
+        const label = (m.label ?? name) as string | undefined;
+        if (!id || !name || !label) return null;
+        return {
+          id,
+          name,
+          label,
+          status: m.status,
+          plate: m.plate ?? null,
+        };
+      })
+      .filter(Boolean) as CachedMachineOption[];
   } catch (error) {
     console.error('Erro ao carregar cache de máquinas:', error);
     return [];

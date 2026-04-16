@@ -10,23 +10,25 @@ interface HomeProps {
 }
 
 const FALLBACK_MACHINES: CachedMachineOption[] = [
-  { value: 'Escavadeira Hidráulica', label: 'Escavadeira Hidráulica' },
-  { value: 'Retroescavadeira', label: 'Retroescavadeira' },
-  { value: 'Pá Carregadeira', label: 'Pá Carregadeira' },
-  { value: 'Motoniveladora', label: 'Motoniveladora' },
-  { value: 'Rolo Compactador', label: 'Rolo Compactador' },
-  { value: 'Trator de Esteiras', label: 'Trator de Esteiras' },
-  { value: 'Trator Agrícola', label: 'Trator Agrícola' },
-  { value: 'Caminhão', label: 'Caminhão' },
-  { value: 'Caminhão Basculante', label: 'Caminhão Basculante' },
-  { value: 'Mini Escavadeira', label: 'Mini Escavadeira' },
-  { value: 'Skid Steer', label: 'Skid Steer' },
-  { value: 'Outra', label: 'Outra' },
+  { id: 'fallback-escavadeira', name: 'Escavadeira Hidráulica', label: 'Escavadeira Hidráulica' },
+  { id: 'fallback-retro', name: 'Retroescavadeira', label: 'Retroescavadeira' },
+  { id: 'fallback-pa', name: 'Pá Carregadeira', label: 'Pá Carregadeira' },
+  { id: 'fallback-motoniveladora', name: 'Motoniveladora', label: 'Motoniveladora' },
+  { id: 'fallback-rolo', name: 'Rolo Compactador', label: 'Rolo Compactador' },
+  { id: 'fallback-trator-esteiras', name: 'Trator de Esteiras', label: 'Trator de Esteiras' },
+  { id: 'fallback-trator-agricola', name: 'Trator Agrícola', label: 'Trator Agrícola' },
+  { id: 'fallback-caminhao', name: 'Caminhão', label: 'Caminhão' },
+  { id: 'fallback-caminhao-basculante', name: 'Caminhão Basculante', label: 'Caminhão Basculante' },
+  { id: 'fallback-mini-escavadeira', name: 'Mini Escavadeira', label: 'Mini Escavadeira' },
+  { id: 'fallback-skid', name: 'Skid Steer', label: 'Skid Steer' },
+  { id: 'fallback-outra', name: 'Outra', label: 'Outra' },
 ];
 
 export const Home: React.FC<HomeProps> = ({ onStartChecklist, onViewHistory }) => {
   const [operator, setOperator] = useState('');
-  const [machine, setMachine] = useState('');
+  const [machineId, setMachineId] = useState('');
+  const [machineName, setMachineName] = useState('');
+  const [machineSearch, setMachineSearch] = useState('');
   const [location, setLocation] = useState('');
   const [tag, setTag] = useState('');
   const [horimeter, setHorimeter] = useState('');
@@ -58,7 +60,8 @@ export const Home: React.FC<HomeProps> = ({ onStartChecklist, onViewHistory }) =
             const labelParts = [m.name, model].filter(Boolean);
             const label = `${labelParts.join(' - ')}${plate ? ` (${plate})` : ''}`;
             return {
-              value: m.name,
+              id: m.id,
+              name: m.name,
               label,
               status: m.status,
               plate,
@@ -79,17 +82,25 @@ export const Home: React.FC<HomeProps> = ({ onStartChecklist, onViewHistory }) =
     void loadMachines();
   }, []);
 
+  const normalizedQuery = machineSearch.trim().toLowerCase();
+  const filteredMachines = normalizedQuery
+    ? machineOptions.filter((m) => {
+        const haystack = `${m.name} ${m.label} ${m.plate ?? ''}`.toLowerCase();
+        return haystack.includes(normalizedQuery);
+      })
+    : machineOptions;
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!operator.trim() || !machine.trim() || !location.trim() || !tag.trim() || !horimeter.trim()) {
+    if (!operator.trim() || !machineId.trim() || !location.trim() || !tag.trim() || !horimeter.trim()) {
       alert('Por favor, preencha todos os campos obrigatórios.');
       return;
     }
 
     onStartChecklist({
       operator: operator.trim(),
-      machine: machine.trim(),
+      machine: machineName.trim(),
       location: location.trim(),
       tag: tag.trim(),
       horimeter: horimeter.trim(),
@@ -142,16 +153,28 @@ export const Home: React.FC<HomeProps> = ({ onStartChecklist, onViewHistory }) =
 
           <div className="form-group">
             <label htmlFor="machine">Máquina *</label>
+            <input
+              type="text"
+              value={machineSearch}
+              onChange={(e) => setMachineSearch(e.target.value)}
+              placeholder="Buscar por nome ou TAG..."
+              style={{ marginBottom: '0.5rem' }}
+            />
             <select
               id="machine"
-              value={machine}
-              onChange={(e) => setMachine(e.target.value)}
+              value={machineId}
+              onChange={(e) => {
+                const id = e.target.value;
+                setMachineId(id);
+                const selected = machineOptions.find((m) => m.id === id);
+                setMachineName(selected?.name ?? '');
+              }}
               required
               disabled={isLoadingMachines && machineOptions.length === 0}
             >
               <option value="">Selecione a máquina</option>
-              {machineOptions.map((m) => (
-                <option key={m.label} value={m.value}>
+              {filteredMachines.map((m) => (
+                <option key={m.id} value={m.id}>
                   {m.label}
                 </option>
               ))}
