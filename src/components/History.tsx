@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ChecklistData } from '../types';
-import { getCompletedChecklists, deleteCompletedChecklist } from '../services/storage';
+import { getCompletedChecklists, deleteCompletedChecklist, syncChecklistPhotosForSave } from '../services/storage';
 import { generatePDF } from '../services/pdf';
 import './History.css';
 
@@ -35,7 +35,8 @@ export const History: React.FC<HistoryProps> = ({ onBack }) => {
   const handleRegeneratePDF = async (checklist: ChecklistData) => {
     setIsGeneratingPDF(true);
     try {
-      await generatePDF(checklist);
+      const checklistWithPhotos = await syncChecklistPhotosForSave(checklist);
+      await generatePDF(checklistWithPhotos);
       alert('✅ PDF gerado com sucesso!');
     } catch (error) {
       console.error('Erro ao gerar PDF:', error);

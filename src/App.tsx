@@ -6,6 +6,7 @@ import { Login } from './components/Login';
 import { OSI } from './components/OSI';
 import { ChecklistData, User } from './types';
 import { getDarkMode, setDarkMode, initDB } from './services/storage';
+import { checkStorageUploadAccess } from './services/supabase';
 import './App.css';
 
 type View = 'home' | 'checklist' | 'history' | 'osi';
@@ -29,6 +30,16 @@ function App() {
     console.log('🔍 Debug - Variáveis de ambiente:');
     console.log('URL:', import.meta.env.VITE_SUPABASE_URL);
     console.log('Key:', import.meta.env.VITE_SUPABASE_ANON_KEY ? 'Definida ✅' : 'NÃO definida ❌');
+
+    void checkStorageUploadAccess().then((ok) => {
+      if (!ok) {
+        console.warn(
+          '⚠️ Upload no bucket "pdfs" indisponível. Execute CRIAR_POLITICAS_STORAGE.sql no Supabase e permita MIME types de imagem/PDF no bucket.'
+        );
+      } else {
+        console.log('✅ Storage "pdfs" pronto para upload de fotos/PDFs');
+      }
+    });
   }, []);
 
   const handleStartChecklist = (data: Partial<ChecklistData>) => {

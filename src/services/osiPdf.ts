@@ -1,26 +1,7 @@
 import jsPDF from 'jspdf';
 import { OSIData } from '../types';
 import { uploadPDFToStorage } from './supabase';
-
-/**
- * Converte foto (URL ou base64) para base64 para uso no PDF
- */
-const photoToBase64 = async (photo: string): Promise<string> => {
-  if (photo.startsWith('data:')) return photo;
-  try {
-    const response = await fetch(photo);
-    const blob = await response.blob();
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
-  } catch (error) {
-    console.error('Erro ao carregar foto da URL:', error);
-    return photo; // Retorna original em caso de erro
-  }
-};
+import { photoRefToBase64 } from './photoUtils';
 
 // Função para carregar a logo
 const loadLogo = async (): Promise<string | null> => {
@@ -244,7 +225,9 @@ export const generateOSIPDF = async (osi: OSIData): Promise<void> => {
 
   // Fotos (se existirem) - converter URLs do bucket para base64
   if (osi.photos && osi.photos.length > 0) {
-    const photosBase64 = await Promise.all(osi.photos.map(photoToBase64));
+    const photosBase64 = await Promise.all(
+      osi.photos.map(async (photo) => (await photoRefToBase64(photo)) || photo)
+    );
 
     // Configuração das fotos: 2 colunas, 3 linhas por página = 6 fotos por página
     const photosPerPage = 6;

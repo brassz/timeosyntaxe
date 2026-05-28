@@ -512,10 +512,79 @@ export const getOSIById = async (id: number) => {
 // FUNÇÕES PARA SUPABASE STORAGE (PDFs)
 // ============================================
 
-const PDF_BUCKET_NAME = 'pdfs';
+const PDF_BUCKET_NAME = import.meta.env.VITE_STORAGE_BUCKET || 'pdfs';
 
-// Criar bucket se não existir (deve ser feito manualmente no Supabase Dashboard)
-// Storage > Create bucket > Nome: "pdfs" > Public: false (ou true se quiser acesso público)
+const getImageExtension = (mime: string): string => {
+  if (mime === 'image/png') return 'png';
+  if (mime === 'image/webp') return 'webp';
+  if (mime === 'image/gif') return 'gif';
+  return 'jpg';
+};
+
+const logStorageUploadError = (context: string, error: { message?: string; statusCode?: string | number }) => {
+  console.error(`❌ Erro ao fazer upload (${context}):`, error);
+
+  const message = error.message || '';
+  if (message.includes('row-level security') || message.includes('Unauthorized')) {
+    console.error(
+      '🛠️ Permissão negada no Storage. Execute o arquivo CRIAR_POLITICAS_STORAGE.sql no Supabase SQL Editor.'
+    );
+  }
+  if (message.includes('invalid_mime_type') || message.includes('mime type')) {
+    console.error(
+      '🛠️ Tipo de arquivo bloqueado. No bucket "pdfs", permita: application/pdf, image/jpeg, image/png, image/webp'
+    );
+  }
+  if (message.includes('Bucket not found') || message.includes('not found')) {
+    console.error('🛠️ Bucket "pdfs" não encontrado. Crie em Storage > New bucket > nome: pdfs');
+  }
+};
+
+const uploadBlobToStorage = async (
+  filePath: string,
+  blob: Blob,
+  context: string
+): Promise<string | null> => {
+  const { error } = await supabase.storage
+    .from(PDF_BUCKET_NAME)
+    .upload(filePath, blob, {
+      contentType: blob.type || 'application/octet-stream',
+      upsert: true,
+    });
+
+  if (error) {
+    logStorageUploadError(context, error);
+    return null;
+  }
+
+  const { data: urlData } = supabase.storage
+    .from(PDF_BUCKET_NAME)
+    .getPublicUrl(filePath);
+
+  if (urlData?.publicUrl) {
+    console.log(`✅ Upload concluído (${context}):`, urlData.publicUrl);
+    return urlData.publicUrl;
+  }
+
+  return null;
+};
+
+export const checkStorageUploadAccess = async (): Promise<boolean> => {
+  if (!isSupabaseConfigured) return false;
+
+  try {
+    const testBlob = new Blob(['storage-test'], { type: 'application/pdf' });
+    const testPath = `_healthcheck/storage-test-${Date.now()}.pdf`;
+    const url = await uploadBlobToStorage(testPath, testBlob, 'healthcheck');
+    if (url) {
+      await supabase.storage.from(PDF_BUCKET_NAME).remove([testPath]);
+      return true;
+    }
+    return false;
+  } catch {
+    return false;
+  }
+};
 
 /**
  * Converte base64 data URL em Blob
@@ -530,13 +599,34 @@ const dataURLtoBlob = (dataUrl: string): Blob => {
   return new Blob([u8arr], { type: mime });
 };
 
-/**
- * Faz upload de uma foto de OSI para o Supabase Storage
- * @param photoData Base64 data URL ou Blob da foto
- * @param orderNumber Número da ordem
- * @param index Índice da foto
- * @returns URL pública da foto ou null em caso de erro
- */
+export const uploadChecklistPhotoToStorage = async (
+  photoData: string | Blob,
+  checklistId: string,
+  itemId: string,
+  photoId: string
+): Promise<string | null> => {
+  if (!isSupabaseConfigured) {
+    console.warn('⚠️ Supabase não configurado! Foto do checklist não será salva no storage.');
+    return null;
+  }
+
+  try {
+    const blob = typeof photoData === 'string'
+      ? dataURLtoBlob(photoData)
+      : photoData;
+
+    const ext = getImageExtension(blob.type);
+    const safePhotoId = photoId.replace(/[^a-zA-Z0-9-_]/g, '_');
+    const filePath = `checklists/photos/${checklistId}/${itemId}_${safePhotoId}.${ext}`;
+
+    console.log(`📤 Enviando foto do checklist: ${filePath}`);
+    return uploadBlobToStorage(filePath, blob, 'foto checklist');
+  } catch (error) {
+    console.error('❌ Exception ao fazer upload da foto do checklist:', error);
+    return null;
+  }
+};
+
 export const uploadOSIPhotoToStorage = async (
   photoData: string | Blob,
   orderNumber: number,
@@ -552,33 +642,12 @@ export const uploadOSIPhotoToStorage = async (
       ? dataURLtoBlob(photoData) 
       : photoData;
     
-    const ext = blob.type === 'image/png' ? 'png' : 'jpg';
+    const ext = getImageExtension(blob.type);
     const timestamp = Date.now();
     const filePath = `osi/photos/OSI_${orderNumber}_${timestamp}_${index}.${ext}`;
 
     console.log(`📤 Enviando foto OSI: ${filePath}`);
-
-    const { error } = await supabase.storage
-      .from(PDF_BUCKET_NAME)
-      .upload(filePath, blob, {
-        contentType: blob.type,
-        upsert: true
-      });
-
-    if (error) {
-      console.error('❌ Erro ao fazer upload da foto:', error);
-      return null;
-    }
-
-    const { data: urlData } = supabase.storage
-      .from(PDF_BUCKET_NAME)
-      .getPublicUrl(filePath);
-
-    if (urlData?.publicUrl) {
-      console.log('✅ Foto enviada:', urlData.publicUrl);
-      return urlData.publicUrl;
-    }
-    return null;
+    return uploadBlobToStorage(filePath, blob, 'foto OSI');
   } catch (error) {
     console.error('❌ Exception ao fazer upload da foto:', error);
     return null;

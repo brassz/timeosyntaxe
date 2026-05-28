@@ -1,6 +1,6 @@
 import jsPDF from 'jspdf';
 import { ChecklistData } from '../types';
-import { getPhoto } from './storage';
+import { resolveChecklistPhotoData } from './storage';
 import { uploadPDFToStorage } from './supabase';
 
 export const generatePDF = async (checklist: ChecklistData): Promise<void> => {
@@ -177,14 +177,15 @@ export const generatePDF = async (checklist: ChecklistData): Promise<void> => {
         const rowYPos = yPos;
 
         for (let i = startIndex; i < endIndex; i++) {
-          const photo = await getPhoto(item.photos[i]);
-          if (!photo) continue;
+          const photoData = await resolveChecklistPhotoData(item.photos[i]);
+          if (!photoData) continue;
 
           const col = i % photosPerRow;
           const xPos = margin + 10 + col * (photoWidth + photoSpacing);
 
           try {
-            doc.addImage(photo.data, 'JPEG', xPos, rowYPos, photoWidth, photoHeight);
+            const format = photoData.startsWith('data:image/png') ? 'PNG' : 'JPEG';
+            doc.addImage(photoData, format, xPos, rowYPos, photoWidth, photoHeight);
           } catch (error) {
             console.error('Erro ao adicionar foto:', error);
           }

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { ChecklistData, ChecklistItem, ChecklistStatus, Photo } from '../types';
 import { saveDraft, loadDraftAsync, deleteDraft, saveCompletedChecklist, savePhoto, getPhoto, deletePhoto } from '../services/storage';
+import { uploadChecklistPhotoToStorage } from '../services/supabase';
 import { generatePDF } from '../services/pdf';
 import './Checklist.css';
 
@@ -282,7 +283,7 @@ export const Checklist: React.FC<ChecklistProps> = ({ initialData, onBack }) => 
           for (const photoId of item.photos) {
             const photo = await getPhoto(photoId);
             if (photo) {
-              photoDataArray.push(photo.data);
+              photoDataArray.push(photo.url || photo.data);
             }
           }
           previews[item.id] = photoDataArray;
@@ -388,6 +389,14 @@ export const Checklist: React.FC<ChecklistProps> = ({ initialData, onBack }) => 
           await savePhoto(photo);
           newPhotoIds.push(photoId);
           newPreviews.push(base64);
+
+          const url = await uploadChecklistPhotoToStorage(base64, checklist.id, item.id, photoId);
+          if (url) {
+            await savePhoto({ ...photo, url });
+          } else {
+            console.warn('⚠️ Foto salva localmente, mas não foi enviada ao bucket. Verifique CRIAR_POLITICAS_STORAGE.sql');
+          }
+
           resolve();
         };
         reader.readAsDataURL(file);
@@ -431,10 +440,10 @@ export const Checklist: React.FC<ChecklistProps> = ({ initialData, onBack }) => 
 
     try {
       const completedChecklist = { ...checklist, completed: true };
-      await saveCompletedChecklist(completedChecklist);
+      const savedChecklist = await saveCompletedChecklist(completedChecklist);
       await deleteDraft();
       
-      await generatePDF(completedChecklist);
+      await generatePDF(savedChecklist);
       
       alert('✅ Checklist finalizado e PDF gerado com sucesso!');
       onBack();

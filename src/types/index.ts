@@ -28,6 +28,7 @@ export interface Photo {
   itemId: string;
   data: string; // base64
   timestamp: number;
+  url?: string; // URL no Supabase Storage
 }
 
 // Tipos para OSI (Ordem de Serviço Interna)

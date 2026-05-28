@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { User, OSIData, MaintenanceType } from '../types';
-import { getNextOrderNumber, saveOSI, getOSIHistory } from '../services/supabase';
+import { getNextOrderNumber, saveOSI, getOSIHistory, uploadOSIPhotoToStorage } from '../services/supabase';
 import { generateOSIPDF } from '../services/osiPdf';
 import { generateOSIExcel } from '../services/osiExcel';
 import './OSI.css';
@@ -83,7 +83,7 @@ export const OSI: React.FC<OSIProps> = ({ user, onBack }) => {
     }));
   };
 
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
@@ -103,23 +103,33 @@ export const OSI: React.FC<OSIProps> = ({ user, onBack }) => {
       alert(`Você pode adicionar apenas mais ${remainingSlots} foto(s). Limite: ${MAX_PHOTOS} fotos.`);
     }
 
-    filesToProcess.forEach(file => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64 = reader.result as string;
-        setFormData(prev => {
-          const currentCount = prev.photos?.length || 0;
-          if (currentCount >= MAX_PHOTOS) {
-            return prev;
-          }
-          return {
-            ...prev,
-            photos: [...(prev.photos || []), base64]
-          };
+    for (let i = 0; i < filesToProcess.length; i++) {
+      const file = filesToProcess[i];
+      const base64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+
+      setFormData((prev) => ({
+        ...prev,
+        photos: [...(prev.photos || []), base64],
+      }));
+
+      const photoIndex = currentPhotosCount + i;
+      const url = await uploadOSIPhotoToStorage(base64, orderNumber, photoIndex);
+      if (url) {
+        setFormData((prev) => {
+          const photos = [...(prev.photos || [])];
+          const idx = photos.lastIndexOf(base64);
+          if (idx !== -1) photos[idx] = url;
+          return { ...prev, photos };
         });
-      };
-      reader.readAsDataURL(file);
-    });
+      } else {
+        console.warn('⚠️ Foto OSI salva localmente, mas não foi enviada ao bucket. Verifique CRIAR_POLITICAS_STORAGE.sql');
+      }
+    }
 
     e.target.value = '';
   };

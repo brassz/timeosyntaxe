@@ -1,6 +1,7 @@
 import { openDB, DBSchema, IDBPDatabase } from 'idb';
 import { ChecklistData, Photo } from '../types';
-import { saveChecklistToDB, getChecklistsFromDB, deleteChecklistFromDB, cleanOldChecklists } from './supabase';
+import { saveChecklistToDB, getChecklistsFromDB, deleteChecklistFromDB, cleanOldChecklists, uploadChecklistPhotoToStorage } from './supabase';
+import { isInlinePhotoRef, isRemotePhotoRef, photoRefToBase64 } from './photoUtils';
 
 interface ChecklistDB extends DBSchema {
   photos: {
@@ -97,18 +98,61 @@ export const deleteDraft = async (): Promise<void> => {
 };
 
 // Salvar checklist completado (agora no Supabase + localStorage como backup)
+export const syncChecklistPhotosForSave = async (data: ChecklistData): Promise<ChecklistData> => {
+  const items = await Promise.all(
+    data.items.map(async (item) => {
+      if (item.photos.length === 0) return item;
+
+      const photoRefs = await Promise.all(
+        item.photos.map(async (photoRef) => {
+          if (isRemotePhotoRef(photoRef) || isInlinePhotoRef(photoRef)) {
+            return photoRef;
+          }
+
+          const photo = await getPhoto(photoRef);
+          if (!photo) return photoRef;
+
+          if (photo.url) return photo.url;
+
+          const url = await uploadChecklistPhotoToStorage(
+            photo.data,
+            photo.checklistId,
+            photo.itemId,
+            photo.id
+          );
+
+          if (url) {
+            await savePhoto({ ...photo, url });
+            return url;
+          }
+
+          return photo.data;
+        })
+      );
+
+      return { ...item, photos: photoRefs };
+    })
+  );
+
+  return { ...data, items };
+};
+
 export const saveCompletedChecklist = async (data: ChecklistData) => {
+  const checklistWithPhotos = await syncChecklistPhotosForSave(data);
+
   // Salvar no Supabase
   try {
-    await saveChecklistToDB(data);
+    await saveChecklistToDB(checklistWithPhotos);
   } catch (error) {
     console.error('Error saving to Supabase, using localStorage as backup:', error);
   }
   
   // Manter no localStorage como backup
   const checklists = getCompletedChecklistsLocal();
-  checklists.unshift(data);
+  checklists.unshift(checklistWithPhotos);
   localStorage.setItem('completed-checklists', JSON.stringify(checklists));
+
+  return checklistWithPhotos;
 };
 
 // Buscar checklists do Supabase (com fallback para localStorage)
@@ -169,6 +213,21 @@ export const savePhoto = async (photo: Photo): Promise<void> => {
 export const getPhoto = async (id: string): Promise<Photo | undefined> => {
   const database = await initDB();
   return await database.get('photos', id);
+};
+
+export const resolveChecklistPhotoData = async (photoRef: string): Promise<string | null> => {
+  if (isInlinePhotoRef(photoRef)) return photoRef;
+
+  if (isRemotePhotoRef(photoRef)) {
+    return photoRefToBase64(photoRef);
+  }
+
+  const photo = await getPhoto(photoRef);
+  if (!photo) return null;
+  if (photo.url) {
+    return (await photoRefToBase64(photo.url)) || photo.data;
+  }
+  return photo.data;
 };
 
 export const getPhotosByChecklist = async (checklistId: string): Promise<Photo[]> => {
