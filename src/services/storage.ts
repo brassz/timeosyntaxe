@@ -1,6 +1,5 @@
 import { openDB, DBSchema, IDBPDatabase } from 'idb';
 import { ChecklistData, Photo } from '../types';
-import { saveChecklistToDB, getChecklistsFromDB, deleteChecklistFromDB, cleanOldChecklists, uploadChecklistPhotoToStorage } from './supabase';
 import { isInlinePhotoRef, isRemotePhotoRef, photoRefToBase64 } from './photoUtils';
 
 interface ChecklistDB extends DBSchema {
@@ -19,7 +18,7 @@ let db: IDBPDatabase<ChecklistDB> | null = null;
 
 export const initDB = async () => {
   if (db) return db;
-  
+
   db = await openDB<ChecklistDB>('terraplanagem-db', 2, {
     upgrade(db, oldVersion) {
       if (oldVersion < 1) {
@@ -31,15 +30,13 @@ export const initDB = async () => {
       }
     },
   });
-  
-  // Limpar checklists antigos ao inicializar
-  await cleanOldChecklists();
-  
+
   return db;
 };
 
 const DRAFT_STORAGE_KEY = 'checklist-draft';
 const DRAFT_DB_KEY = 'active';
+const COMPLETED_STORAGE_KEY = 'completed-checklists';
 
 // Local cache do rascunho (localStorage + IndexedDB)
 export const saveDraft = async (data: ChecklistData): Promise<void> => {
@@ -57,7 +54,6 @@ export const saveDraft = async (data: ChecklistData): Promise<void> => {
   }
 };
 
-// Mantém compatibilidade com chamadas síncronas (ex.: Home)
 export const loadDraft = (): ChecklistData | null => {
   try {
     const draft = localStorage.getItem(DRAFT_STORAGE_KEY);
@@ -97,7 +93,7 @@ export const deleteDraft = async (): Promise<void> => {
   }
 };
 
-// Salvar checklist completado (agora no Supabase + localStorage como backup)
+/** Embute fotos em base64 no checklist para o histórico/PDF funcionar só com localStorage */
 export const syncChecklistPhotosForSave = async (data: ChecklistData): Promise<ChecklistData> => {
   const items = await Promise.all(
     data.items.map(async (item) => {
@@ -105,28 +101,13 @@ export const syncChecklistPhotosForSave = async (data: ChecklistData): Promise<C
 
       const photoRefs = await Promise.all(
         item.photos.map(async (photoRef) => {
-          if (isRemotePhotoRef(photoRef) || isInlinePhotoRef(photoRef)) {
-            return photoRef;
+          if (isInlinePhotoRef(photoRef)) return photoRef;
+          if (isRemotePhotoRef(photoRef)) {
+            return (await photoRefToBase64(photoRef)) || photoRef;
           }
 
           const photo = await getPhoto(photoRef);
-          if (!photo) return photoRef;
-
-          if (photo.url) return photo.url;
-
-          const url = await uploadChecklistPhotoToStorage(
-            photo.data,
-            photo.checklistId,
-            photo.itemId,
-            photo.id
-          );
-
-          if (url) {
-            await savePhoto({ ...photo, url });
-            return url;
-          }
-
-          return photo.data;
+          return photo?.data || photoRef;
         })
       );
 
@@ -137,71 +118,64 @@ export const syncChecklistPhotosForSave = async (data: ChecklistData): Promise<C
   return { ...data, items };
 };
 
+const getCompletedChecklistsLocal = (): ChecklistData[] => {
+  try {
+    const checklists = localStorage.getItem(COMPLETED_STORAGE_KEY);
+    return checklists ? JSON.parse(checklists) : [];
+  } catch (error) {
+    console.error('Erro ao ler checklists do localStorage:', error);
+    return [];
+  }
+};
+
 export const saveCompletedChecklist = async (data: ChecklistData) => {
   const checklistWithPhotos = await syncChecklistPhotosForSave(data);
 
-  // Salvar no Supabase
   try {
-    await saveChecklistToDB(checklistWithPhotos);
+    const checklists = getCompletedChecklistsLocal();
+    const withoutSame = checklists.filter((c) => c.id !== checklistWithPhotos.id);
+    withoutSame.unshift(checklistWithPhotos);
+    localStorage.setItem(COMPLETED_STORAGE_KEY, JSON.stringify(withoutSame));
   } catch (error) {
-    console.error('Error saving to Supabase, using localStorage as backup:', error);
+    console.error('Erro ao salvar checklist no localStorage:', error);
+    // Se o localStorage encheu (fotos grandes), tenta salvar sem embutir base64 (só IDs)
+    try {
+      const checklists = getCompletedChecklistsLocal();
+      const withoutSame = checklists.filter((c) => c.id !== data.id);
+      withoutSame.unshift(data);
+      localStorage.setItem(COMPLETED_STORAGE_KEY, JSON.stringify(withoutSame));
+    } catch (fallbackError) {
+      console.error('Erro ao salvar checklist (fallback):', fallbackError);
+      throw fallbackError;
+    }
   }
-  
-  // Manter no localStorage como backup
-  const checklists = getCompletedChecklistsLocal();
-  checklists.unshift(checklistWithPhotos);
-  localStorage.setItem('completed-checklists', JSON.stringify(checklists));
 
   return checklistWithPhotos;
 };
 
-// Buscar checklists do Supabase (com fallback para localStorage)
 export const getCompletedChecklists = async (): Promise<ChecklistData[]> => {
-  try {
-    const checklists = await getChecklistsFromDB();
-    if (checklists && checklists.length > 0) {
-      return checklists;
-    }
-  } catch (error) {
-    console.error('Error fetching from Supabase, using localStorage:', error);
-  }
-  
-  // Fallback para localStorage
   return getCompletedChecklistsLocal();
 };
 
-// Função local para buscar do localStorage
-const getCompletedChecklistsLocal = (): ChecklistData[] => {
-  const checklists = localStorage.getItem('completed-checklists');
-  return checklists ? JSON.parse(checklists) : [];
-};
-
-// Deletar checklist (do Supabase e localStorage)
 export const deleteCompletedChecklist = async (id: string) => {
-  try {
-    await deleteChecklistFromDB(id);
-  } catch (error) {
-    console.error('Error deleting from Supabase:', error);
-  }
-  
-  const checklists = getCompletedChecklistsLocal().filter(c => c.id !== id);
-  localStorage.setItem('completed-checklists', JSON.stringify(checklists));
+  const checklists = getCompletedChecklistsLocal().filter((c) => c.id !== id);
+  localStorage.setItem(COMPLETED_STORAGE_KEY, JSON.stringify(checklists));
+  await deletePhotosByChecklist(id);
 };
 
-// Limpar checklists locais antigos (mais de 7 dias)
 export const cleanOldLocalChecklists = () => {
   const checklists = getCompletedChecklistsLocal();
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-  
-  const filtered = checklists.filter(c => {
+
+  const filtered = checklists.filter((c) => {
     const checklistDate = new Date(c.date);
     return checklistDate > sevenDaysAgo;
   });
-  
-  localStorage.setItem('completed-checklists', JSON.stringify(filtered));
-  
-  return checklists.length - filtered.length; // Retorna quantos foram removidos
+
+  localStorage.setItem(COMPLETED_STORAGE_KEY, JSON.stringify(filtered));
+
+  return checklists.length - filtered.length;
 };
 
 // IndexedDB para fotos
@@ -258,7 +232,7 @@ export const setDarkMode = (enabled: boolean): void => {
   localStorage.setItem('dark-mode', enabled ? 'true' : 'false');
 };
 
-// Cache de máquinas (para dropdown funcionar offline)
+// Cache de máquinas
 const MACHINES_CACHE_KEY = 'machines-cache-v1';
 const MACHINES_CACHE_TTL_MS = 1000 * 60 * 60 * 24; // 24h
 
@@ -267,7 +241,7 @@ export type CachedMachineOption = {
   name: string;
   label: string;
   status?: string;
-  plate?: string | null; // usado como "TAG" no seletor
+  plate?: string | null;
 };
 
 export const saveMachinesCache = (machines: CachedMachineOption[]): void => {
@@ -289,7 +263,6 @@ export const loadMachinesCache = (): CachedMachineOption[] => {
     if (!parsed?.machines || !Array.isArray(parsed.machines)) return [];
     if (parsed.updatedAt && Date.now() - parsed.updatedAt > MACHINES_CACHE_TTL_MS) return [];
 
-    // Compatibilidade com cache antigo (value/label)
     return parsed.machines
       .map((m: any): CachedMachineOption | null => {
         const id = (m.id ?? m.value ?? m.label) as string | undefined;
@@ -311,16 +284,14 @@ export const loadMachinesCache = (): CachedMachineOption[] => {
   }
 };
 
-// Funções para OSI (Ordem de Serviço Interna) - localStorage como fallback
+// Funções para OSI (mantidas para se reativar no futuro)
 const OSI_STORAGE_KEY = 'osi-orders';
 const OSI_PENDING_KEY = 'osi-pending-sync';
 
-// Salvar OSI no localStorage
 export const saveOSILocal = (osi: any): void => {
   try {
     const orders = getOSILocal();
     orders.unshift(osi);
-    // Manter apenas as últimas 1000 ordens
     const limited = orders.slice(0, 1000);
     localStorage.setItem(OSI_STORAGE_KEY, JSON.stringify(limited));
   } catch (error) {
@@ -328,7 +299,6 @@ export const saveOSILocal = (osi: any): void => {
   }
 };
 
-// Buscar OSI do localStorage
 export const getOSILocal = (): any[] => {
   try {
     const orders = localStorage.getItem(OSI_STORAGE_KEY);
@@ -339,7 +309,6 @@ export const getOSILocal = (): any[] => {
   }
 };
 
-// Salvar OSI pendente de sincronização
 export const saveOSIPending = (osi: any): void => {
   try {
     const pending = getOSIPending();
@@ -350,7 +319,6 @@ export const saveOSIPending = (osi: any): void => {
   }
 };
 
-// Buscar OSI pendentes
 export const getOSIPending = (): any[] => {
   try {
     const pending = localStorage.getItem(OSI_PENDING_KEY);
@@ -361,7 +329,6 @@ export const getOSIPending = (): any[] => {
   }
 };
 
-// Remover OSI pendente após sincronização bem-sucedida
 export const removeOSIPending = (orderNumber: number): void => {
   try {
     const pending = getOSIPending();
@@ -372,7 +339,6 @@ export const removeOSIPending = (orderNumber: number): void => {
   }
 };
 
-// Limpar todas as OSI pendentes
 export const clearOSIPending = (): void => {
   try {
     localStorage.removeItem(OSI_PENDING_KEY);

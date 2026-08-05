@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ChecklistData } from '../types';
-import { loadDraft, loadMachinesCache, saveMachinesCache, CachedMachineOption } from '../services/storage';
-import { getMachinesFromDB } from '../services/supabase';
+import { loadDraft, CachedMachineOption } from '../services/storage';
 import './Home.css';
 
 interface HomeProps {
@@ -9,7 +8,7 @@ interface HomeProps {
   onViewHistory: () => void;
 }
 
-const FALLBACK_MACHINES: CachedMachineOption[] = [
+const LOCAL_MACHINES: CachedMachineOption[] = [
   { id: 'fallback-escavadeira', name: 'Escavadeira Hidráulica', label: 'Escavadeira Hidráulica' },
   { id: 'fallback-retro', name: 'Retroescavadeira', label: 'Retroescavadeira' },
   { id: 'fallback-pa', name: 'Pá Carregadeira', label: 'Pá Carregadeira' },
@@ -34,52 +33,11 @@ export const Home: React.FC<HomeProps> = ({ onStartChecklist, onViewHistory }) =
   const [horimeter, setHorimeter] = useState('');
   const [mileage, setMileage] = useState('');
   const [hasDraft, setHasDraft] = useState(false);
-  const [machineOptions, setMachineOptions] = useState<CachedMachineOption[]>(() => {
-    const cached = loadMachinesCache();
-    return cached.length > 0 ? cached : FALLBACK_MACHINES;
-  });
-  const [isLoadingMachines, setIsLoadingMachines] = useState(false);
+  const [machineOptions] = useState<CachedMachineOption[]>(LOCAL_MACHINES);
 
   useEffect(() => {
     const draft = loadDraft();
     setHasDraft(!!draft);
-  }, []);
-
-  useEffect(() => {
-    const loadMachines = async () => {
-      setIsLoadingMachines(true);
-      try {
-        const machines = await getMachinesFromDB();
-        if (!machines || machines.length === 0) return;
-
-        const options: CachedMachineOption[] = machines
-          .filter((m) => m.active)
-          .map((m) => {
-            const plate = m.plate?.trim() || null;
-            const model = m.model?.trim() || '';
-            const labelParts = [m.name, model].filter(Boolean);
-            const label = `${labelParts.join(' - ')}${plate ? ` (${plate})` : ''}`;
-            return {
-              id: m.id,
-              name: m.name,
-              label,
-              status: m.status,
-              plate,
-            };
-          });
-
-        if (options.length > 0) {
-          setMachineOptions(options);
-          saveMachinesCache(options);
-        }
-      } catch (error) {
-        console.error('Erro ao carregar máquinas:', error);
-      } finally {
-        setIsLoadingMachines(false);
-      }
-    };
-
-    void loadMachines();
   }, []);
 
   const normalizedQuery = machineSearch.trim().toLowerCase();
@@ -92,7 +50,7 @@ export const Home: React.FC<HomeProps> = ({ onStartChecklist, onViewHistory }) =
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!operator.trim() || !machineId.trim() || !location.trim() || !tag.trim() || !horimeter.trim()) {
       alert('Por favor, preencha todos os campos obrigatórios.');
       return;
@@ -157,7 +115,7 @@ export const Home: React.FC<HomeProps> = ({ onStartChecklist, onViewHistory }) =
               type="text"
               value={machineSearch}
               onChange={(e) => setMachineSearch(e.target.value)}
-              placeholder="Buscar por nome ou TAG..."
+              placeholder="Buscar por nome..."
               style={{ marginBottom: '0.5rem' }}
             />
             <select
@@ -170,7 +128,6 @@ export const Home: React.FC<HomeProps> = ({ onStartChecklist, onViewHistory }) =
                 setMachineName(selected?.name ?? '');
               }}
               required
-              disabled={isLoadingMachines && machineOptions.length === 0}
             >
               <option value="">Selecione a máquina</option>
               {filteredMachines.map((m) => (
@@ -179,11 +136,6 @@ export const Home: React.FC<HomeProps> = ({ onStartChecklist, onViewHistory }) =
                 </option>
               ))}
             </select>
-            {isLoadingMachines && (
-              <small style={{ color: 'var(--color-gray)' }}>
-                Carregando máquinas do sistema...
-              </small>
-            )}
           </div>
 
           <div className="form-group">

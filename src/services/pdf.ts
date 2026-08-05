@@ -1,7 +1,6 @@
 import jsPDF from 'jspdf';
 import { ChecklistData } from '../types';
 import { resolveChecklistPhotoData } from './storage';
-import { uploadPDFToStorage } from './supabase';
 
 export const generatePDF = async (checklist: ChecklistData): Promise<void> => {
   const doc = new jsPDF();
@@ -242,26 +241,9 @@ export const generatePDF = async (checklist: ChecklistData): Promise<void> => {
   const fileName = `Checklist_${checklist.machine}_${new Date(checklist.date).toLocaleDateString('pt-BR').replace(/\//g, '-')}.pdf`;
   
   try {
-    // Salvar no dispositivo
     doc.save(fileName);
-    
-    // Fazer upload para o Supabase Storage
-    const pdfBlob = doc.output('blob');
-    const pdfUrl = await uploadPDFToStorage(pdfBlob, fileName, 'checklists');
-    
-    if (pdfUrl) {
-      console.log('✅ PDF salvo no Supabase Storage:', pdfUrl);
-    } else {
-      console.warn('⚠️ PDF salvo localmente, mas não foi possível fazer upload para o storage');
-    }
   } catch (error) {
     console.error('❌ Erro ao salvar PDF:', error);
-    // Tentar salvar apenas localmente em caso de erro
-    try {
-      doc.save(fileName);
-    } catch (saveError) {
-      console.error('❌ Erro ao salvar PDF localmente:', saveError);
-      throw error;
-    }
+    throw error;
   }
 };
